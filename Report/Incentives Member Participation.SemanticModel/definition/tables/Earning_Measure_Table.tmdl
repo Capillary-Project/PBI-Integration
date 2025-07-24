@@ -1,0 +1,365 @@
+table Earning_Measure_Table
+	lineageTag: 5d05674f-2b0b-4cc1-8fbf-d511f3c807ba
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_,  -- Filter dates up to the selected date
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: edfc633c-4821-4035-90df-6e673d962ac1
+
+	measure %Incentive_Employee =
+			
+			var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE")
+			RETURN
+			DIVIDE(count_user,[EligibleEmployees])
+		lineageTag: 885e06dc-604d-4629-84b9-b441081160c8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure EligibleEmployees = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[relationship_code]="Employee" || 'member_dimension'[relationship_code]="EE",
+			        'member_dimension'[join_date] <= date_,  -- Filter dates up to the selected date
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 3459fae5-33e7-4a93-8dcd-9d9f1a2574f0
+
+	measure %Incentive_S/P =
+			
+			var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),member_dimension[relationship_code] <> "Employee")
+			RETURN
+			DIVIDE(count_user,[Eligible_S/P])
+		lineageTag: a82896ee-318b-4db7-9b7b-0f241205841e
+
+	measure Eligible_S/P = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[relationship_code]<>"Employee" || 'member_dimension'[relationship_code]<>"EE",
+			        'member_dimension'[join_date] <= date_,  -- Filter dates up to the selected date
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: cfc5084f-1900-4df7-b038-718a22feb02c
+
+	measure %Incentive_all =
+			
+			var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]))
+			RETURN
+			DIVIDE(count_user,[EligibleUsers])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 69f01756-d38d-48ea-b85f-ebcfeec7b2c3
+
+	measure Total_Incentive_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [%Incentive_Employee]-[%Incentive_S/P]
+		lineageTag: 4bd38577-02ec-4961-bf1e-a22171973601
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Avg_Earrnings_Incentive =
+			
+			var a = CALCULATE(SUM('incentive_earning_detail'[amount_earned]))
+			var b = CALCULATE(DISTINCTCOUNT('incentive_earning_detail'[user_id]))
+			var c = DIVIDE(a,b)
+			RETURN
+			c
+		formatString: 0.0
+		lineageTag: 79a21a06-2053-41bf-9e7a-6d5631d451f4
+
+	measure Total_Earrnings = CALCULATE(SUM('incentive_earning_detail'[amount_earned]))
+		formatString: 0
+		lineageTag: e6232358-0fc9-49b8-98e8-1b7de6287220
+
+	measure '% states_Participants' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]))
+			var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),ALL(member_dimension))
+			RETURN
+			DIVIDE(a,b)
+		formatString: 0%;-0%;0%
+		lineageTag: f5775d0b-a2d9-4f24-9138-1350b2744705
+
+	measure 'Incentive Participants' =
+			
+			var a =CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]))
+			RETURN
+			a
+		formatString: #,0
+		lineageTag: e831b345-89dc-4b99-9650-85e175b7d9c5
+
+	measure Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(COUNT(incentive_earning_detail[activity_id]),incentive_earning_detail[fulfillment_date]<= a)
+			 RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: ac345aa5-80fa-4216-8e8d-e8fadb6e1579
+
+	measure Avg_Activity_completion =
+			
+			DIVIDE([Activity_completion],[Incentive Participants])
+		lineageTag: 416dc2bc-aa9e-4e4b-89a3-477a4024afb5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Bonus Participants' =
+			
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 2ebf0344-8a30-4b85-ada8-7bbbc472479b
+
+	measure Avg_Earrnings_Bonus =
+			
+			var a = CALCULATE(SUM('incentive_earning_detail'[amount_earned]),incentive_earning_detail[reward_category]="Bonus")
+			var b = CALCULATE(DISTINCTCOUNT('incentive_earning_detail'[user_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			var c = DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+		formatString: 0
+		lineageTag: fe77d07f-338a-4e38-b22b-7e56c2034752
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure Activity_completion_Bonus =
+			
+			var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[activity_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 2dffa072-8cc7-465e-8714-932fc97884fd
+
+	measure Total_Earnings_Employee = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			    FILTER(
+			        'incentive_earning_detail',
+			        CALCULATE(SUM('incentive_earning_detail'[amount_earned])) = 
+			        CALCULATE(SUM('incentive_plan_config_activity'[actv_max_amount]))
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: bfb9aa15-3f42-487a-a41d-8488183bd39a
+
+	measure Client_name =
+			
+			var a = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+			var b = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			a
+		lineageTag: b4cc50f5-ad3d-403b-8b95-5694f8f5af85
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 405d9980-08f6-41d1-a992-c0ed051c6eb0
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: b0b9f50d-12b5-4586-a9db-3aaee825ce6d
+
+	measure Jan_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="January")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: cbcc2f5c-a4cf-4647-ba28-b774c898719d
+
+	measure Oct_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="October")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: e7b56627-4d9f-42ae-8e2e-e95cf321f966
+
+	measure Nov_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="November")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: 6b9e42c5-d8a4-4b70-b14a-fd5c1c3a5abb
+
+	measure Feb_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="February")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: aaf17388-6d52-42ba-a98c-79a77b2c56a9
+
+	measure Mar_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="March")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: 1ef43bb6-9af4-4ad5-b1ff-9ee114d353ed
+
+	measure Apr_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="April")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: e892ec9d-dc28-4589-a32c-3a62b7c9f0ef
+
+	measure May_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="May")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: 52220d56-bbee-438a-b848-436162d8f947
+
+	measure Jun_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="June")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: a843f906-f5f0-4507-984b-3d2b468a7744
+
+	measure Jul_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="July")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: 0885bd6f-3fb1-4069-ab15-d38f2505d9df
+
+	measure Aug_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="August")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: 3c052739-d66c-4999-807d-6ace322d4057
+
+	measure Sep_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="September")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: e1385a1c-6b82-4b27-b6ab-028e67373282
+
+	measure Dec_Activity_completion = ```
+			
+			 var a = max(date_table[date])
+			 var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<= a,date_table[month]="December")
+			RETURN
+			b
+			```
+		formatString: #,0
+		lineageTag: bf4a34a9-bf62-46ea-a57f-3f7e91f4a0e4
+
+	partition Earning_Measure_Table = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

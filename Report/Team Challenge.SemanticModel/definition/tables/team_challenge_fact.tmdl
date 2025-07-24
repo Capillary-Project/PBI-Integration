@@ -1,0 +1,191 @@
+table team_challenge_fact
+	lineageTag: ff007b62-3b0e-41af-a25a-77a13b489ebe
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: fa00a3e6-bae6-43b4-91e6-e9b3ee0b776d
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 56dc4d36-9fc2-4d63-8b78-c208b6871a8f
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: f86b1d59-ca5e-4f5d-8832-d777d3b8b6f1
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_id
+		dataType: string
+		lineageTag: 187e35d9-c5f5-423a-b5d2-449f75179879
+		summarizeBy: none
+		sourceColumn: challenge_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_team_challenge
+		dataType: int64
+		formatString: 0
+		lineageTag: b512163c-8e3b-4279-88ae-d8f8a123b359
+		summarizeBy: sum
+		sourceColumn: is_team_challenge
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e3764e46-7da3-4959-a5d0-87ecc519bf5a
+		summarizeBy: none
+		sourceColumn: start_date
+
+		variation Variation
+			isDefault
+			relationship: b5b3c490-3b31-4c99-89ac-1e78e68652e2
+			defaultHierarchy: LocalDateTable_1cb069f9-743c-4b47-9b79-7107659efd27.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3445b686-bf77-4cbf-93d5-4eb89208b723
+		summarizeBy: none
+		sourceColumn: end_date
+
+		variation Variation
+			isDefault
+			relationship: 20452cda-26b1-4f15-8d02-0dc07555996c
+			defaultHierarchy: LocalDateTable_eb13a3a0-717b-4796-9cc6-6808c5c64f6c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column challenge_team_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e4d87cc-d00d-42fc-975e-7db00f92e854
+		summarizeBy: sum
+		sourceColumn: challenge_team_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column team_name
+		dataType: string
+		lineageTag: 361fa077-a380-41ec-898b-4f071426b1a8
+		summarizeBy: none
+		sourceColumn: team_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column team_challenge_type
+		dataType: string
+		lineageTag: 95190235-dd7e-4c6f-a9a8-f5c7ded6eb61
+		summarizeBy: none
+		sourceColumn: team_challenge_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column amount
+		dataType: double
+		lineageTag: c9eb8bff-a296-49bf-8ba1-6cf7dffba341
+		summarizeBy: sum
+		sourceColumn: amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column average_amount
+		dataType: double
+		lineageTag: aafdd748-93f4-4629-a82a-996ac27240b0
+		summarizeBy: sum
+		sourceColumn: average_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column challenge_milestone
+		dataType: double
+		lineageTag: 3626915c-47ae-4893-951a-cd1edbaf4fec
+		summarizeBy: sum
+		sourceColumn: challenge_milestone
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column milestone_achieved
+		dataType: string
+		lineageTag: 9040bd7a-2666-4b3a-9304-cede30e45ad2
+		summarizeBy: none
+		sourceColumn: milestone_achieved
+
+		annotation SummarizationSetBy = Automatic
+
+	column team_rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 2c50e2f9-06f7-48b6-ba59-4fb8555f4998
+		summarizeBy: sum
+		sourceColumn: team_rank
+
+		annotation SummarizationSetBy = Automatic
+
+	column member_count
+		dataType: int64
+		formatString: 0
+		lineageTag: 1827f3ce-cb87-427e-aee2-75f4da7bbe5a
+		summarizeBy: sum
+		sourceColumn: member_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column users_met_milestone
+		dataType: int64
+		formatString: 0
+		lineageTag: 6fb4c26a-094f-4203-92a8-ee60f163f67d
+		summarizeBy: sum
+		sourceColumn: users_met_milestone
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_checkins
+		dataType: int64
+		formatString: 0
+		lineageTag: 878a92aa-57e7-41dc-b331-c6b38c204697
+		summarizeBy: sum
+		sourceColumn: total_checkins
+
+		annotation SummarizationSetBy = Automatic
+
+	partition team_challenge_fact = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_extracts_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    team_challenge_fact_Table = optum_extracts_Schema{[Name="team_challenge_fact",Kind="Table"]}[Data]
+				in
+				    team_challenge_fact_Table
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

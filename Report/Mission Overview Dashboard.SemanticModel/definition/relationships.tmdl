@@ -1,0 +1,107 @@
+relationship b3d16e47-5ef7-4d15-aa25-976dbbc0ca49
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_c397a81f-2221-4c60-9b79-e7e194921be0.Date
+
+relationship e445db70-f612-b8a7-0b90-d1c3ad12c2cb
+	crossFilteringBehavior: bothDirections
+	fromColumn: Categories_Table.Value
+	toColumn: 'Pseudo Category Table'.Value
+
+relationship 167eef84-d5a5-4fdb-ae04-8e6d084bb30c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_dimension.last_updated_date
+	toColumn: LocalDateTable_3ab72a6e-fd60-464e-a5eb-c86905d50827.Date
+
+relationship 7ff576d8-847d-85b4-c45c-89de15e3b57d
+	fromColumn: mission_members_fact.mission_id
+	toColumn: Categories_Table.mission_id
+
+relationship 332580a6-3dc7-8cd4-a91b-566c14f24b0e
+	fromColumn: mission_members_fact.mission_id
+	toColumn: mission_dimension.mission_id
+
+relationship a540ba43-fd26-90ed-3089-d9050cd8ce61
+	toCardinality: many
+	fromColumn: mission_members_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship 883dd5fc-a237-39c9-9409-fbe5c4c9d075
+	fromColumn: mission_members_fact.mission_start_date
+	toColumn: date_table.date
+
+relationship 4cc73b6f-0fbf-4f25-9c11-99c1a5ba3c3c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.activity_completion_date
+	toColumn: LocalDateTable_07d9e8e8-b142-40ca-8c0a-6a1bccaa0be0.Date
+
+relationship c73f0283-75cc-45ba-9728-71915131c363
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.activity_start_date
+	toColumn: LocalDateTable_93b17480-379b-47d2-be01-36c1c721b937.Date
+
+relationship 02c6e5c4-bf0f-4005-aa21-63a1f164200b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.award_date
+	toColumn: LocalDateTable_8922304b-6525-450f-9456-099d4036c559.Date
+
+relationship ab3d18fe-08a1-4fa9-8cbb-f5f1fdb66cbd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.fulfillment_date
+	toColumn: LocalDateTable_54209528-9483-415c-b08a-dff714f0dc2d.Date
+
+relationship 615a34c7-0087-44e7-884e-b0c20ca4646a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_startdate
+	toColumn: LocalDateTable_cdef4a77-d7cd-4a4d-a378-4f064a455136.Date
+
+relationship 2f08ba4e-ff2c-4917-8a08-fcdee9dcfa80
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_enddate
+	toColumn: LocalDateTable_00e1d821-9eaf-40c7-80be-67d074bf237e.Date
+
+relationship a474d188-4c68-413d-8662-d1be29f50bc2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_runout_end_date
+	toColumn: LocalDateTable_ab980631-90a9-4ed1-b4d3-9f9c01ab0661.Date
+
+relationship 68bbc66c-e912-4f3d-8620-8b3cc55dcb22
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.last_updated_date
+	toColumn: LocalDateTable_b82152e4-073b-4d93-a304-a06dd1ec9229.Date
+
+relationship eaa3c644-fdcd-4753-9f68-60b2173c2948
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_last_activity_bi.last_updated_date
+	toColumn: LocalDateTable_ac3ba86e-63c4-4e39-9bb3-460545c70508.Date
+
+relationship 455d4a30-1c96-07af-8b07-efe61debf3d3
+	toCardinality: many
+	fromColumn: member_last_activity_bi.user_id
+	toColumn: member_dimension.user_id
+
+relationship f285888b-a2a1-7974-55e1-09247c39e4ce
+	isActive: false
+	fromColumn: member_last_activity_bi.last_session_date
+	toColumn: date_table.date
+
+relationship 29839080-3550-3dbe-e454-12fba27d9288
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: mission_members_fact.mission_id
+
+relationship 0f30ab32-7346-49b6-b89a-d62a0942f664
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_7cb70b28-47f0-4e1c-9fa0-e23cf30b9fb2.Date
+
+relationship d7b42704-d8fd-783a-c1e3-3c9fea8ad5f6
+	isActive: false
+	fromColumn: member_dimension.start_date
+	toColumn: date_table.date
+
+relationship b6409cca-9438-c2b5-e617-3d81779aa965
+	isActive: false
+	fromColumn: mission_members_fact.mission_completion_date
+	toColumn: date_table.date
+

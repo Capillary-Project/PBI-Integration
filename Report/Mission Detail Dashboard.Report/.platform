@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Mission Detail Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d7ad9b74-1c5b-915f-42f8-1462d6c16d92"
+  }
+}

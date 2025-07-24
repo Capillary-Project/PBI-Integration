@@ -1,0 +1,349 @@
+table MeasureTable
+	lineageTag: b27610ed-d99a-4bd9-8aed-e675f8771072
+
+	measure 'Mission Participants' = ```
+			
+			var a = CALCULATE(DISTINCTCOUNT(mission_members_fact[user_id]),USERELATIONSHIP(date_table[date],mission_members_fact[mission_start_date]))
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    a
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: 95576484-fe33-4815-976c-a80bbe8f8451
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension_table'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension_table'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_  -- Filter dates up to the selected date
+			        // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 82cfa44d-595b-4b7e-84fe-85c83d5f766e
+
+	measure Participation_rate = ```
+			
+			VAR A = MAX(Parameter[Parameter])
+			VAR B = DIVIDE([Mission Participants],A)
+			RETURN 
+			IF(ISBLANK(IF(A="Show All Eligible Users",DIVIDE([Mission Participants],[EligibleUsers]),DIVIDE([Mission Participants],[ActiveUsers])
+			)),0,(IF(A="Show All Eligible Users",DIVIDE([Mission Participants],[EligibleUsers]),DIVIDE([Mission Participants],[ActiveUsers]))))
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 07cd3c8b-4f1b-42f2-b94c-a95149afb918
+
+	measure 'Avg mission joined per participants' = ```
+			
+			VAR Total_mission = COUNT(mission_members_fact[user_id])
+			VAR total_particiants = DISTINCTCOUNT(mission_members_fact[user_id])
+			VAR rate_1 = DIVIDE(Total_mission,total_particiants)
+			RETURN
+			IF(
+			    ISBLANK(rate_1),
+			    0,
+			    rate_1
+			)
+			// USERELATIONSHIP(date_table[date],mission_members_fact[mission_start_date]
+			
+			```
+		formatString: 0.0
+		lineageTag: a8b21457-ec4d-418f-bed4-ff850291aa15
+
+	measure 'Avg completn per participants' =
+			
+			var total_mission_completion= CALCULATE(DISTINCTCOUNT(mission_members_fact[user_id]),mission_members_fact[mission_complete] = "1",USERELATIONSHIP(date_table[date],mission_members_fact[mission_completion_date]))
+			var mission_participants= DISTINCTCOUNT(mission_members_fact[user_id])
+			var rate_1 = DIVIDE(total_mission_completion,mission_participants)
+			RETURN
+			IF(
+			    ISBLANK(rate_1),
+			    0,
+			    rate_1
+			)
+		formatString: 0.0
+		lineageTag: f9b9f923-960b-40f4-9a7f-2ebcb77f918b
+
+	measure 'Mission Participants by month' = ```
+			
+			
+			var a = CALCULATE(DISTINCTCOUNT(mission_members_fact[user_id]))
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    a
+			)
+			
+			```
+		formatString: 0
+		lineageTag: bf06a471-0857-4d94-8355-551f41ec73b7
+
+	measure Total_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [Participation_rate]
+		formatString: 0%;-0%;0%
+		lineageTag: ff5c12f6-be1b-449f-8ff5-5cf751829d55
+
+	measure Login_Rates = ```
+			
+			// var a = CALCULATE(COUNT(member_last_activity_bi[user_id]),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date]))
+			// var challenge_participnats = DISTINCTCOUNT(mission_members_fact[user_id])
+			// var active_users = DIVIDE(a,challenge_participnats)
+			// var non_challenge_participnats= CALCULATE(
+			//     COUNT('member_last_activity_bi'[user_id]),
+			//     NOT 'member_last_activity_bi'[user_id] IN VALUES(mission_members_fact[user_id]))
+			// var non_challenge= CALCULATE(
+			//     DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//     NOT 'member_last_activity_bi'[user_id] IN VALUES(mission_members_fact[user_id]))
+			// var non_active = DIVIDE(non_challenge_participnats,non_challenge)
+			// var final = DIVIDE((active_users - non_active),non_active)
+			// RETURN
+			// IF(ISBLANK(final),0,final)
+			
+			var total_sessions  = CALCULATE(COUNT(member_last_activity_bi[user_id]),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date]))
+			var challenge_participnats = DISTINCTCOUNT(mission_members_fact[user_id])
+			var total_active  = CALCULATE(DISTINCTCOUNT(member_last_activity_bi[user_id]),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date]))
+			
+			var challenge_participnats_sessions = 
+			    CALCULATE(
+			        COUNT('member_last_activity_bi'[user_id]),
+			        FILTER(
+			            'member_last_activity_bi',
+			            'member_last_activity_bi'[user_id] IN VALUES('mission_members_fact'[user_id])
+			        ),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			var non_challenge_participants = total_active - challenge_participnats
+			var non_challenge_participants_session = total_sessions - challenge_participnats_sessions
+			
+			var avg_visits_of_challenge_participant = DIVIDE(challenge_participnats_sessions,challenge_participnats)
+			var avg_visits_of_non_challenge_participant = DIVIDE(non_challenge_participants_session,non_challenge_participants) 
+			
+			var final = DIVIDE((avg_visits_of_challenge_participant - avg_visits_of_non_challenge_participant),avg_visits_of_non_challenge_participant)
+			RETURN
+			IF(
+			    ISBLANK(final),
+			    0,
+			    final)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: cf818e4e-29b1-4057-b0bd-38eb7b3f2a9a
+
+	measure Avg_weeks_complete = ```
+			
+			var a = CALCULATE(SUM(mission_members_fact[completion_time_days]),'mission_members_fact'[mission_complete]="1",USERELATIONSHIP(date_table[date],mission_members_fact[mission_completion_date]))
+			var b = DIVIDE(a,7)
+			var c = CALCULATE(COUNTROWS('mission_members_fact'),'mission_members_fact'[mission_complete]="1",USERELATIONSHIP(date_table[date],mission_members_fact[mission_completion_date]))
+			var d = DIVIDE(b,c)
+			RETURN
+			IF(
+			    ISBLANK(d),
+			    0,
+			    d
+			)
+			
+			```
+		formatString: 0.0
+		lineageTag: be742f7f-e16f-4b11-8ee8-60c687c8bc50
+
+	measure Rank_Missions_Strict = ```
+			
+			RANKX(
+			    ALL(mission_dimension[name]),
+			    [Mission Participants],
+			    ,
+			    DESC,
+			    Dense
+			)
+			
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 1431fca2-5b6b-41ff-a49d-863e1b234cb2
+
+	measure AlphabeticalRank = ```
+			
+			VAR curr_name = SELECTEDVALUE('mission_dimension'[name])
+			var result = 
+			COUNTROWS(FILTER(
+			    ALL('mission_dimension'[name]), mission_dimension[name]<=curr_name))
+			RETURN
+			result
+			```
+		formatString: 0
+		lineageTag: 6d2609e1-bf8d-4075-a073-7077545b405e
+
+	measure 'Final rank' =
+			
+			IF(ISINSCOPE('mission_dimension'[name]),
+			RANKX(ALL('mission_dimension'[name]),[Mission Participants]+DIVIDE([AlphabeticalRank],100),,DESC))
+		formatString: 0
+		lineageTag: bf2f6e67-29a2-4ac3-b2da-7eee55612607
+
+	measure t1 = ```
+			
+			
+			VAR Top5Categories = 
+			    TOPN(
+			        5,
+			        SUMMARIZE(
+			            Categories_Table,
+			            Categories_Table[Value],
+			            "CategoryPercentage", [Percent_by_id]
+			        ),
+			        [CategoryPercentage], 
+			        DESC,
+			        Categories_Table[Value], 
+			        ASC  // Secondary sort by Value alphabetically
+			    )
+			VAR OtherCategoriesPercentage = 
+			    DIVIDE(
+			        CALCULATE(
+			            SUMX(
+			                Categories_Table, 
+			                [Percent_by_id]
+			            ),
+			            FILTER(
+			                Categories_Table, 
+			                NOT(Categories_Table[Value] IN 
+			                    SELECTCOLUMNS(Top5Categories, "Value", Categories_Table[Value]))
+			            )
+			        ),
+			        CALCULATE(
+			            DISTINCTCOUNTNOBLANK(Categories_Table[Value]),
+			            FILTER(
+			                Categories_Table, 
+			                NOT(Categories_Table[Value] IN 
+			                    SELECTCOLUMNS(Top5Categories, "Value", Categories_Table[Value]))
+			            )
+			        ),
+			        0 // Optional: Specify the alternate result in case of division by zero
+			    )
+			
+			RETURN
+			OtherCategoriesPercentage
+			```
+		lineageTag: afefb7fa-ec4b-4af9-b38e-94075b46a8b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 87114045-10e4-4edb-a9d8-d24ed40b2dbd
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 2f4e35e4-9713-419c-a358-3d94e6e138af
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: 929cca6f-0480-4797-8f48-855fbfd92521
+
+	measure ActiveUsers = ```
+			
+			// VAR EndDate = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR StartDate = EndDate - 364  -- Use the correct variable
+			// VAR ActiveUser = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         'member_last_activity_bi'[last_session_date] >= StartDate &&
+			//         'member_last_activity_bi'[last_session_date] <= EndDate,  -- Make sure the filter applies up to the EndDate
+			//         USERELATIONSHIP('date_table'[date], 'member_last_activity_bi'[last_session_date]),  -- Ensure correct usage of the inactive relationship
+			//         ALL('date_table'), ALL(date_table[date]) -- Ensure correct table reference
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(ActiveUser),
+			//     0,
+			//     ActiveUser
+			// )
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]), USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: fee91916-42e6-49e8-8247-bb72cdc784ab
+
+	measure Image = "D:\Projects\Capillary\Icon\Toggle"
+		lineageTag: a3f5541a-35f3-40fa-91ef-c58d91c11ae0
+
+	measure User_incentive =
+			
+			var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[mission_flag] = 1)
+			// , USERELATIONSHIP(mission_members_fact[user_id],incentive_earning_detail[target_group_id]),mission_members_fact[mission_complete] = "1")
+			// CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 760b04b5-7167-4eb4-bd91-caeae0e182e6
+
+	measure User_instances =
+			
+			var a= CALCULATE(COUNT(incentive_earning_detail[user_id]),incentive_earning_detail[mission_flag] = 1)
+			// , USERELATIONSHIP(mission_members_fact[user_id],incentive_earning_detail[target_group_id]),mission_members_fact[mission_complete] = "1")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 4e2aa3bd-be05-4907-a5bb-5343efc9adb7
+
+	partition MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

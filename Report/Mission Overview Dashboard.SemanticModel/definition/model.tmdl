@@ -1,0 +1,43 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","MeasureTable","Categories_Table","MissionDetailMeasure","mission_dimension","member_dimension","mission_members_fact","incentive_earning_detail","member_last_activity_bi","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1378.0 (25.06)+cba1e61f16ea36d44901f06fa446299040122394
+
+ref table date_table
+ref table DateTableTemplate_55e61269-5c5e-4149-b539-bcb1dcdcc67e
+ref table LocalDateTable_c397a81f-2221-4c60-9b79-e7e194921be0
+ref table MeasureTable
+ref table Categories_Table
+ref table Parameter
+ref table 'Pseudo Category Table'
+ref table MissionDetailMeasure
+ref table mission_dimension
+ref table LocalDateTable_3ab72a6e-fd60-464e-a5eb-c86905d50827
+ref table member_dimension
+ref table mission_members_fact
+ref table incentive_earning_detail
+ref table LocalDateTable_07d9e8e8-b142-40ca-8c0a-6a1bccaa0be0
+ref table LocalDateTable_93b17480-379b-47d2-be01-36c1c721b937
+ref table LocalDateTable_8922304b-6525-450f-9456-099d4036c559
+ref table LocalDateTable_54209528-9483-415c-b08a-dff714f0dc2d
+ref table LocalDateTable_cdef4a77-d7cd-4a4d-a378-4f064a455136
+ref table LocalDateTable_00e1d821-9eaf-40c7-80be-67d074bf237e
+ref table LocalDateTable_ab980631-90a9-4ed1-b4d3-9f9c01ab0661
+ref table LocalDateTable_b82152e4-073b-4d93-a304-a06dd1ec9229
+ref table member_last_activity_bi
+ref table LocalDateTable_ac3ba86e-63c4-4e39-9bb3-460545c70508
+ref table LocalDateTable_7cb70b28-47f0-4e1c-9fa0-e23cf30b9fb2
+
+ref role Untitled
+
+ref cultureInfo en-US
+

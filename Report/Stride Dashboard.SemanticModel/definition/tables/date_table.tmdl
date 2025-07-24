@@ -1,0 +1,80 @@
+table date_table
+	lineageTag: 259ee67f-7b1a-4d8f-bee6-0e7be2eccf4e
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1b84dcc5-e116-4fb8-979e-b5180b5caeef
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 6857b7eb-5ac0-4744-9a71-96d0660ba21a
+			defaultHierarchy: LocalDateTable_a423fb71-ad0e-4691-acb2-ef1bc4b05780.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: 4da9187d-98f5-4142-a340-5c01705e80a0
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 970e4dde-9661-46f9-87da-664996b91fef
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column Days = DAY(date_table[date])
+		formatString: 0
+		lineageTag: a112e633-4cc7-42d7-99e6-b6149f6ab358
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: 6781b765-dce1-4795-9078-c6c65698f8c9
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')), 
+			    'date_table'[date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: b761cbde-4162-4e35-9457-0c6eaa0c0910
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

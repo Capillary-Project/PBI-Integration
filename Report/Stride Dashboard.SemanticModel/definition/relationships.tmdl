@@ -1,0 +1,73 @@
+relationship 6857b7eb-5ac0-4744-9a71-96d0660ba21a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_a423fb71-ad0e-4691-acb2-ef1bc4b05780.Date
+
+relationship 56f91bd0-e962-4099-b43e-ce4298295f17
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.stride_start_date
+	toColumn: LocalDateTable_3727ace8-2c4c-463f-b908-23e3351a56ea.Date
+
+relationship 21ee91bb-5da4-4fe6-90d1-318bc041416f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.stride_end_date
+	toColumn: LocalDateTable_2bf41d11-9f82-4047-babb-4259aa13e327.Date
+
+relationship e01b17ea-c9b3-4d0c-a41f-1eeb38998305
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.end_date
+	toColumn: LocalDateTable_28f1d6b5-d37a-444d-bcb7-55b025d928d4.Date
+
+relationship cd200536-68e0-4341-b1ba-5f7e4d5840a5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.terms_and_conditions_acceptance_date
+	toColumn: LocalDateTable_eb1782af-b1f5-4031-9edf-c606bc885596.Date
+
+relationship c84b0599-2dcf-404a-a513-21e630da2acd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.date_of_birth
+	toColumn: LocalDateTable_7a7df38c-abbf-4b9a-903f-a98253e780dd.Date
+
+relationship 5f1f578e-3299-4cc6-acc3-1e180d76315b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_last_activity_bi.last_updated_date
+	toColumn: LocalDateTable_6b71929e-1a19-4be3-9c64-9d8c3eae0356.Date
+
+relationship b7326292-27f0-8134-970d-ce527654c631
+	isActive: false
+	fromColumn: member_last_activity_bi.last_session_date
+	toColumn: date_table.date
+
+relationship 9f01cef2-6e96-e6c4-4a0f-b356a686e387
+	toCardinality: many
+	fromColumn: stride.user_id
+	toColumn: member_dimension.user_id
+
+relationship 5a3a05ad-630f-937e-fe8f-a537ab1be3f5
+	toCardinality: many
+	fromColumn: member_last_activity_bi.user_id
+	toColumn: member_dimension.user_id
+
+relationship 2f79ed4d-c8f1-485d-b013-03b41602ccc5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_172bf4a2-a702-4672-a915-9cdc09eb3155.Date
+
+relationship d4477a23-fc18-c424-b0ef-a79c0925e787
+	fromColumn: stride.no_of_days_achieved
+	toColumn: Table.category
+
+relationship b6e2b983-f6e8-4203-ac4f-7492c5dc75f7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.last_stride_date
+	toColumn: LocalDateTable_63ca9ae4-bed4-4577-b531-174afd5f00b8.Date
+
+relationship 59f36c68-5cab-bb77-1c01-7f66ababad3a
+	fromColumn: stride.month_date
+	toColumn: date_table.date
+
+relationship 83418805-06a7-44df-882a-79116d55e384
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.start_date
+	toColumn: LocalDateTable_9b445061-4d6c-403d-ade1-bd423adf6ca5.Date
+

@@ -1,0 +1,574 @@
+table incentive_earning_detail
+	lineageTag: 9d5f4ab9-7ad0-4c9e-9a60-51cd4758b11a
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: bc6bd529-a6f4-445f-89ed-c9d0c92e7e5c
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_description
+		dataType: string
+		lineageTag: 20846422-0f46-4536-9bf4-a5b4b712598d
+		summarizeBy: none
+		sourceColumn: activity_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_id
+		dataType: string
+		lineageTag: 575e40cf-db16-4f5d-a7c1-f9bcf0244305
+		summarizeBy: none
+		sourceColumn: activity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 14337606-4c48-4ad3-a8d2-5df19c71a468
+		summarizeBy: none
+		sourceColumn: activity_completion_date
+
+		variation Variation
+			isDefault
+			relationship: 545249d0-5a40-4fbd-82ff-3797656307dc
+			defaultHierarchy: LocalDateTable_a29a627c-d827-4084-8ac8-d154eb8894aa.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column activity_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 406976bb-cf53-48fd-b777-623a76d4c526
+		summarizeBy: none
+		sourceColumn: activity_start_date
+
+		variation Variation
+			isDefault
+			relationship: 968c13c9-eca7-4edb-a9e9-e1e4215da990
+			defaultHierarchy: LocalDateTable_983cb800-b570-44b9-89cb-654c24fef48a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column amount_earned
+		dataType: int64
+		formatString: 0
+		lineageTag: 1f1d82c9-4ef7-4b4b-a54f-40736a1de90c
+		summarizeBy: sum
+		sourceColumn: amount_earned
+
+		annotation SummarizationSetBy = Automatic
+
+	column award_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d6830bae-57b3-44d1-94ba-2859c0e43b1b
+		summarizeBy: none
+		sourceColumn: award_date
+
+		variation Variation
+			isDefault
+			relationship: 503c4596-631a-4bc0-a1e8-58a3d84f2ba9
+			defaultHierarchy: LocalDateTable_0d786d6c-9b25-406e-a518-da5bdc9f46fc.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column fulfillment_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0167c7b9-e75e-49cf-842c-5516267c32c6
+		summarizeBy: none
+		sourceColumn: fulfillment_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column currency
+		dataType: string
+		lineageTag: c206e353-2829-4401-87b6-c6b9e0a4ba07
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_type
+		dataType: string
+		lineageTag: 9e05e6f2-1121-4f07-8282-7ea0f25c5e36
+		summarizeBy: none
+		sourceColumn: reward_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column distribution_partner
+		dataType: string
+		lineageTag: 0e4c276d-e7f8-4466-bee5-4cb6f046dfc0
+		summarizeBy: none
+		sourceColumn: distribution_partner
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_gatekeeper
+		dataType: int64
+		formatString: 0
+		lineageTag: 49108dc4-60e2-4c4b-9a2c-64c0185cc428
+		summarizeBy: sum
+		sourceColumn: is_gatekeeper
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_description
+		dataType: string
+		lineageTag: 9b71115d-d9ba-4674-b556-d4459fef4ddf
+		summarizeBy: none
+		sourceColumn: subactivity_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_id
+		dataType: string
+		lineageTag: f1f89c12-9d53-49aa-85bd-0f30a348c532
+		summarizeBy: none
+		sourceColumn: subactivity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_completion_date
+		dataType: string
+		lineageTag: e554131f-6da0-4dd8-bf72-003c1ed25ac1
+		summarizeBy: none
+		sourceColumn: subactivity_completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column incentive_plan_year_startdate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a03dce47-3e47-4f42-9e99-9886c5045eae
+		summarizeBy: none
+		sourceColumn: incentive_plan_year_startdate
+
+		variation Variation
+			isDefault
+			relationship: 5b99bfd2-22ec-496d-bb0b-644093d6e2ee
+			defaultHierarchy: LocalDateTable_651a88fd-a48d-4ac1-86c1-c3a092b17eaa.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column incentive_plan_year_enddate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f4d4a84c-c447-43d4-91cf-0c399e63d364
+		summarizeBy: none
+		sourceColumn: incentive_plan_year_enddate
+
+		variation Variation
+			isDefault
+			relationship: 8ec8b907-5e01-452b-ad80-9b76d02e0bd6
+			defaultHierarchy: LocalDateTable_1c55a4d6-a615-4780-b768-4a9b849c5868.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column run_out_days
+		dataType: int64
+		formatString: 0
+		lineageTag: b51952fb-f315-47fd-bf55-888bba1332fd
+		summarizeBy: sum
+		sourceColumn: run_out_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column incentive_plan_year_runout_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: dcf7bf73-891a-4cdf-a4d7-98880689963e
+		summarizeBy: none
+		sourceColumn: incentive_plan_year_runout_end_date
+
+		variation Variation
+			isDefault
+			relationship: e36f1539-bc0d-443c-96f9-6715a8dcef0e
+			defaultHierarchy: LocalDateTable_26ad7dac-7fae-4bcc-bf33-bf7221e9f941.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column awarded_ref_id
+		dataType: string
+		lineageTag: f2f8aa32-834a-42ac-9f1e-997b1a059af5
+		summarizeBy: none
+		sourceColumn: awarded_ref_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_category
+		dataType: string
+		lineageTag: 18aaec6d-9b05-4a9d-9b93-cb44e50c50b4
+		summarizeBy: none
+		sourceColumn: reward_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ccaba8f4-c760-405b-bb8f-58d966db29f6
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: e2adf697-8a9f-4856-8119-e458b8f06a75
+			defaultHierarchy: LocalDateTable_20137fb9-17c7-433f-9016-1394de53f495.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column target_group_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 945bfbfd-dff7-4f19-86ef-3b5c4e1d98fa
+		summarizeBy: sum
+		sourceColumn: target_group_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column promotion_id
+		dataType: string
+		lineageTag: bcefafe3-aeab-4c41-b856-a339f7ac7979
+		summarizeBy: none
+		sourceColumn: promotion_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: a2f25e2f-8422-4581-bfa2-9ffdfe080c77
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_rule_id
+		dataType: string
+		lineageTag: 3e77c2db-bb45-4364-a2bd-74b7a0799ca8
+		summarizeBy: none
+		sourceColumn: target_rule_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column cust_affiliation_id
+		dataType: string
+		lineageTag: 20a58c78-461e-4642-8988-3c59c4589200
+		summarizeBy: none
+		sourceColumn: cust_affiliation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column affiliation_id
+		dataType: string
+		lineageTag: 92e98622-fdd1-4356-b4e5-fd3c0fb48cc2
+		summarizeBy: none
+		sourceColumn: affiliation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column employer_id
+		dataType: string
+		lineageTag: c90a86a7-ed3d-4fbf-9ee0-6bb4c2dcc03f
+		summarizeBy: none
+		sourceColumn: employer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_type
+		dataType: string
+		lineageTag: 79cadc6e-64e3-4b24-a01b-a258b0f0fa5f
+		summarizeBy: none
+		sourceColumn: activity_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column sanity_activity_id
+		dataType: string
+		lineageTag: 5a983ba5-78f5-4821-bd2e-e9c38e5a82ff
+		summarizeBy: none
+		sourceColumn: sanity_activity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column bonus_activity
+		dataType: int64
+		formatString: 0
+		lineageTag: da9f53ea-fad5-4d28-a96a-e2b1a70eb834
+		summarizeBy: sum
+		sourceColumn: bonus_activity
+
+		annotation SummarizationSetBy = Automatic
+
+	column choice_reward_type
+		dataType: int64
+		formatString: 0
+		lineageTag: 69ad2eb5-aca8-4b60-b677-6b505b494acd
+		summarizeBy: sum
+		sourceColumn: choice_reward_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column fulfillment_status
+		dataType: string
+		lineageTag: 338603f9-ae3e-441f-a2e2-d8e317be5ae7
+		summarizeBy: none
+		sourceColumn: fulfillment_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_log_id
+		dataType: string
+		lineageTag: f12c34e1-dd15-4edc-b9f7-5d02e4d493f1
+		summarizeBy: none
+		sourceColumn: event_log_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fulfillment_status_id
+		dataType: string
+		lineageTag: 3203c022-0b52-4d47-8928-c409750b73a0
+		summarizeBy: none
+		sourceColumn: fulfillment_status_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_completion_date_t
+		dataType: string
+		lineageTag: 2cc4d5b0-18ea-4df2-8d67-880900b69813
+		summarizeBy: none
+		sourceColumn: activity_completion_date_t
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_start_date_t
+		dataType: string
+		lineageTag: d5fc4e94-7eec-4dc7-acc6-30bbdfc55305
+		summarizeBy: none
+		sourceColumn: activity_start_date_t
+
+		annotation SummarizationSetBy = Automatic
+
+	column available_subactivity
+		dataType: string
+		lineageTag: 8a85b200-e498-4c8c-9aca-9f98f6b55cb2
+		summarizeBy: none
+		sourceColumn: available_subactivity
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_details
+		dataType: string
+		lineageTag: 93e8e155-06e0-465b-8056-c40bd1308e84
+		summarizeBy: none
+		sourceColumn: subactivity_details
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_threshold
+		dataType: string
+		lineageTag: fcfb2ff5-eb70-4813-9eee-04d94f4b8c9f
+		summarizeBy: none
+		sourceColumn: subactivity_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_threshold
+		dataType: string
+		lineageTag: 31100f90-4f20-41f0-ab79-eb5c284890e4
+		summarizeBy: none
+		sourceColumn: total_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_sub_id
+		dataType: string
+		lineageTag: 2e0f4921-c74e-4271-8e48-380e8c60add1
+		summarizeBy: none
+		sourceColumn: event_sub_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_name
+		dataType: string
+		lineageTag: 73fec6dc-ea2d-4346-a920-ee5011f0d3fb
+		summarizeBy: none
+		sourceColumn: event_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_event_id
+		dataType: string
+		lineageTag: 46831659-42e2-4761-b26b-a951849e5a76
+		summarizeBy: none
+		sourceColumn: unique_event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_event_id
+		dataType: string
+		lineageTag: fcb7f6cc-d324-4f6e-86c1-de6028e725ef
+		summarizeBy: none
+		sourceColumn: user_event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column quiz_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 71edc267-966d-446e-aed2-045a3cc18246
+		summarizeBy: sum
+		sourceColumn: quiz_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column health_survey_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 9bf91a7b-6baa-4170-8026-d21351c11986
+		summarizeBy: sum
+		sourceColumn: health_survey_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 8cdd2157-7d61-496a-a064-647f9bf1d072
+		summarizeBy: sum
+		sourceColumn: mission_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 44880509-5c9f-4910-87ac-025468b56ed2
+		summarizeBy: sum
+		sourceColumn: challenge_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column stride_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: c49fc2c5-5ee0-4d38-bc00-52dab2cc71ac
+		summarizeBy: sum
+		sourceColumn: stride_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column gym_checkin_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c9d8560-202b-4ea7-8c45-ae00c24faa5a
+		summarizeBy: sum
+		sourceColumn: gym_checkin_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_completion_date_transformed
+		dataType: string
+		lineageTag: 3fb88bea-b1fe-4c7a-812d-3c98f7b47e87
+		summarizeBy: none
+		sourceColumn: subactivity_completion_date_transformed
+
+		annotation SummarizationSetBy = Automatic
+
+	column choice_reward_name
+		dataType: string
+		lineageTag: 4ce46a4b-4661-4be5-988a-76663f2d4e89
+		summarizeBy: none
+		sourceColumn: choice_reward_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_date_greater_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: a8ec410a-394c-44b6-aa57-2991b2fab276
+		summarizeBy: sum
+		sourceColumn: activity_date_greater_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_id_null_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 31f948a4-2c6c-4092-bd41-13aefa15e4be
+		summarizeBy: sum
+		sourceColumn: activity_id_null_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column affiliation_change_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a3ac5b5-6009-49c5-9d68-35fe33a16c2e
+		summarizeBy: sum
+		sourceColumn: affiliation_change_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column multiple_subactivity_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 98b36382-477a-43f4-add9-bb3cc1741522
+		summarizeBy: sum
+		sourceColumn: multiple_subactivity_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column subactivity_id_null_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 55d33765-301a-4f74-a6eb-46ef9b23d029
+		summarizeBy: sum
+		sourceColumn: subactivity_id_null_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaxCap = CALCULATE(SUM(incentive_plan_config[max_cap]),RELATEDTABLE(incentive_plan_config))
+		formatString: 0
+		lineageTag: f0351998-e6cf-4aa6-b700-cc855fb75b09
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition incentive_earning_detail = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    incentive_earning_detail_Table = optum_dev_Schema{[Name="incentive_earning_detail",Kind="Table"]}[Data]
+				in
+				    incentive_earning_detail_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

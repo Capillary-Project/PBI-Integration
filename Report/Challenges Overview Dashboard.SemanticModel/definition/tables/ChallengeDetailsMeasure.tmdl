@@ -1,0 +1,79 @@
+table ChallengeDetailsMeasure
+	lineageTag: 4ab6ddbb-fa2a-4b71-8ce6-973a990a0b26
+
+	measure %Milestone_achived =
+			
+			var a = CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]),'challenge_members_fact'[milestone_achieved] = 1)
+			VAR b = CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]),ALL('challenge_members_fact'))
+			var c = DIVIDE(a,b)
+			RETURN
+			c
+		lineageTag: af1d7d5c-5b06-4dbf-ab82-04365604c6c1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Challenge Milestone Goal' = CALCULATE(SUM(challenge_members_fact[milestone_achieved]))
+		formatString: 0
+		lineageTag: 17931016-8cf8-4370-a26e-b93899f2a9d6
+
+	measure unique_Challenge_joins =
+			
+			VAR a = CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]))
+			RETURN
+			IF(a = 0, BLANK(), a)
+		formatString: 0
+		lineageTag: 29483bbf-404e-4ada-b62e-d2143ca68e64
+
+	measure Milestone_achived = CALCULATE(COUNTROWS('challenge_members_fact'),'challenge_members_fact'[milestone_achieved] = 1)
+		formatString: 0
+		lineageTag: 918163ab-5f10-4bf6-ac78-2bc87af2d20f
+
+	measure Challenge_Accomplishment_Minutes =
+			
+			var a = CALCULATE(SUM(challenge_members_fact[amount]),'challenge_dimension'[target_type]="minutes")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 672b0ef9-1823-42df-ab44-812191bebb6a
+
+	measure Challenge_Accomplishment_steps = ```
+			
+			var a = CALCULATE(SUM(challenge_members_fact[amount]),'challenge_dimension'[target_type]="miles",challenge_dimension[name]<>"Pedal Push",challenge_dimension[name]<>"Stroke Star")
+			var b = CALCULATE(SUM(challenge_members_fact[amount]),'challenge_dimension'[target_type]="steps",challenge_dimension[name]<>"Pedal Push",challenge_dimension[name]<>"Stroke Star")
+			var steps_to_miles = 0.000416667 * (b)
+			var final = steps_to_miles + a
+			RETURN
+			IF(ISBLANK(final),0,final)
+			
+			```
+		formatString: 0
+		lineageTag: aa3fe3dc-9103-471a-abf0-1b34e99819f9
+
+	measure Challenge_Accomplishment_Miles =
+			
+			var a = CALCULATE(SUM(challenge_members_fact[amount]),'challenge_dimension'[target_type]="miles",challenge_dimension[name]="Pedal push")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: afbe8053-7353-4689-a7ca-2a362a7ca89a
+
+	measure Challenge_Accomplishment_Swam =
+			
+			var a = CALCULATE(SUM(challenge_members_fact[amount]),'challenge_dimension'[target_type]="meters", challenge_dimension[name] = "Stroke Star")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 147921c5-1b05-4219-aeb5-c746294e40f3
+
+	partition ChallengeDetailsMeasure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

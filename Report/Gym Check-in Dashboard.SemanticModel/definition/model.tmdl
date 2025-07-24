@@ -1,0 +1,33 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","member_dimension","member_last_activity_bi","gym_checkin","Gym-MeasureTable","Table","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1378.0 (25.06)+cba1e61f16ea36d44901f06fa446299040122394
+
+ref table DateTableTemplate_73b24c0e-505f-46f7-bcb5-526235af1f72
+ref table date_table
+ref table LocalDateTable_c1d089d9-455e-40c1-876c-1be04f9e2124
+ref table member_dimension
+ref table member_last_activity_bi
+ref table LocalDateTable_f2c5f5eb-6a40-4f14-af7f-2701e981cd63
+ref table gym_checkin
+ref table LocalDateTable_a3eace86-3647-489d-b1da-81a5c4f1a533
+ref table LocalDateTable_8d58ddca-698f-46fb-aec1-1095fbb1dbda
+ref table LocalDateTable_a39fb914-73f4-408c-9d87-7301da0d01f6
+ref table LocalDateTable_6c86a77e-c611-4628-8e80-b2ffd0ea7785
+ref table LocalDateTable_9ae11de8-31d3-42d4-a49c-37c8d764b9c5
+ref table Gym-MeasureTable
+ref table Parameter
+ref table Table
+ref table LocalDateTable_eccb6aee-920a-4bbf-b992-a78582c2c47f
+
+ref cultureInfo en-US
+

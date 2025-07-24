@@ -1,0 +1,38 @@
+table 'Challenge Bucket'
+	lineageTag: f7968fbe-8ac6-4007-92d4-90073bb303bf
+
+	column 'Visit Bucket'
+		lineageTag: c76d5a2f-3cf7-460b-9aed-e0f09b66459a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Visit Bucket]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Bucket Rank'
+		formatString: 0
+		lineageTag: 8ed0a3e9-f666-4f8c-acbc-886dd9c0698f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Bucket Rank]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Challenge Bucket' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Visit Bucket", STRING,
+				    "Bucket Rank", INTEGER,
+				    {
+				        {"1 Challenge", 1},
+				        {"2 Challenges", 2},
+				        {"3 Challenges", 3},
+				        {"4 Challenges", 4},
+				        {"5+ Challenges", 5}
+				    }
+				)
+
+	annotation PBI_Id = a0672d552f3b4848b9f4af3d285779dd
+

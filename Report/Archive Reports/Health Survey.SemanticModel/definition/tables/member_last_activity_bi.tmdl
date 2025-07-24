@@ -1,0 +1,69 @@
+table member_last_activity_bi
+	lineageTag: e3b79e39-3666-42e2-b398-9d7bb313e9d6
+
+	column user_id
+		dataType: string
+		lineageTag: 8c6d07f4-f10a-428b-8f7d-8b7a8b15a421
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_session_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 2c5e9c33-775c-470a-a071-56c0b719f706
+		summarizeBy: none
+		sourceColumn: last_session_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c842c0b0-8c25-45b5-8f2a-07c1ae6fd648
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: dc2f4dbc-d9f7-4795-becc-15466ae8a9bc
+			defaultHierarchy: LocalDateTable_3d095f92-336e-4a8b-a564-80ebe2410048.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column platform
+		dataType: string
+		lineageTag: 24ba902f-ada0-45f4-8631-34a587ddce08
+		summarizeBy: none
+		sourceColumn: platform
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: 3157c2a3-2339-4be4-b0a0-cb90267b9641
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition member_last_activity_bi = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    member_last_activity_bi_Table = optum_dev_Schema{[Name="member_last_activity_bi",Kind="Table"]}[Data]
+				in
+				    member_last_activity_bi_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

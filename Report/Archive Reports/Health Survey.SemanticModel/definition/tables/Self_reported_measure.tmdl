@@ -1,0 +1,2006 @@
+table Self_reported_measure
+	lineageTag: c3c8f76a-2b2c-43e4-9a76-3eb4b5f4ec6e
+
+	measure Diabetic = ```
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditiondiabetes] IN {"High"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			
+			
+			```
+		formatString: #,0
+		lineageTag: cceefa80-0ef7-44e0-a269-798a20168d5d
+
+	measure hypertensive = ```
+			
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionhypertension] IN {"High"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			
+			RETURN
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 89e98ebe-726e-456b-a837-4ecaefbd95ce
+
+	measure derpressed = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditiondepression] IN {"High"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 3c98c789-ba2c-4480-9daf-c86fef1c51b4
+
+	measure pre-diabetes = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionprediabetes] IN {"Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 41d24b50-5b14-43c1-97f1-9eac025bfae2
+
+	measure pre-hypertensive = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionhypertension] IN {"Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 8df8e45e-85fa-4672-a945-71536c271645
+
+	measure overweight = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionhighbmi] IN {"High"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 83199c1f-0c93-4067-8f7f-331cd6e96f4c
+
+	measure previous_depression = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditiondepression] IN {"Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 6e5e2c74-75f6-4359-8486-61e687f3161e
+
+	measure obese = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionhighbmi] IN {"Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			return 
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 34c5c57f-9463-4455-8502-bb5be626260b
+
+	measure '% Alcohol' = ```
+			
+			var a = 
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskalcohol] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 4436a7ad-eb1f-41c4-a716-319b2c0e2c31
+
+	measure '% Diet' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskdiet] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: c736b385-0077-4eab-b53f-5715049f0fe7
+
+	measure '% Exercise(Cardio)' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskexercisecardio] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 4e576da7-0d26-4e79-b172-a845c83a9345
+
+	measure '% Exercise(weight)' = ```
+			
+			var a = 
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskexerciseweighttraining] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: e9783c55-1768-403c-81a5-47ee79321910
+
+	measure '% Financial Health' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskfinancial] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: c98e1267-0b73-4fdf-b648-5d83dd9d275b
+
+	measure '% Sleep' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[risksleep] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: a313ab9f-f4db-46a7-9c74-ea49ea299f7f
+
+	measure '% Social Support' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[risksocial] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 412787d9-eb5b-400e-bd0f-68e225b20a76
+
+	measure '% Stress' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskstress] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: daf3e15a-5584-44a2-bcd4-b2c3b1b7e9f5
+
+	measure '% Tobacco & Niccotine' = ```
+			
+			var a =  
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[risktobacconicotineuse] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 628648a5-1dcf-44c5-8260-29cd5013e40c
+
+	measure '% Weight(BMI)' = ```
+			
+			var a = 
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[riskbmi] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 8140f8b0-eeee-4548-9a48-15060bb26ffb
+
+	measure 'Risk_Category Value' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Alcohol", [% Alcohol],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Diet", [% Diet],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Exercise(Cardio)", [% Exercise(Cardio)],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Exercise(Weights)", [% Exercise(weight)],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Financial Health", [% Financial Health],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Life Satisfaction", [% Life Satisfaction],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Sleep", [% Sleep],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Social Support", [% Social Support],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Stress", [% Stress],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Tobacco & Nicotine", [% Tobacco & Niccotine],
+			    SELECTEDVALUE('Risk Category'[Risk Category]) = "Weight (BMI)", [% Weight(BMI)],
+			    BLANK()
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 33ed3f72-1e1c-4c33-8272-fe06a80d1b4b
+
+	measure '% Life Satisfaction' = ```
+			
+			var a =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[risklifesatisfaction] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			var b = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),ALL(survey_event_fact))
+			return 
+			IF(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			```
+		lineageTag: f27fdc6d-0236-4e3c-8ddf-91cc2ea0bfc0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Eligible/In-Need users' = ```
+			
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact(table)'[user_id]),
+			        'survey_event_fact(table)'[Completed] = 0 ||'survey_event_fact(table)'[Completed] = 1,'survey_event_fact(table)'[Completed] <> BLANK()
+			    )
+			
+			
+			```
+		formatString: 0
+		lineageTag: cb6736f8-d45d-41f2-a52b-eea3e26f4d5a
+
+	measure 'Eligible & Tested_in_time' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    -- Logic for "Breast"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Breast",
+			    VAR a_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_breast] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningbreastcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_breast, b_breast)), 0, DIVIDE(a_breast, b_breast)),
+			
+			    -- Logic for "Flu"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Flu",
+			    VAR a_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_flu] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[vaccinationsflu] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_flu, b_flu)), 0, DIVIDE(a_flu, b_flu)),
+			
+			    -- Logic for "Blood Pressure"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Blood Pressure",
+			    VAR a_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_blood_pressure] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testbloodpressure] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_bp, b_bp)), 0, DIVIDE(a_bp, b_bp)),
+			
+			    -- Logic for "Cholesterol"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Cholesterol",
+			    VAR a_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_cholesterol] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testcholesterol] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_chol, b_chol)), 0, DIVIDE(a_chol, b_chol)),
+			
+			    -- Logic for "Cervical"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Cervical",
+			VAR a_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_cervical] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningcervicalcancer] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_cervical, b_cervical)), 0, DIVIDE(a_cervical, b_cervical)),
+			
+			    -- Logic for "A1C"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "A1C",
+			VAR a_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_a1c] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[testa1c] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_a1c, b_a1c)), 0, DIVIDE(a_a1c, b_a1c)),
+			    -- Logic for "Glaucoma"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Glaucoma",
+			VAR a_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_glaucoma] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningglaucoma] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_glaucoma, b_glaucoma)), 0, DIVIDE(a_glaucoma, b_glaucoma)),
+			
+			    0 -- Default value if no match
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 2cead481-15a2-4565-86ed-e11010f81f46
+
+	measure 'Eligible & Not_Tested_in_time' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    -- Logic for "Breast"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Breast",
+			    VAR a_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_breast] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningbreastcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_breast, b_breast)), 0, DIVIDE(a_breast, b_breast)),
+			
+			    -- Logic for "Flu"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Flu",
+			    VAR a_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_flu] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[vaccinationsflu] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_flu, b_flu)), 0, DIVIDE(a_flu, b_flu)),
+			
+			    -- Logic for "Blood Pressure"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Blood Pressure",
+			    VAR a_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_blood_pressure] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testbloodpressure] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_bp, b_bp)), 0, DIVIDE(a_bp, b_bp)),
+			
+			    -- Logic for "Cholesterol"
+			    ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Cholesterol",
+			    VAR a_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_cholesterol] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testcholesterol] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_chol, b_chol)), 0, DIVIDE(a_chol, b_chol)),
+			
+			    -- Logic for "Cervical"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Cervical",
+			VAR a_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_cervical] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningcervicalcancer] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_cervical, b_cervical)), 0, DIVIDE(a_cervical, b_cervical)),
+			
+			    -- Logic for "A1C"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "A1C",
+			VAR a_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_a1c] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[testa1c] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_a1c, b_a1c)), 0, DIVIDE(a_a1c, b_a1c)),
+			    -- Logic for "Glaucoma"
+			ISINSCOPE('survey_event_fact(table)'[Category Name]) && MAX('survey_event_fact(table)'[Category Name]) = "Glaucoma",
+			VAR a_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_glaucoma] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningglaucoma] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_glaucoma, b_glaucoma)), 0, DIVIDE(a_glaucoma, b_glaucoma)),
+			
+			    0 -- Default value if no match
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 00521de4-5b9c-4db3-831f-291baeedc908
+
+	measure new_Eligible_In_Need = ```
+			
+			SWITCH(
+			    TRUE(),
+			
+			    -- Logic for "Breast"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Breast",
+			    VAR a_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningbreastcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_breast,
+			
+			    -- Logic for "Flu"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Flu",
+			    VAR a_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[vaccinationsflu] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_flu,
+			
+			    -- Logic for "Blood Pressure"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Blood Pressure",
+			    VAR a_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testbloodpressure] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_bp,
+			
+			    -- Logic for "Cholesterol"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cholesterol",
+			    VAR a_cholesterol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testcholesterol] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_cholesterol,
+			
+			    -- Logic for "Colorectal"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Colorectal",
+			    VAR a_Colorectal = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningcolorectalcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(a_Colorectal),0,a_Colorectal),
+			
+			    -- Logic for "Cervical"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cervical",
+			    VAR a_cervical = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningcervicalcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_cervical,
+			
+			    -- Logic for "A1C"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "A1C",
+			    VAR a_a1c = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testa1c] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_a1c,
+			
+			    -- Logic for "Glaucoma"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Glaucoma",
+			    VAR a_glaucoma = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningglaucoma] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_glaucoma,
+			
+			    -- Logic for "Colorectal"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Colorectal",
+			    VAR a_colorectal = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningcolorectalcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] =
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN a_colorectal,
+			
+			    0 -- Default value if no match
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 07026cee-4607-42cf-8a3b-3edeb6660709
+
+	measure 'new_Eligible & Not_Tested_in_time' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    -- Logic for "Breast"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Breast",
+			    VAR a_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_breast] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningbreastcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_breast, b_breast)), 0, DIVIDE(a_breast, b_breast)),
+			
+			    -- Logic for "Flu"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Flu",
+			    VAR a_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_flu] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[vaccinationsflu] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_flu, b_flu)), 0, DIVIDE(a_flu, b_flu)),
+			
+			    -- Logic for "Blood Pressure"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Blood Pressure",
+			    VAR a_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_blood_pressure] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testbloodpressure] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_bp, b_bp)), 0, DIVIDE(a_bp, b_bp)),
+			
+			    -- Logic for "Cholesterol"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cholesterol",
+			    VAR a_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_cholesterol] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testcholesterol] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_chol, b_chol)), 0, DIVIDE(a_chol, b_chol)),
+			
+			    -- Logic for "Colorectal"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Colorectal",
+			    VAR a_colo = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_colorectal] = "0",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_colo = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningcolorectalcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_colo, b_colo)), 0, DIVIDE(a_colo, b_colo)),
+			
+			    -- Logic for "Cervical"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cervical",
+			VAR a_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_cervical] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningcervicalcancer] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_cervical, b_cervical)), 0, DIVIDE(a_cervical, b_cervical)),
+			
+			    -- Logic for "A1C"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "A1C",
+			VAR a_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_a1c] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[testa1c] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_a1c, b_a1c)), 0, DIVIDE(a_a1c, b_a1c)),
+			    -- Logic for "Glaucoma"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Glaucoma",
+			VAR a_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_glaucoma] = "0",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningglaucoma] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_glaucoma, b_glaucoma)), 0, DIVIDE(a_glaucoma, b_glaucoma)),
+			
+			    0 -- Default value if no match
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: bf327bea-7b48-47c5-a6b7-bdd6338318e0
+
+	measure 'new_Eligible & Tested_in_time' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    -- Logic for "Breast"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Breast",
+			    VAR a_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_breast] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_breast = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningbreastcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_breast, b_breast)), 0, DIVIDE(a_breast, b_breast)),
+			
+			    -- Logic for "Flu"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Flu",
+			    VAR a_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_flu] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_flu = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[vaccinationsflu] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_flu, b_flu)), 0, DIVIDE(a_flu, b_flu)),
+			
+			    -- Logic for "Blood Pressure"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Blood Pressure",
+			    VAR a_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_blood_pressure] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_bp = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testbloodpressure] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_bp, b_bp)), 0, DIVIDE(a_bp, b_bp)),
+			
+			    -- Logic for "Cholesterol"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cholesterol",
+			    VAR a_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_cholesterol] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_chol = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[testcholesterol] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_chol, b_chol)), 0, DIVIDE(a_chol, b_chol)),
+			
+			    -- Logic for "Colorectal"
+			    ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Colorectal",
+			    VAR a_colo = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[in_rec_time_colorectal] = "1",
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    VAR b_colo = 
+			        CALCULATE(
+			            DISTINCTCOUNT('survey_event_fact'[user_id]),
+			            'survey_event_fact'[screeningcolorectalcancer] <> BLANK(),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[survey_end_date] = 
+			                CALCULATE(
+			                    MAX('survey_event_fact'[survey_end_date]),
+			                    FILTER(
+			                        'survey_event_fact',
+			                        'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                        'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                        'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                    )
+			                )
+			            )
+			        )
+			    RETURN IF(ISBLANK(DIVIDE(a_colo, b_colo)), 0, DIVIDE(a_colo, b_colo)),
+			
+			    -- Logic for "Cervical"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Cervical",
+			VAR a_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_cervical] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_cervical = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningcervicalcancer] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_cervical, b_cervical)), 0, DIVIDE(a_cervical, b_cervical)),
+			
+			    -- Logic for "A1C"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "A1C",
+			VAR a_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_a1c] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_a1c = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[testa1c] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_a1c, b_a1c)), 0, DIVIDE(a_a1c, b_a1c)),
+			    -- Logic for "Glaucoma"
+			ISINSCOPE('ScreeningTable'[Screening Type]) && MAX('ScreeningTable'[Screening Type]) = "Glaucoma",
+			VAR a_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[in_rec_time_glaucoma] = "1",
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			VAR b_glaucoma = 
+			    CALCULATE(
+			        DISTINCTCOUNT('survey_event_fact'[user_id]),
+			        'survey_event_fact'[screeningglaucoma] <> BLANK(),
+			        FILTER(
+			            'survey_event_fact',
+			            'survey_event_fact'[survey_end_date] = 
+			            CALCULATE(
+			                MAX('survey_event_fact'[survey_end_date]),
+			                FILTER(
+			                    'survey_event_fact',
+			                    'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                    'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                    'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			                )
+			            )
+			        )
+			    )
+			RETURN IF(ISBLANK(DIVIDE(a_glaucoma, b_glaucoma)), 0, DIVIDE(a_glaucoma, b_glaucoma)),
+			
+			    0 -- Default value if no match
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: fcb4c714-cf94-49c3-95ba-b9385afff211
+
+	partition Self_reported_measure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Stride Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "0b8fa0d7-80f9-add5-474e-e4347874fb40"
+  }
+}

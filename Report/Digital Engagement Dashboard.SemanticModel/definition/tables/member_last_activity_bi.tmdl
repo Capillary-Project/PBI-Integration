@@ -1,0 +1,94 @@
+table member_last_activity_bi
+	lineageTag: 5dd626a3-f17d-4ca0-b2fe-8220748b0217
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e2bff578-96d2-408c-a1ff-2fd38e119866
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_session_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4ee27a99-2fa1-4b0b-a9df-62abdd2dba27
+		summarizeBy: none
+		sourceColumn: last_session_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d48662c8-1946-4b2e-85b3-815038273604
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: a378aba8-cb3f-4d69-874e-01e0f1a6f37e
+			defaultHierarchy: LocalDateTable_f17464c9-36ea-44d0-b7ea-2062cce13b19.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column platform
+		dataType: string
+		lineageTag: 39c6e61d-d55a-4dfb-a5da-30e645533a90
+		summarizeBy: none
+		sourceColumn: platform
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: fc2f0b80-daa0-4f4a-ada0-9cbbb5a1dc9a
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mon_year = FORMAT('member_last_activity_bi'[last_session_date],"mmm-yy")
+		lineageTag: bfd1f559-afe7-468c-bd71-5123c57431fa
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('member_last_activity_bi'[last_session_date]), ALLSELECTED('member_last_activity_bi')), 
+			    'member_last_activity_bi'[last_session_date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: f968bae7-b6a2-446e-9e88-84b062960c3b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition member_last_activity_bi = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    member_last_activity_bi_Table = optum_dev_Schema{[Name="member_last_activity_bi",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(member_last_activity_bi_Table,{{"user_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

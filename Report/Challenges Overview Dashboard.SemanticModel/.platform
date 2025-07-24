@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Challenges Overview Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "47096fd7-32a8-96be-4903-496a091660c7"
+  }
+}

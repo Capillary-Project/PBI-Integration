@@ -1,0 +1,195 @@
+table 'Pseudo Category Table'
+	lineageTag: 261ef855-7b57-4626-8766-66537e5a13c6
+
+	measure 'Top N SUM Table' = ```
+			
+			// VAR TOPNSelected = SELECTEDVALUE('TopN Selection'[Value])
+			// VAR CurrentProd = SELECTEDVALUE('Pseudo Category Table'[Value])
+			// VAR TopProducts = 
+			//     TOPN(
+			//         6,
+			//         ALLSELECTED('Pseudo Category Table'[Value]),
+			//         [Percent_by_userid]
+			//     )
+			// VAR TopProdSales = 
+			//     CALCULATE(
+			//         [Percent_by_userid],
+			//         KEEPFILTERS( TopProducts )
+			//     )
+			// VAR BlankSales = 
+			//     CALCULATE(
+			//         [Percent_by_userid],
+			//         'Pseudo Category Table'[Value] = BLANK()
+			//     )
+			// RETURN
+			//     IF(
+			//         HASONEVALUE('Pseudo Category Table'[Value]),
+			//         SWITCH(
+			//             TRUE(),
+			//             CurrentProd <> "Others",
+			//             TopProdSales,
+			//             CurrentProd = "Others",
+			//                 CALCULATE(
+			//                     [Percent_by_userid],
+			//                     ALLSELECTED('Pseudo Category Table'[Value])
+			//                 ) - 
+			//                 CALCULATE(
+			//                     [Percent_by_userid], 
+			//                     TopProducts
+			//                 ) + BlankSales
+			//         ),
+			//         [Percent_by_userid]
+			//     )
+			
+			VAR TopProducts =
+			    TOPN(
+			        5, 
+			        ALLSELECTED('Pseudo Category Table'), 
+			        [Percent_by_userid], 
+			        DESC
+			    )
+			
+			VAR TopProductNames = 
+			    SELECTCOLUMNS(TopProducts, "Value", 'Pseudo Category Table'[Value])
+			
+			VAR TopProdSales = 
+			    CALCULATE(
+			        [Percent_by_userid], 
+			        'Pseudo Category Table'[Value] IN TopProductNames
+			    )
+			
+			VAR TotalSales =
+			    CALCULATE(
+			        [Percent_by_userid], 
+			        REMOVEFILTERS('Pseudo Category Table')
+			    )
+			
+			VAR OthersSales = TotalSales - TopProdSales
+			
+			RETURN
+			    IF(
+			        ISINSCOPE('Pseudo Category Table'[Value]), 
+			        IF(
+			            SELECTEDVALUE('Pseudo Category Table'[Value]) IN TopProductNames, 
+			            [Percent_by_userid], 
+			            IF(
+			                SELECTEDVALUE('Pseudo Category Table'[Value]) = "Others", 
+			                OthersSales
+			            )
+			        ),
+			        TotalSales
+			    )
+			
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 6638d4bc-8e14-480b-8487-0f2c62654a2c
+
+	measure 'NTop N Categories' = ```
+			
+			VAR Topcattable =
+			    TOPN(5, ALLSELECTED('Pseudo Category Table'), [Percent_by_userid])
+			VAR topcat = 
+			    CALCULATE([Percent_by_userid], KEEPFILTERS(Topcattable))
+			VAR totalpercent =
+			    CALCULATE([Percent_by_userid], ALLSELECTED('Pseudo Category Table'))
+			VAR otherpercent =
+			    totalpercent - CALCULATE([Percent_by_userid], KEEPFILTERS(Topcattable))
+			VAR currentprod = 
+			    SELECTEDVALUE('Pseudo Category Table'[Value])
+			RETURN
+			    IF(currentprod <> "Others",
+			        topcat,
+			        otherpercent
+			    )
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 2e1985cc-29f5-4dcd-8ae6-8b858c8343de
+
+	measure Rank = ```
+			
+			// IF([Top N SUM Table] <> BLANK(),
+			// RANKX(TOPN(5,ALLSELECTED('Pseudo Category Table'),[Percent_by_userid]),[Percent_by_userid],,DESC,Dense))
+			
+			VAR TopNRank = 
+			    RANKX(
+			        TOPN(5, ALLSELECTED('Pseudo Category Table'), [Percent_by_userid], DESC),
+			        [Percent_by_userid],
+			        ,
+			        DESC,
+			        Dense
+			    )
+			VAR AllOthersRank = 
+			    IF(
+			        SELECTEDVALUE('Pseudo Category Table'[Value]) = "All Others",
+			        6,
+			        TopNRank
+			    )
+			RETURN
+			    AllOthersRank
+			
+			
+			```
+		formatString: 0
+		lineageTag: 3f4ed383-dfae-4755-a206-d3da2dec83da
+
+	measure newSortOrderMeasure = ```
+			
+			IF (
+			    [NTop N Categories] = BLANK(),
+			    6,
+			    VAR CurrentPercent = [Percent_by_userid]
+			    VAR CurrentCategory = SELECTEDVALUE('Pseudo Category Table'[Value])
+			    
+			    RETURN 
+			    RANKX (
+			        FILTER (
+			            ALL ('Pseudo Category Table'),
+			            'Pseudo Category Table'[NTop N Categories]
+			        ),
+			        [Percent_by_userid],  -- Using the measure here
+			        ,
+			        DESC,
+			        DENSE
+			    ) + 
+			    COUNTROWS (
+			        FILTER (
+			            FILTER (
+			                ALL ('Pseudo Category Table'),
+			                'Pseudo Category Table'[NTop N Categories]
+			            ),
+			            [Percent_by_userid] = CurrentPercent &&
+			            'Pseudo Category Table'[Value] < CurrentCategory
+			        )
+			    )
+			)
+			
+			
+			
+			```
+		formatString: 0
+		lineageTag: 6abed560-b4f6-4bb7-866d-c3ac711390c8
+
+	measure 'New rank' = ```
+			ROWNUMBER(ORDERBY([Top N SUM Table], DESC), PARTITIONBY('Pseudo Category Table'[Value]))
+			
+			```
+		lineageTag: a8871204-7aa4-4a75-95c0-57748f21f8f3
+
+	column Value
+		lineageTag: 38831bd1-4188-4a77-a7f1-d99f737ae8df
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Categories_Table[Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Pseudo Category Table' = calculated
+		mode: import
+		source =
+				
+				UNION(DISTINCT(Categories_Table[Value]),DATATABLE("Categories_dim",STRING,{{"Others"}}))
+
+	annotation PBI_Id = 05ed0955df654307af6213b55a826e16
+

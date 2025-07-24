@@ -1,0 +1,249 @@
+table stride
+	lineageTag: 0b20b6d2-42ab-420a-b06d-d67e70cf7f79
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b5dbf021-70f8-4b9f-8c54-405eec52afac
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column stride_activity_id
+		dataType: int64
+		formatString: 0
+		lineageTag: ee225539-3020-4737-8554-53144937722b
+		summarizeBy: sum
+		sourceColumn: stride_activity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column stride_enrollment_date
+		dataType: string
+		lineageTag: c509edce-592e-4a0d-b342-4f1af6472914
+		summarizeBy: none
+		sourceColumn: stride_enrollment_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column stride_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 303fe19f-2cec-41ad-8d54-7a99cb36a131
+		summarizeBy: none
+		sourceColumn: stride_start_date
+
+		variation Variation
+			isDefault
+			relationship: d69fa213-73fa-4ec6-810c-8695366433cc
+			defaultHierarchy: LocalDateTable_79548bed-4fb4-4518-a613-114f305d657b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column stride_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3126098b-a240-44bd-9cf9-29cdd8076fd1
+		summarizeBy: none
+		sourceColumn: stride_end_date
+
+		variation Variation
+			isDefault
+			relationship: 045fa84a-1790-4edd-8837-2dab6fdab266
+			defaultHierarchy: LocalDateTable_bd22f744-12f8-4f9e-8271-53785d8eb234.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: string
+		lineageTag: 8373065c-53e4-4aae-96f3-30cecf04bd03
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_group_name
+		dataType: string
+		lineageTag: 51bd24a4-72b4-4eef-a646-a77684b2aadf
+		summarizeBy: none
+		sourceColumn: target_group_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column achieved_value
+		dataType: int64
+		formatString: 0
+		lineageTag: 95f84f44-931d-471c-9ed2-91cf2e9f0e29
+		summarizeBy: sum
+		sourceColumn: achieved_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column achievement_status_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 7798828d-1399-48d3-9555-be237b82d443
+		summarizeBy: sum
+		sourceColumn: achievement_status_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_amount
+		dataType: string
+		lineageTag: 77a7176c-271d-4260-8787-3b8fb0daba53
+		summarizeBy: none
+		sourceColumn: level_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_name
+		dataType: string
+		lineageTag: 424ea445-7dcd-43f2-b949-4f6a145a4f0e
+		summarizeBy: none
+		sourceColumn: level_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_period
+		dataType: string
+		lineageTag: 44d7f48a-35fa-4aec-95fb-8062025a016a
+		summarizeBy: none
+		sourceColumn: level_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_unit
+		dataType: string
+		lineageTag: f9d09714-3a5c-4a0c-9eb5-db090bc4cfe7
+		summarizeBy: none
+		sourceColumn: level_unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7593064c-72fe-41e9-870b-cefe3fd38417
+		summarizeBy: none
+		sourceColumn: month_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month_total
+		dataType: string
+		lineageTag: e9e51f80-5cf3-49f5-95ff-4e581cc0a0ba
+		summarizeBy: none
+		sourceColumn: month_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column average_daily_steps
+		dataType: string
+		lineageTag: 691e2fb2-fd16-4bcb-b5b5-d602e4c558b9
+		summarizeBy: none
+		sourceColumn: average_daily_steps
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_complete
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fcbe21e-e7e4-4fb4-984b-377ff14e4940
+		summarizeBy: sum
+		sourceColumn: is_complete
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_stride_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d3fe9d95-f984-4fd5-9ab7-826c4c6c2174
+		summarizeBy: none
+		sourceColumn: last_stride_date
+
+		variation Variation
+			isDefault
+			relationship: 0d553781-216d-44b0-b871-93f33113c2f8
+			defaultHierarchy: LocalDateTable_d0316ba9-6832-4833-b7cf-706d5177ce25.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column org_id
+		dataType: string
+		lineageTag: 4d7fd1bf-4142-44d1-b236-3a8b616b5847
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column no_of_days_walked
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a683bd8-2eb8-491b-8ecb-59fd37b606b5
+		summarizeBy: sum
+		sourceColumn: no_of_days_walked
+
+		annotation SummarizationSetBy = Automatic
+
+	column no_of_days_achieved
+		dataType: int64
+		formatString: 0
+		lineageTag: a56642a3-34fd-48c3-8595-22a98bc0a779
+		summarizeBy: sum
+		sourceColumn: no_of_days_achieved
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_total_int
+		dataType: int64
+		formatString: 0
+		lineageTag: aa8a5e63-5885-463a-a922-076ec91c2c75
+		summarizeBy: sum
+		sourceColumn: month_total_int
+
+		annotation SummarizationSetBy = Automatic
+
+	column average_daily_steps_int
+		dataType: int64
+		formatString: 0
+		lineageTag: d02b9ac7-2d54-4f95-a8c5-8e33b0b8cb38
+		summarizeBy: sum
+		sourceColumn: average_daily_steps_int
+
+		annotation SummarizationSetBy = Automatic
+
+	column new_target
+		dataType: int64
+		formatString: 0
+		lineageTag: 81e86fb6-a153-46cb-8462-339bcb72b68e
+		summarizeBy: sum
+		sourceColumn: new_target
+
+		annotation SummarizationSetBy = Automatic
+
+	partition stride = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    stride_Table = optum_dev_Schema{[Name="stride",Kind="Table"]}[Data],
+				    #"Added Custom" = Table.AddColumn(stride_Table, "new_target", each Text.From([user_id]) & Text.From([stride_activity_id])),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"new_target", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

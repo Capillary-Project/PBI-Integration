@@ -1,0 +1,58 @@
+relationship b3d16e47-5ef7-4d15-aa25-976dbbc0ca49
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_c397a81f-2221-4c60-9b79-e7e194921be0.Date
+
+relationship f4532959-626b-4168-9678-a454f3635419
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_dimension.last_updated_date
+	toColumn: LocalDateTable_7a0ebe8a-f839-4064-a708-afafadad82fb.Date
+
+relationship 9d33b5ed-1a31-9147-8c40-94f4ae3d3917
+	fromColumn: mission_members_fact.mission_id
+	toColumn: mission_dimension.mission_id
+
+relationship 4fc40861-0dec-5c5a-8536-658ecc5c951d
+	fromColumn: mission_members_fact.mission_start_date
+	toColumn: date_table.date
+
+relationship b7c32b09-c674-99b8-2104-abbb0e7e0c24
+	toCardinality: many
+	fromColumn: mission_members_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship df8572f3-001e-49a2-98c3-5523d6d70ecf
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_members_fact.complete_week_01_ts
+	toColumn: LocalDateTable_1e49a31b-ad33-4fe8-b267-5d4d85ff1dcc.Date
+
+relationship d53c1f2c-4924-49b3-a9df-2a3c462b0924
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_members_fact.complete_week_02_ts
+	toColumn: LocalDateTable_eac72bf7-694a-4c2d-adc0-9cef5d72c32c.Date
+
+relationship aaf6f807-45e5-4dc3-87b9-c9bec67d622b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_members_fact.complete_week_03_ts
+	toColumn: LocalDateTable_10d355d6-5fc2-41b4-9e5b-e0e09aef99ea.Date
+
+relationship e216b114-c98f-4cf0-a545-43bdfa681aec
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_members_fact.complete_week_04_ts
+	toColumn: LocalDateTable_39b41280-a3aa-48ed-9c14-08088cf97cf9.Date
+
+relationship 08ee4b4f-41bb-4b95-982a-46566aedc48b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_members_fact.last_updated_date
+	toColumn: LocalDateTable_90c0e1a4-3b84-43c8-b593-5bed31dbe866.Date
+
+relationship d3368556-f1f1-4e1a-b676-c18e8f6f9dae
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_03a0033c-0419-4543-969f-2a44b7d4f294.Date
+
+relationship f358d12a-3a82-72e9-fc0f-c9d3dc40a406
+	isActive: false
+	fromColumn: mission_members_fact.mission_completion_date
+	toColumn: date_table.date
+

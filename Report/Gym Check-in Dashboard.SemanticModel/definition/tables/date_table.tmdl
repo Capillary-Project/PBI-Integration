@@ -1,0 +1,73 @@
+table date_table
+	lineageTag: ca3bcece-f328-4471-af5b-27facef2f7cc
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: afda0f53-577e-4565-8cab-c5d47efa628b
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 9062b030-3cac-4e34-8abe-104f3c3d9ee0
+			defaultHierarchy: LocalDateTable_c1d089d9-455e-40c1-876c-1be04f9e2124.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: c34bf506-cc63-47ce-8277-0a5f843e1d1d
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 28b01be6-bb55-4dcc-9799-6be662d6b4e7
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: 9a91e94e-b96d-482e-82c2-6693f0a829e6
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')), 
+			    'date_table'[date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 11437302-d501-4a91-9bc6-7f412d2d7d97
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

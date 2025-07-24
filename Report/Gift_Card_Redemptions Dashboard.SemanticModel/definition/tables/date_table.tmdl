@@ -1,0 +1,89 @@
+table date_table
+	lineageTag: 673fdfc8-6e35-41fd-be98-747843adc725
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fbbc7e00-f12f-4df9-b7bf-700c3ca1b88f
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: b04845b8-5410-4854-b0d7-640a26ece2e5
+			defaultHierarchy: LocalDateTable_dbd0f2db-4d04-4865-9069-8acb282988b7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: 533fd9fd-9025-40e5-b020-2ecb6c84f098
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 0810b2a1-5187-427e-9ab2-59f50e4ad1ff
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_no = FORMAT('date_table'[date],"m")
+		dataType: int64
+		formatString: 0
+		lineageTag: 177623c0-22d6-45ed-acf4-b236116c0b30
+		summarizeBy: sum
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: 401122de-191c-4625-9fc4-92104fb2bfcb
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year = FORMAT(date_table[date],"YYYY")
+		lineageTag: a1b1df66-193a-431b-9998-55044874ebd3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')), 
+			    'date_table'[date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 5825880a-c820-4017-8de4-169d1252f31f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

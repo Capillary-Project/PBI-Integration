@@ -1,0 +1,191 @@
+table gift_card_redemption
+	lineageTag: db7dc864-f683-4f38-b3cc-4d6467ee07dc
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 5d780346-9e7f-42e8-b3e8-027a960cfa5c
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_issue_id
+		dataType: string
+		lineageTag: 26298d50-fe99-4bbd-beff-504381b441b8
+		summarizeBy: none
+		sourceColumn: reward_issue_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_issue_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e333d31c-2b87-4843-b6fa-289a19a8a4ea
+		summarizeBy: none
+		sourceColumn: reward_issue_date
+
+		variation Variation
+			isDefault
+			relationship: d1c86f5e-3b1e-4c80-a23c-05fe395d6df3
+			defaultHierarchy: LocalDateTable_c6136d5f-1829-4b0d-8ac7-19394f405c2a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column voucher_id
+		dataType: string
+		lineageTag: 312ea02e-8760-4340-a107-2f933cef142a
+		summarizeBy: none
+		sourceColumn: voucher_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column giftcardnumber
+		dataType: string
+		lineageTag: dc8c5129-123f-463e-ac9d-0bfbb73c0b54
+		summarizeBy: none
+		sourceColumn: giftcardnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column amount
+		dataType: int64
+		formatString: 0
+		lineageTag: a8b7702b-e75f-4e2a-a07a-1a9d1f5b70a9
+		summarizeBy: sum
+		sourceColumn: amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column redemption_id
+		dataType: string
+		lineageTag: c3e91b3c-6ee4-45d2-96b6-8b9f6da25ca7
+		summarizeBy: none
+		sourceColumn: redemption_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_name
+		dataType: string
+		lineageTag: 283e97fd-0a2b-4503-acbb-502c585aada9
+		summarizeBy: none
+		sourceColumn: brand_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_year_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 454c5720-3218-4d9c-ac43-969641c398ca
+		summarizeBy: none
+		sourceColumn: plan_year_date
+
+		variation Variation
+			isDefault
+			relationship: 12f980da-1148-452e-98e3-c9121a8837ba
+			defaultHierarchy: LocalDateTable_ee0174e4-ee6a-4f20-9e28-eb1afdb1e4ca.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column plan_year_redeemed
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b59d2ab-7b05-446d-8aaf-47ce23b31367
+		summarizeBy: sum
+		sourceColumn: plan_year_redeemed
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_year_remaining
+		dataType: int64
+		formatString: 0
+		lineageTag: 32954cfa-ec0b-4be5-b27c-1a2a4524b810
+		summarizeBy: sum
+		sourceColumn: plan_year_remaining
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency
+		dataType: string
+		lineageTag: e1dba3c7-9b2a-4ad9-be38-2d952271478d
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_year_earned
+		dataType: int64
+		formatString: 0
+		lineageTag: 893dcfbe-7a9c-433d-89a6-f4b51d7d6fae
+		summarizeBy: sum
+		sourceColumn: plan_year_earned
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_id
+		dataType: string
+		lineageTag: d6ac44da-8e1a-4835-87f7-096ed47e61fc
+		summarizeBy: none
+		sourceColumn: reward_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column brand_id
+		dataType: string
+		lineageTag: 57825fee-0a4f-4a66-ad97-0d6b0441c859
+		summarizeBy: none
+		sourceColumn: brand_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 542e4373-766d-4b2a-8feb-ae965b24085b
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 2d394aee-b724-4bdd-b69d-6d7cab9463b1
+			defaultHierarchy: LocalDateTable_8b24bd55-58f4-4162-9923-77214ccd9915.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column org_id
+		dataType: string
+		lineageTag: 29fb307d-7988-43a6-a73a-71b61a34f48d
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column point_ref_id
+		dataType: string
+		lineageTag: 9b61b1df-822b-4426-b1bc-510785f3d493
+		summarizeBy: none
+		sourceColumn: point_ref_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition gift_card_redemption = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    gift_card_redemption_Table = optum_dev_Schema{[Name="gift_card_redemption",Kind="Table"]}[Data]
+				in
+				    gift_card_redemption_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

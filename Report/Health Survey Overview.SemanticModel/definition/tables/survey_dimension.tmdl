@@ -1,0 +1,193 @@
+table survey_dimension
+	lineageTag: f82e0497-97f6-4bd6-ac70-6862850210bc
+
+	column language
+		dataType: string
+		lineageTag: f170a284-b53b-44e4-8684-0370b89c3cf1
+		summarizeBy: none
+		sourceColumn: language
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_id
+		dataType: string
+		lineageTag: ba0e3a0b-8d2b-4450-9509-3abcc9615ce0
+		summarizeBy: none
+		sourceColumn: question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_text
+		dataType: string
+		lineageTag: 68a7bd57-ebc6-4345-bdd0-ded98c171aed
+		summarizeBy: none
+		sourceColumn: question_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_type_source
+		dataType: string
+		lineageTag: 026caa4f-5775-48a6-a619-8d2e16d3e2af
+		summarizeBy: none
+		sourceColumn: question_type_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_id
+		dataType: string
+		lineageTag: b35fc77c-040a-438d-b5b9-7ab1e68ddada
+		summarizeBy: none
+		sourceColumn: derived_answer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_text
+		dataType: string
+		lineageTag: af5b1f67-5794-4c35-9ee1-51b7bb4fb629
+		summarizeBy: none
+		sourceColumn: derived_answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_question_id
+		dataType: string
+		lineageTag: 4cd1470e-f645-4031-ab85-42d64c3f0109
+		summarizeBy: none
+		sourceColumn: derived_question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_question_text
+		dataType: string
+		lineageTag: a68ca4dc-d316-4858-acce-280c985549db
+		summarizeBy: none
+		sourceColumn: derived_question_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_code
+		dataType: string
+		lineageTag: 903d2f99-072a-4918-9e8d-81328cf3d90a
+		summarizeBy: none
+		sourceColumn: answer_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_text
+		dataType: string
+		lineageTag: 17e45284-c7e4-4ba9-bc9b-710ab2f34f2f
+		summarizeBy: none
+		sourceColumn: answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_type
+		dataType: string
+		lineageTag: b78280c4-ca32-46b5-9b0a-d73837d4eed3
+		summarizeBy: none
+		sourceColumn: question_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_id
+		dataType: string
+		lineageTag: c0bbe37b-18e0-47bb-9de4-bf66a396f30f
+		summarizeBy: none
+		sourceColumn: answer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sl_no
+		dataType: int64
+		formatString: 0
+		lineageTag: e102e458-3b90-453a-8ceb-df90a7346a88
+		summarizeBy: sum
+		sourceColumn: sl_no
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category = ```
+			
+			SWITCH(
+			    TRUE(),
+			    'survey_dimension'[question_text] = 
+			        "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)", 
+			        "Sex",
+			    'survey_dimension'[question_text] = 
+			        "What is your sex?
+			(So we can offer the right health care recommendations for you.)", 
+			        "Sex",
+			    'survey_dimension'[question_text] = "How old are you?", 
+			        "Age",
+			    'survey_dimension'[question_text] = "In the past month, how many days of work did you miss because you were sick?", 
+			        "Sick Days*",
+			    'survey_dimension'[question_text] = "How's your work life?", 
+			        "Job Satisfaction*",
+			    'survey_dimension'[question_text] = "On average, how many hours of sleep do you get at night?", 
+			        "Sleep Quantity",
+			    'survey_dimension'[question_text] = "How often do you wake up refreshed in the morning?", 
+			        "Sleep Quality",
+			    'survey_dimension'[question_text] = "How often do you feel overwhelmed with stress?", 
+			        "Stress Perception",
+			    'survey_dimension'[question_text] = "Do you feel that stress is affecting your health?", 
+			        "Stress Impact on Health*",
+			    'survey_dimension'[question_text] = "How much activity do you do in a week?", 
+			        "Exercise Quantity",
+			    'survey_dimension'[question_text] = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?", 
+			        "Weight Training Exercises",
+			    'survey_dimension'[question_text] = 
+			        "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?", 
+			        "Confidence in Ability to Make Positive Change",
+			    'survey_dimension'[question_text] = "What motivates you to try to be healthier?", 
+			        "Change Motivators",
+			    BLANK()
+			)
+			
+			```
+		lineageTag: 54021040-6c57-4124-b058-7db3fb6cb93f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cd65b4fe-151c-4189-90fb-4b5c8656e925
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 5add17d1-0238-4253-a991-9fae53135b90
+			defaultHierarchy: LocalDateTable_817286a4-84fd-4452-83c6-d84b91d796c6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Unique_key
+		dataType: string
+		lineageTag: 191510e6-e202-4593-b013-aba29961ab54
+		summarizeBy: none
+		sourceColumn: Unique_key
+
+		annotation SummarizationSetBy = Automatic
+
+	partition survey_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    survey_dimension_Table = optum_dev_Schema{[Name="survey_dimension",Kind="Table"]}[Data],
+				    #"Added Custom" = Table.AddColumn(survey_dimension_Table, "Unique_key", each [derived_answer_id] & [derived_question_id] & [language]),
+				    #"Replaced Value" = Table.ReplaceValue(#"Added Custom",null,"0",Replacer.ReplaceValue,{"Unique_key"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Replaced Value", each ([Unique_key] <> "0"))
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

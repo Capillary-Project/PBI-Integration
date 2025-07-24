@@ -1,0 +1,69 @@
+relationship 9062b030-3cac-4e34-8abe-104f3c3d9ee0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_c1d089d9-455e-40c1-876c-1be04f9e2124.Date
+
+relationship c4eb080e-8251-489a-8fac-3d792dc75ddb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_last_activity_bi.last_updated_date
+	toColumn: LocalDateTable_f2c5f5eb-6a40-4f14-af7f-2701e981cd63.Date
+
+relationship 825cf416-c223-477b-83e4-39c35665aee6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gym_checkin.gym_start_date
+	toColumn: LocalDateTable_a3eace86-3647-489d-b1da-81a5c4f1a533.Date
+
+relationship 6805aa1c-8e5c-4482-80f9-75128dc100c3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gym_checkin.gym_end_date
+	toColumn: LocalDateTable_8d58ddca-698f-46fb-aec1-1095fbb1dbda.Date
+
+relationship 6874b4b4-6f52-4ee6-be82-463aa9a6d0ef
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.end_date
+	toColumn: LocalDateTable_a39fb914-73f4-408c-9d87-7301da0d01f6.Date
+
+relationship dd6391aa-04e2-4319-b5e1-440277c0cafc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.terms_and_conditions_acceptance_date
+	toColumn: LocalDateTable_6c86a77e-c611-4628-8e80-b2ffd0ea7785.Date
+
+relationship ed6ef5fb-0e26-48e6-955a-6754be503e5e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.date_of_birth
+	toColumn: LocalDateTable_9ae11de8-31d3-42d4-a49c-37c8d764b9c5.Date
+
+relationship ddba01e9-0a3d-9104-bb08-307a7c247bad
+	toCardinality: many
+	fromColumn: gym_checkin.user_id
+	toColumn: member_dimension.user_id
+
+relationship 94dba02d-7998-d173-304c-b2abcc9db2b9
+	toCardinality: many
+	fromColumn: member_last_activity_bi.user_id
+	toColumn: member_dimension.user_id
+
+relationship 42cb536a-fcf7-8a45-9a73-a30c66b01e22
+	isActive: false
+	fromColumn: member_last_activity_bi.last_session_date
+	toColumn: date_table.date
+
+relationship d67760d5-d543-a045-9b9e-e52c1ef51d62
+	isActive: false
+	fromColumn: gym_checkin.month_date
+	toColumn: date_table.date
+
+relationship f6dd76f7-6625-4833-8f13-334cc6213ac1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_eccb6aee-920a-4bbf-b992-a78582c2c47f.Date
+
+relationship 672e47dc-4c1b-eb05-b17f-1dfafaf8fc10
+	isActive: false
+	fromColumn: member_dimension.start_date
+	toColumn: date_table.date
+
+relationship fa81ae5c-2c8b-ba7d-d5aa-9f533f176883
+	fromColumn: gym_checkin.achieved_value
+	toColumn: Table.Category
+

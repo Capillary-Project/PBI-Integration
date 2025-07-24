@@ -1,0 +1,1670 @@
+table survey_dimension
+	lineageTag: f82e0497-97f6-4bd6-ac70-6862850210bc
+
+	measure Test1_category =
+			
+			
+			// Mapping Table for Questions and Categories
+			VAR QuestionCategoryMapping = {
+			    "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)", "Sex",
+			    "What is your sex? (So we can offer the right health care recommendations for you.)", "Sex",
+			    "How old are you?", "Age",
+			    "What is your height and weight?", "Body Metrics",
+			    "What is your employment status?", "Employment Status",
+			    "What is your relationship status?", "Relationship Status",
+			    "Do you have children?", "Family Status",
+			    "What is your housing situation today?", "Housing Status",
+			    "What is your living situation?", "Living Situation",
+			    "What is the highest level of education you have received?", "Education Level",
+			    "In the past month, how many days of work did you miss because you were sick?", "Sick Days",
+			    "How's your work life?", "Job Satisfaction",
+			    "My employer provides a safe work environment.", "Workplace Safety",
+			    "My employer supports me in maintaining a healthy work environment", "Workplace Health Support",
+			    "I believe a healthy work environment promotes a safe work environment", "Workplace Health Beliefs",
+			    "I believe a safe work environment is a healthy work environment", "Workplace Safety Beliefs",
+			    "Sometimes, things going on at home can cause me to feel emotionally off-balance at work.", "Work-Home Balance",
+			    "Sometimes, things going on at work can cause me to feel emotionally off-balance at home.", "Home-Work Balance",
+			    "In the past 12 months, how many times have you missed work, school, or other obligations due to personal or family health issues?", "Health-Related Absenteeism",
+			    "On average, how many hours of sleep do you get at night?", "Sleep Quantity",
+			    "How often do you wake up refreshed in the morning?", "Sleep Quality",
+			    "How often do you feel overwhelmed with stress?", "Stress Perception",
+			    "Do you feel that stress is affecting your health?", "Stress Impact on Health",
+			    "How would you describe your outlook?", "Mental Outlook",
+			    "How much of the time during the past 4 weeks have you felt calm and peaceful?", "Mental Wellbeing",
+			    "How much of the time during the past 4 weeks have you felt downhearted or blue?", "Mental Distress",
+			    "In the past four weeks, how often have your emotions affected your work or other activities? (you were not as attentive or careful as usual)", "Emotional Impact on Function",
+			    "In the past four weeks, how often have your emotions interfered with getting things done?  (you accomplished less than you'd like)", "Emotional Impact on Productivity",
+			    "Compared to one year ago, how would you rate your emotional health? (feeling anxious, depressed, or irritable)", "Emotional Health Change",
+			    "Have you ever had depression?", "Depression History",
+			    "Are you getting help or medical treatment for your depression?", "Depression Treatment"
+			}
+			
+			// Retrieve Category Based on Current Question
+			VAR AssignedCategory = LOOKUPVALUE(
+			    survey_dimension[Category],
+			    survey_dimension[question_text],
+			    BLANK()
+			)
+			
+			RETURN
+			    IF(
+			        NOT(ISBLANK(AssignedCategory)),
+			        AssignedCategory,
+			        BLANK()
+			    )
+		lineageTag: e85e1afb-f5f1-4938-8bc5-e63cde3e97a2
+
+	measure Merged_Category = ```
+			
+			
+			SWITCH( 
+			
+			    TRUE(), 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)", 
+			
+			    "Demographics & Personal Information - Sex", 
+			
+			 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your sex?\r\n(So we can offer the right health care recommendations for you.)", 
+			
+			    "Demographics & Personal Information - Sex", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How old are you?", 
+			
+			    "Demographics & Personal Information - Age", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your height and weight?", 
+			
+			    "Demographics & Personal Information - Body Metrics", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your employment status?", 
+			
+			    "Demographics & Personal Information - Employment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your relationship status?", 
+			
+			    "Demographics & Personal Information - Relationship Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have children?", 
+			
+			    "Demographics & Personal Information - Family Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your housing situation today?", 
+			
+			    "Demographics & Personal Information - Housing Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your living situation?", 
+			
+			    "Demographics & Personal Information - Living Situation", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is the highest level of education you have received?", 
+			
+			    "Demographics & Personal Information - Education Level", 
+			
+			 
+			
+			    // Work & Life Balance 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past month, how many days of work did you miss because you were sick?", 
+			
+			    "Work & Life Balance - Sick Days", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How's your work life?", 
+			
+			    "Work & Life Balance - Job Satisfaction", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "My employer provides a safe work environment.", 
+			
+			    "Work & Life Balance - Workplace Safety", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "My employer supports me in maintaining a healthy work environment", 
+			
+			    "Work & Life Balance - Workplace Health Support", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I believe a healthy work environment promotes a safe work environment", 
+			
+			    "Work & Life Balance - Workplace Health Beliefs", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I believe a safe work environment is a healthy work environment", 
+			
+			    "Work & Life Balance - Workplace Safety Beliefs", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Sometimes, things going on at home can cause me to feel emotionally off-balance at work.", 
+			
+			    "Work & Life Balance - Work-Home Balance", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Sometimes, things going on at work can cause me to feel emotionally off-balance at home.", 
+			
+			    "Work & Life Balance - Home-Work Balance", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past 12 months, how many times have you missed work, school, or other obligations due to personal or family health issues?", 
+			
+			    "Work & Life Balance - Health-Related Absenteeism", 
+			
+			 
+			
+			    // Sleep 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "On average, how many hours of sleep do you get at night?", 
+			
+			    "Sleep - Sleep Quantity", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you wake up refreshed in the morning?", 
+			
+			    "Sleep - Sleep Quality", 
+			
+			 
+			
+			    // Stress & Mental Health 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you feel overwhelmed with stress?", 
+			
+			    "Stress & Mental Health - Stress Perception", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you feel that stress is affecting your health?" || SELECTEDVALUE('survey_dimension'[question_text]) = "¿Siente que el estrés está afectando su salud?", 
+			
+			    "Stress & Mental Health - Stress Impact on Health", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How would you describe your outlook?", 
+			
+			    "Stress & Mental Health - Mental Outlook", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How much of the time during the past 4 weeks have you felt calm and peaceful?", 
+			
+			    "Stress & Mental Health - Mental Wellbeing", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How much of the time during the past 4 weeks have you felt downhearted or blue?", 
+			
+			    "Stress & Mental Health - Mental Distress", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, how often have your emotions affected your work or other activities? (you were not as attentive or careful as usual)", 
+			
+			    "Stress & Mental Health - Emotional Impact on Function", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, how often have your emotions interfered with getting things done?\r\n (you accomplished less than you'd like)", 
+			
+			    "Stress & Mental Health - Emotional Impact on Productivity", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Compared to one year ago, how would you rate your emotional health? (feeling anxious, depressed, or irritable)", 
+			
+			    "Stress & Mental Health - Emotional Health Change", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you ever had depression?", 
+			
+			    "Stress & Mental Health - Depression History", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you getting help or medical treatment for your depression?", 
+			
+			    "Stress & Mental Health - Depression Treatment", 
+			
+			 
+			
+			    // Physical Activity & Exercise 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How much activity do you do in a week?" || SELECTEDVALUE('survey_dimension'[question_text]) = "¿Cuánta actividad realiza en la semana?", 
+			
+			    "Physical Activity & Exercise - Exercise Quantity", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?" || SELECTEDVALUE('survey_dimension'[question_text]) = "¿Cuántos días a la semana realizas ejercicios con peso (pesas, peso corporal)?", 
+			
+			    "Physical Activity & Exercise - Weight Training Frequency", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many days a week do you exercise for at least 30 minutes?", 
+			
+			    "Physical Activity & Exercise - Exercise Duration", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How do you feel about exercise?", 
+			
+			    "Physical Activity & Exercise - Exercise Attitude", 
+			
+			 
+			
+			    // Nutrition & Diet 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "diet") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "eat"), 
+			
+			    "Nutrition & Diet - Nutrition", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many servings of fruits and vegetables do you eat in a day?", 
+			
+			    "Nutrition & Diet - Fruit & Vegetable Intake", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many servings of fruits do you eat in a day?", 
+			
+			    "Nutrition & Diet - Fruit Intake", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many servings of vegetables do you eat in a day?", 
+			
+			    "Nutrition & Diet - Vegetable Intake", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you eat foods high in unhealthy trans or saturated fats?\r\n (Examples: red meat, butter, cheese, fried foods)", 
+			
+			    "Nutrition & Diet - Unhealthy Fat Consumption", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How would you rate your diet on most days?", 
+			
+			    "Nutrition & Diet - Diet Quality Self-Assessment", 
+			
+			 
+			
+			    // Substance Use 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "tobacco") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "smoking") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cigarette") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "fumar"), 
+			
+			    "Substance Use - Tobacco Use", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How would you describe your cigarette smoking habits (traditional cigarettes, NOT e-cigarettes)?", 
+			
+			    "Substance Use - Smoking Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "On average, how many cigarettes do you smoke in a day?", 
+			
+			    "Substance Use - Cigarette Consumption", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How long have you smoked cigarettes?", 
+			
+			    "Substance Use - Smoking Duration", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How long ago did you stop smoking cigarettes?", 
+			
+			    "Substance Use - Smoking Cessation Time", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "On average, how many cigarettes a day did you use to smoke?", 
+			
+			    "Substance Use - Previous Cigarette Consumption", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you been thinking about cutting down or quitting tobacco?", 
+			
+			    "Substance Use - Tobacco Cessation Contemplation", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have plans to change your use of tobacco or other nicotine products?", 
+			
+			    "Substance Use - Tobacco Use Change Plans", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What are your plans to cut down or quit using tobacco?", 
+			
+			    "Substance Use - Tobacco Reduction Plans", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What are your plans to quit using tobacco?", 
+			
+			    "Substance Use - Tobacco Cessation Plans", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you use other forms of tobacco or nicotine? Select all that apply.", 
+			
+			    "Substance Use - Other Tobacco/Nicotine Use", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often are you exposed to secondhand smoke?", 
+			
+			    "Substance Use - Secondhand Smoke Exposure", 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "alcohol") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "drink"), 
+			
+			    "Substance Use - Alcohol Consumption", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Number of alcoholic drinks", 
+			
+			    "Substance Use - Alcohol Consumption Quantity", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In a typical month, do you ever have 4 or more drinks at a time (within about 2 hours)?", 
+			
+			    "Substance Use - Binge Drinking (Lower Threshold)", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In a typical month, do you ever have 5 or more drinks at a time (within about 2 hours)?", 
+			
+			    "Substance Use - Binge Drinking (Higher Threshold)", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any plans to change your drinking habits?", 
+			
+			    "Substance Use - Alcohol Use Change Plans", 
+			
+			 
+			
+			    // Health Status & General Health 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In general, would you say your health is:", 
+			
+			    "Health Status & General Health - General Health Self-Assessment", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Compared to one year ago, how would you rate your physical health in general now?", 
+			
+			    "Health Status & General Health - Physical Health Change", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What are your biggest hurdles to making healthy changes?", 
+			
+			    "Health Status & General Health - Health Improvement Barriers", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What motivates you to try to be healthier?" || SELECTEDVALUE('survey_dimension'[question_text]) = "¿Qué te motiva para intentar estar más saludable?", 
+			
+			    "Health Status & General Health - Health Improvement Motivators", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?" || SELECTEDVALUE('survey_dimension'[question_text]) = "¿Qué tan seguro/a estás de ser capaz de implementar cambios saludables (como alimentarse mejor, hacer más ejercicio o bajar de peso)?", 
+			
+			    "Health Status & General Health - Confidence in Health Changes", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I handle my health well.", 
+			
+			    "Health Status & General Health - Health Self-Management Perception", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When I work to improve my health, I succeed.", 
+			
+			    "Health Status & General Health - Health Improvement Success", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I can stick with plans to exercise and eat a healthy diet.", 
+			
+			    "Health Status & General Health - Health Plan Adherence", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Even when life is stressful, I know I can continue to do the things that keep me healthy.", 
+			
+			    "Health Status & General Health - Health Resilience", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Blood sugar reading", 
+			
+			    "Health Status & General Health - Blood Glucose Levels", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Latest A1C Reading", 
+			
+			    "Health Status & General Health - A1C Levels", 
+			
+			 
+			
+			    // Pain & Functional Status 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "During the past four weeks, how much did pain interfere with your normal work?", 
+			
+			    "Pain & Functional Status - Pain Impact on Function", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "During the past four weeks, how much did pain interfere with your normal work? (at your job or at home)", 
+			
+			    "Pain & Functional Status - Pain Impact on Work", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Does your health limit you while climbing several flights of stairs?", 
+			
+			    "Pain & Functional Status - Functional Limitation - Stairs", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Does your health limit you while doing moderate activities, such as moving a table, pushing a vacuum cleaner, bowling, or playing golf?", 
+			
+			    "Pain & Functional Status - Functional Limitation - Moderate Activities", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, how often has your physical health limited your work or other activities?", 
+			
+			    "Pain & Functional Status - Physical Health Impact on Activities", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, has your physical health affected your work or other regular daily activities?", 
+			
+			    "Pain & Functional Status - Physical Health Impact on Function", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, how often has your physical health or emotional problems interfered with your social activities? (like visiting with friends, relatives, etc.)", 
+			
+			    "Pain & Functional Status - Health Impact on Social Function", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past four weeks, how often have you had a lot of energy?", 
+			
+			    "Pain & Functional Status - Energy Levels", 
+			
+			 
+			
+			    // Chronic Conditions & Management 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any arthritis or pain, aching, or stiffness in your joints?", 
+			
+			    "Chronic Conditions & Management - Joint Problems", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Does the pain or stiffness in your joints affect your daily work, school, or recreational activities?", 
+			
+			    "Chronic Conditions & Management - Joint Pain Impact", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have back problems?", 
+			
+			    "Chronic Conditions & Management - Back Problems", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do your back problems affect your daily work, school, or recreational activities?", 
+			
+			    "Chronic Conditions & Management - Back Pain Impact", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under treatment by a physician for your back problems?", 
+			
+			    "Chronic Conditions & Management - Back Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any lung problems like asthma or COPD?", 
+			
+			    "Chronic Conditions & Management - Respiratory Condition Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any of the following lung problems?", 
+			
+			    "Chronic Conditions & Management - Specific Respiratory Conditions", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have chronic bronchitis or emphysema (COPD)?", 
+			
+			    "Chronic Conditions & Management - COPD Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under medical treatment or taking medication for your chronic bronchitis / emphysema?", 
+			
+			    "Chronic Conditions & Management - COPD Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any vision problems?", 
+			
+			    "Chronic Conditions & Management - Vision Problems", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any vision problems or wear corrective lenses of any kind (eyeglasses, contact lenses)?", 
+			
+			    "Chronic Conditions & Management - Vision Correction Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you need to wear glasses or contact lenses?", 
+			
+			    "Chronic Conditions & Management - Vision Aid Requirements", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you had an eye exam and glaucoma test within the last year?", 
+			
+			    "Chronic Conditions & Management - Vision Screening", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any hearing problems?", 
+			
+			    "Chronic Conditions & Management - Hearing Problems", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have a hearing aid?", 
+			
+			    "Chronic Conditions & Management - Hearing Aid Use", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you been diagnosed with diabetes or prediabetes?", 
+			
+			    "Chronic Conditions & Management - Diabetes Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How are you managing your diabetes?" || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "blood sugar") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "azúcar"), 
+			
+			    "Chronic Conditions & Management - Diabetes Management", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past three years, have you had a fasting blood sugar test?", 
+			
+			    "Chronic Conditions & Management - Diabetes Screening - Fasting Glucose", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past three years, have you had an A1C test for diabetes?", 
+			
+			    "Chronic Conditions & Management - Diabetes Screening - A1C", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past3 years, have you been screened for diabetes?", 
+			
+			    "Chronic Conditions & Management - Diabetes Screening Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Has a doctor told you that you have high blood pressure?" || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "presión arterial"), 
+			
+			    "Chronic Conditions & Management - Hypertension Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you taking any medicine for blood pressure?", 
+			
+			    "Chronic Conditions & Management - Hypertension Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What is your most recent blood pressure reading?", 
+			
+			    "Chronic Conditions & Management - Blood Pressure Measurements", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When was the last time you had your blood pressure checked?", 
+			
+			    "Chronic Conditions & Management - Blood Pressure Screening", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Has a doctor told you that you have high cholesterol?", 
+			
+			    "Chronic Conditions & Management - Hypercholesterolemia Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you taking any medicines for cholesterol (statins)?", 
+			
+			    "Chronic Conditions & Management - Cholesterol Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What are your most recent cholesterol numbers?", 
+			
+			    "Chronic Conditions & Management - Cholesterol Measurements", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When was the last time you had your cholesterol checked?", 
+			
+			    "Chronic Conditions & Management - Cholesterol Screening", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have heart disease, or have you had a heart attack or stroke?" || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cardíaco"), 
+			
+			    "Chronic Conditions & Management - Cardiovascular Disease Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you been diagnosed with any of the following cardiovascular problems?", 
+			
+			    "Chronic Conditions & Management - Specific Cardiovascular Conditions", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What kind of heart problems do you have?", 
+			
+			    "Chronic Conditions & Management - Heart Problem Types", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under medical treatment or taking medication for your heart problems?", 
+			
+			    "Chronic Conditions & Management - Heart Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What are you doing to manage your heart problems?", 
+			
+			    "Chronic Conditions & Management - Heart Condition Management", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have osteoporosis (brittle bones)?", 
+			
+			    "Chronic Conditions & Management - Osteoporosis Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under medical treatment or taking medicine for osteoporosis or brittle bones?", 
+			
+			    "Chronic Conditions & Management - Osteoporosis Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have any of the following?", 
+			
+			    "Chronic Conditions & Management - General Medical Conditions", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under medical treatment or taking medication for cancer?" || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cáncer"), 
+			
+			    "Chronic Conditions & Management - Cancer Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you ever had breast or cervical cancer?", 
+			
+			    "Chronic Conditions & Management - Female Cancer History", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you under medical treatment or taking medication for heartburn or acid reflux?", 
+			
+			    "Chronic Conditions & Management - GERD Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you currently pregnant?", 
+			
+			    "Chronic Conditions & Management - Pregnancy Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Is your asthma under control?", 
+			
+			    "Chronic Conditions & Management - Asthma Control", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you prescribed medication to manage your asthma?", 
+			
+			    "Chronic Conditions & Management - Asthma Treatment Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How are you managing your asthma?", 
+			
+			    "Chronic Conditions & Management - Asthma Management", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Did you have health problems lasting more than 4 weeks and you believe are related to a past COVID infection?", 
+			
+			    "Chronic Conditions & Management - Long COVID Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Are you still experiencing these symptoms or problems?", 
+			
+			    "Chronic Conditions & Management - Symptom Persistence", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Were any of these ER visits or hospital stays related to a chronic condition?", 
+			
+			    "Chronic Conditions & Management - Chronic Condition Hospitalizations", 
+			
+			 
+			
+			    // Healthcare Utilization & Access 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "doctor") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "médico") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "physician"), 
+			
+			    "Healthcare Utilization & Access - Medical Care", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you seen a physician in the last 12 months?", 
+			
+			    "Healthcare Utilization & Access - Physician Visit Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have a doctor or clinic for primary care?", 
+			
+			    "Healthcare Utilization & Access - Primary Care Access", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have a doctor who you see regularly?", 
+			
+			    "Healthcare Utilization & Access - Regular Physician Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have a primary care physician (e.g. family practitioner or internist)?", 
+			
+			    "Healthcare Utilization & Access - PCP Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you had the latest available flu shot?", 
+			
+			    "Healthcare Utilization & Access - Flu Vaccination Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When was the last time you had a screening for colorectal cancer?", 
+			
+			    "Healthcare Utilization & Access - Colorectal Cancer Screening Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What type of colorectal cancer screening did you have?", 
+			
+			    "Healthcare Utilization & Access - Colorectal Cancer Screening Type", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When was your last screening for breast cancer (mammogram)?", 
+			
+			    "Healthcare Utilization & Access - Breast Cancer Screening Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When was your last screening for cervical cancer (Pap Smear)?", 
+			
+			    "Healthcare Utilization & Access - Cervical Cancer Screening Status", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Has lack of reliable transportation kept you from any of the following?", 
+			
+			    "Healthcare Utilization & Access - Transportation Barriers - Specific", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Has the lack of transportation kept you from medical appointments, meetings, work, or from getting things needed for daily living?", 
+			
+			    "Healthcare Utilization & Access - Transportation Barriers - General", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.", 
+			
+			    "Healthcare Utilization & Access - Unmet Basic Needs", 
+			
+			 
+			
+			    // Medication Use & Adherence 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "medicine") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "medication") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "medicamento"), 
+			
+			    "Medication Use & Adherence - Medication", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many prescription medicines do you take daily or regularly?", 
+			
+			    "Medication Use & Adherence - Prescription Medication Count", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many medications are prescribed to you?", 
+			
+			    "Medication Use & Adherence - Prescribed Medication Count", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How many over-the-counter medicines and supplements do you take regularly?", 
+			
+			    "Medication Use & Adherence - OTC Medication & Supplement Count", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you take your prescription medicines as directed?", 
+			
+			    "Medication Use & Adherence - Medication Adherence - General", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In an average week, how many days per week do you take your medications as prescribed?", 
+			
+			    "Medication Use & Adherence - Medication Adherence - Days", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "What keeps you from taking your prescription medicines as directed?", 
+			
+			    "Medication Use & Adherence - Medication Adherence Barriers", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "We know there are many reasons why people miss their medications. Please check all the reasons that caused you to miss yours during the past 4 weeks.", 
+			
+			    "Medication Use & Adherence - Medication Non-Adherence Reasons", 
+			
+			 
+			
+			    // Health Literacy & Patient Activation 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you ever need help filling out medical forms, reading prescription labels, or understanding doctors' instructions?", 
+			
+			    "Health Literacy & Patient Activation - Health Literacy", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I feel comfortable talking to my doctor about my health.", 
+			
+			    "Health Literacy & Patient Activation - Provider Communication Comfort", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I have brought my own information about my health to show my doctor.", 
+			
+			    "Health Literacy & Patient Activation - Patient Initiative", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I have lots of experience using the health care system.", 
+			
+			    "Health Literacy & Patient Activation - Healthcare System Experience", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I spend a lot of time learning about health.", 
+			
+			    "Health Literacy & Patient Activation - Health Information Seeking", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Different doctors give different advice; it's up to me to choose what's right for me.", 
+			
+			    "Health Literacy & Patient Activation - Healthcare Decision Autonomy", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "I compare doctors using official ratings about how well their patients are doing.", 
+			
+			    "Health Literacy & Patient Activation - Provider Quality Assessment", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When choosing a new doctor, I look for information online.", 
+			
+			    "Health Literacy & Patient Activation - Online Provider Research", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "When choosing a new doctor, I look for official ratings based on patient health.", 
+			
+			    "Health Literacy & Patient Activation - Provider Quality Rating Use", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Did you think this survey was easy to complete?", 
+			
+			    "Health Literacy & Patient Activation - Survey Usability", 
+			
+			 
+			
+			    // Social Support & Financial Status 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "financial") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "money") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "dinero") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "financiero"), 
+			
+			    "Social Support & Financial Status - Financial Health", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Do you have supportive family and friends?", 
+			
+			    "Social Support & Financial Status - Social Support Perception", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you feel supported by family and friends?", 
+			
+			    "Social Support & Financial Status - Social Support Frequency", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you keep track of your take-home pay and monthly expenses?", 
+			
+			    "Social Support & Financial Status - Financial Tracking", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How often do you worry about making ends meet?", 
+			
+			    "Social Support & Financial Status - Financial Stress", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "How well do you understand financial matters like credit cards, loans, taxes, investments, and retirement planning?", 
+			
+			    "Social Support & Financial Status - Financial Literacy", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In case of an emergency or unexpected expense, can you easily access $500?", 
+			
+			    "Social Support & Financial Status - Financial Emergency Preparedness - Lower", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "In case of an emergency or unexpected expense, can you easily access $1000?", 
+			
+			    "Social Support & Financial Status - Financial Emergency Preparedness - Higher", 
+			
+			    SELECTEDVALUE('survey_dimension'[question_text]) = "Have you built a financial emergency fund (6 months of regular living expenses to include mortgage or rent)?", 
+			
+			    "Social Support & Financial Status - Financial Emergency Fund Status", 
+			
+			 
+			
+			    // Cancer Screening 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cancer") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cáncer"), 
+			
+			    "Screening & Prevention - Cancer Screening", 
+			
+			 
+			
+			    // Heart Health 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "heart") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cardíaco"), 
+			
+			    "Screening & Prevention - Heart Health", 
+			
+			 
+			
+			    // Blood Pressure 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "blood pressure") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "presión arterial"), 
+			
+			    "Screening & Prevention - Blood Pressure", 
+			
+			 
+			
+			    // Diabetes Management 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "diabetes") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "blood sugar") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "azúcar"), 
+			
+			    "Chronic Conditions & Management - Diabetes Management", 
+			
+			 
+			
+			    // Tobacco Use 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "tobacco") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "smoking") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "cigarette") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "fumar"), 
+			
+			    "Substance Use - Tobacco Use", 
+			
+			 
+			
+			    // Alcohol Consumption 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "alcohol") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "drink"), 
+			
+			    "Substance Use - Alcohol Consumption", 
+			
+			 
+			
+			    // Mental Health 
+			
+			    CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "depression") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "anxiety") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "mental health") || CONTAINSSTRING(SELECTEDVALUE('survey_dimension'[question_text]), "emotional"), 
+			
+			    "Stress & Mental Health - Mental Health", 
+			
+			 
+			
+			    BLANK() 
+			
+			) 
+			
+			 
+			```
+		lineageTag: b4655139-42dd-4538-8889-592f8b7f28a7
+
+	column language
+		dataType: string
+		lineageTag: f170a284-b53b-44e4-8684-0370b89c3cf1
+		summarizeBy: none
+		sourceColumn: language
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_id
+		dataType: string
+		lineageTag: ba0e3a0b-8d2b-4450-9509-3abcc9615ce0
+		summarizeBy: none
+		sourceColumn: question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_text
+		dataType: string
+		lineageTag: 68a7bd57-ebc6-4345-bdd0-ded98c171aed
+		summarizeBy: none
+		sourceColumn: question_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_type_source
+		dataType: string
+		lineageTag: 026caa4f-5775-48a6-a619-8d2e16d3e2af
+		summarizeBy: none
+		sourceColumn: question_type_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_id
+		dataType: string
+		lineageTag: b35fc77c-040a-438d-b5b9-7ab1e68ddada
+		summarizeBy: none
+		sourceColumn: derived_answer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_text
+		dataType: string
+		lineageTag: af5b1f67-5794-4c35-9ee1-51b7bb4fb629
+		summarizeBy: none
+		sourceColumn: derived_answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_question_id
+		dataType: string
+		lineageTag: 4cd1470e-f645-4031-ab85-42d64c3f0109
+		summarizeBy: none
+		sourceColumn: derived_question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_question_text
+		dataType: string
+		lineageTag: a68ca4dc-d316-4858-acce-280c985549db
+		summarizeBy: none
+		sourceColumn: derived_question_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_code
+		dataType: string
+		lineageTag: 903d2f99-072a-4918-9e8d-81328cf3d90a
+		summarizeBy: none
+		sourceColumn: answer_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_text
+		dataType: string
+		lineageTag: 17e45284-c7e4-4ba9-bc9b-710ab2f34f2f
+		summarizeBy: none
+		sourceColumn: answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_type
+		dataType: string
+		lineageTag: b78280c4-ca32-46b5-9b0a-d73837d4eed3
+		summarizeBy: none
+		sourceColumn: question_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_id
+		dataType: string
+		lineageTag: c0bbe37b-18e0-47bb-9de4-bf66a396f30f
+		summarizeBy: none
+		sourceColumn: answer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sl_no
+		dataType: int64
+		formatString: 0
+		lineageTag: e102e458-3b90-453a-8ceb-df90a7346a88
+		summarizeBy: sum
+		sourceColumn: sl_no
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category = ```
+			
+			SWITCH(
+			    TRUE(),
+			    'survey_dimension'[question_text] = 
+			        "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)", 
+			        "Sex",
+			    'survey_dimension'[question_text] = 
+			        "What is your sex?
+			(So we can offer the right health care recommendations for you.)", 
+			        "Sex",
+			    'survey_dimension'[question_text] = "How old are you?", 
+			        "Age",
+			    'survey_dimension'[question_text] = "In the past month, how many days of work did you miss because you were sick?", 
+			        "Sick Days*",
+			    'survey_dimension'[question_text] = "How's your work life?", 
+			        "Job Satisfaction*",
+			    'survey_dimension'[question_text] = "On average, how many hours of sleep do you get at night?", 
+			        "Sleep Quantity",
+			    'survey_dimension'[question_text] = "How often do you wake up refreshed in the morning?", 
+			        "Sleep Quality",
+			    'survey_dimension'[question_text] = "How often do you feel overwhelmed with stress?", 
+			        "Stress Perception",
+			    'survey_dimension'[question_text] = "Do you feel that stress is affecting your health?", 
+			        "Stress Impact on Health*",
+			    'survey_dimension'[question_text] = "How much activity do you do in a week?", 
+			        "Exercise Quantity",
+			    'survey_dimension'[question_text] = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?", 
+			        "Weight Training Exercises",
+			    'survey_dimension'[question_text] = 
+			        "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?", 
+			        "Confidence in Ability to Make Positive Change",
+			    'survey_dimension'[question_text] = "What motivates you to try to be healthier?", 
+			        "Change Motivators",
+			    BLANK()
+			)
+			
+			```
+		lineageTag: 54021040-6c57-4124-b058-7db3fb6cb93f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cd65b4fe-151c-4189-90fb-4b5c8656e925
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 5add17d1-0238-4253-a991-9fae53135b90
+			defaultHierarchy: LocalDateTable_817286a4-84fd-4452-83c6-d84b91d796c6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Unique_key
+		dataType: string
+		lineageTag: 191510e6-e202-4593-b013-aba29961ab54
+		summarizeBy: none
+		sourceColumn: Unique_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column New_Category = ```
+			
+			
+			SWITCH( 
+			    TRUE(), 
+			
+			    'survey_dimension'[derived_question_text] = "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)", 
+			        "Sex", 
+			
+			    'survey_dimension'[derived_question_text] = "What is your sex? (So we can offer the right health care recommendations for you.)", 
+			        "Sex", 
+			
+			    'survey_dimension'[derived_question_text] = "How old are you?", 
+			        "Age", 
+			
+			    'survey_dimension'[derived_question_text] = "In the past month, how many days of work did you miss because you were sick?", 
+			        "Sick Days*", 
+			
+			    'survey_dimension'[derived_question_text] = "How's your work life?", 
+			        "Job Satisfaction*", 
+			
+			    'survey_dimension'[derived_question_text] = "On average, how many hours of sleep do you get at night?", 
+			        "Sleep Quantity", 
+			
+			    'survey_dimension'[derived_question_text] = "How often do you wake up refreshed in the morning?", 
+			        "Sleep Quality", 
+			
+			    'survey_dimension'[derived_question_text] = "How often do you feel overwhelmed with stress?", 
+			        "Stress Perception", 
+			
+			    'survey_dimension'[derived_question_text] = "Do you feel that stress is affecting your health?", 
+			        "Stress Impact on Health*", 
+			
+			    'survey_dimension'[derived_question_text] = "How much activity do you do in a week?", 
+			        "Exercise Quantity", 
+			
+			    'survey_dimension'[derived_question_text] = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?", 
+			        "Weight Training Exercises", 
+			
+			    'survey_dimension'[derived_question_text] = "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?", 
+			        "Confidence in Ability to Make Positive Change", 
+			
+			    'survey_dimension'[derived_question_text] = "What motivates you to try to be healthier?", 
+			        "Change Motivators", 
+			
+			    'survey_dimension'[derived_question_text] = "Are you currently pregnant?", 
+			        "Pregnancy Status", 
+			    
+			    'survey_dimension'[derived_question_text] = "Are you getting help or medical treatment for your depression?", 
+			        "Depression",
+			
+			    'survey_dimension'[question_text] = "Has a doctor told you that you have high blood pressure?" ||
+			    'survey_dimension'[question_text] = "Are you taking any medicine for blood pressure?", 
+			        "Blood Pressure",
+			
+			
+			
+			    // Category based on keywords (only English)
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "diet") ||  
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "eat"), 
+			        "Nutrition", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "exercise") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "activity"), 
+			        "Physical Activity", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "doctor") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "physician"), 
+			        "Medical Care", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "medicine") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "medication"), 
+			        "Medication", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "cancer"), 
+			        "Cancer Screening", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "heart"), 
+			        "Heart Health", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "blood pressure"), 
+			        "Blood Pressure", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "diabetes") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "blood sugar"), 
+			        "Diabetes Management", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "tobacco") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "smoking") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "cigarette"), 
+			        "Tobacco Use", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "alcohol") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "drink"), 
+			        "Alcohol Consumption", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "depression") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "anxiety") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "mental health") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "emotional"), 
+			        "Mental Health", 
+			
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "financial") || 
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "money"), 
+			        "Financial Health", 
+			
+			    BLANK() 
+			)
+			
+			```
+		lineageTag: 39c6e65d-9190-49f4-a232-1ef053cce6ba
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Merged_Test_Category = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     'survey_dimension'[derived_question_text] = "What is your sex?
+			// (So we can offer the right health care recommendations for you.)" ||
+			
+			//     'survey_dimension'[derived_question_text] = "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)",
+			//     "Sex",
+			//     'survey_dimension'[derived_question_text] = "How old are you?",
+			//     " Age",
+			//     'survey_dimension'[derived_question_text] = "What is your height and weight?",
+			//     "Body Metrics",
+			//     'survey_dimension'[derived_question_text] = "What is your employment status?",
+			//     " Employment Status",
+			//     'survey_dimension'[derived_question_text] = "What is your relationship status?",
+			//     " Relationship Status",
+			//     'survey_dimension'[derived_question_text] = "Do you have children?",
+			//     "Family Status",
+			//     'survey_dimension'[derived_question_text] = "What is your housing situation today?",
+			//     "Housing Status",
+			//     'survey_dimension'[derived_question_text] = "What is your living situation?",
+			//     "Living Situation",
+			//     'survey_dimension'[derived_question_text] = "What is the highest level of education you have received?",
+			//     " Education Level",
+			
+			
+			//     // Work & Life Balance
+			//     'survey_dimension'[derived_question_text] = "In the past month, how many days of work did you miss because you were sick?",
+			//     "Work & Life Balance - Sick Days",
+			//     'survey_dimension'[derived_question_text] = "How's your work life?",
+			//     "Work & Life Balance - Job Satisfaction",
+			//     'survey_dimension'[derived_question_text] = "My employer provides a safe work environment." ||
+			//     'survey_dimension'[derived_question_text] = "My employer supports me in maintaining a healthy work environment" ||
+			//     'survey_dimension'[derived_question_text] = "I believe a healthy work environment promotes a safe work environment" ||
+			//     'survey_dimension'[derived_question_text] = "I believe a safe work environment is a healthy work environment" ||
+			//     'survey_dimension'[derived_question_text] = "Sometimes, things going on at home can cause me to feel emotionally off-balance at work." ||
+			//     'survey_dimension'[derived_question_text] = "Sometimes, things going on at work can cause me to feel emotionally off-balance at home." ||
+			//     'survey_dimension'[derived_question_text] = "In the past 12 months, how many times have you missed work, school, or other obligations due to personal or family health issues?",
+			//     "Work & Life Balance",
+			
+			
+			//     // Sleep
+			//     'survey_dimension'[derived_question_text] = "On average, how many hours of sleep do you get at night?",
+			//     "Sleep Quantity",
+			//     'survey_dimension'[derived_question_text] = "How often do you wake up refreshed in the morning?",
+			//     "Sleep Quality",
+			
+			//     // Stress & Mental Health
+			//     'survey_dimension'[derived_question_text] = "How often do you feel overwhelmed with stress?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you feel that stress is affecting your health?" ||
+			//   'survey_dimension'[derived_question_text] = "How would you describe your outlook?" ||
+			//     'survey_dimension'[derived_question_text] = "How much of the time during the past 4 weeks have you felt calm and peaceful?" ||
+			//     'survey_dimension'[derived_question_text] = "How much of the time during the past 4 weeks have you felt downhearted or blue?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions affected your work or other activities? (you were not as attentive or careful as usual)"||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions interfered with getting things done?  (you accomplished less than you'd like)"||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions interfered with getting things done? (you accomplished less than you'd like)" ||    
+			//     'survey_dimension'[derived_question_text] = "Compared to one year ago, how would you rate your emotional health? (feeling anxious, depressed, or irritable)" ||
+			//     'survey_dimension'[derived_question_text] = "Have you ever had depression?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you getting help or medical treatment for your depression?",
+			//     "Stress & Mental Health",
+			
+			//     // Physical Activity & Exercise
+			//     'survey_dimension'[derived_question_text] = "How much activity do you do in a week?" || 
+			//     'survey_dimension'[derived_question_text] = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?" || 
+			//     'survey_dimension'[derived_question_text] = "How many days a week do you exercise for at least 30 minutes?" ||
+			//     'survey_dimension'[derived_question_text] = "How do you feel about exercise?",
+			//     "Physical Activity & Exercise",
+			
+			//     // Nutrition & Diet
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "diet") || CONTAINSSTRING('survey_dimension'[derived_question_text], "eat"),
+			//     "Nutrition & Diet",
+			//     'survey_dimension'[derived_question_text] = "How many servings of fruits and vegetables do you eat in a day?" ||
+			//     'survey_dimension'[derived_question_text] = "How many servings of fruits do you eat in a day?" ||
+			//     'survey_dimension'[derived_question_text] = "How many servings of vegetables do you eat in a day?" ||
+			//     'survey_dimension'[derived_question_text] = "How often do you eat foods high in unhealthy trans or saturated fats?\r\n (Examples: red meat, butter, cheese, fried foods)" ||
+			//     'survey_dimension'[derived_question_text] = "How would you rate your diet on most days?",
+			//     "Nutrition & Diet",
+			
+			//     // Substance Use
+			// CONTAINSSTRING('survey_dimension'[derived_question_text], "tobacco") || CONTAINSSTRING('survey_dimension'[derived_question_text], "smoking") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cigarette") || CONTAINSSTRING('survey_dimension'[derived_question_text], "fumar"),
+			//     "Tobacco Use",
+			//     'survey_dimension'[derived_question_text] = "How would you describe your cigarette smoking habits (traditional cigarettes, NOT e-cigarettes)?" ||
+			//     'survey_dimension'[derived_question_text] = "On average, how many cigarettes do you smoke in a day?" ||
+			//     'survey_dimension'[derived_question_text] = "How long have you smoked cigarettes?" ||
+			//     'survey_dimension'[derived_question_text] = "How long ago did you stop smoking cigarettes?" ||
+			//     'survey_dimension'[derived_question_text] = "On average, how many cigarettes a day did you use to smoke?" ||
+			// 'survey_dimension'[derived_question_text] = "How often are you exposed to secondhand smoke?",
+			//     "Smoking",
+			//     'survey_dimension'[derived_question_text] = "Have you been thinking about cutting down or quitting tobacco?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have plans to change your use of tobacco or other nicotine products?" ||
+			//     'survey_dimension'[derived_question_text] = "What are your plans to cut down or quit using tobacco?" ||
+			//     'survey_dimension'[derived_question_text] = "What are your plans to quit using tobacco?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you use other forms of tobacco or nicotine? Select all that apply.",
+			//     "Tobacco Use",   
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "alcohol") || CONTAINSSTRING('survey_dimension'[derived_question_text], "drink"),
+			//     "Alcohol Consumption",
+			//     'survey_dimension'[derived_question_text] = "Number of alcoholic drinks" || 'survey_dimension'[derived_question_text] ="In a typical month, do you ever have 4 or more drinks at a time (within about 2 hours)?" || 'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 5 or more drinks at a time (within about 2 hours)?" ||
+			//     'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 4 or more drinks at a time (within about 2 hours)?" ||
+			//     'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 5 or more drinks at a time (within about 2 hours)?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any plans to change your drinking habits?",
+			//    "Alcohol Consumption",
+			
+			//     // Health Status & General Health
+			//     'survey_dimension'[derived_question_text] = "In general, would you say your health is:" ||
+			//     'survey_dimension'[derived_question_text] = "Compared to one year ago, how would you rate your physical health in general now?" ||
+			//     'survey_dimension'[derived_question_text] = "What are your biggest hurdles to making healthy changes?" ||
+			// 'survey_dimension'[derived_question_text] = "I handle my health well." ||
+			// 'survey_dimension'[derived_question_text] = "Blood sugar reading" ||
+			// 'survey_dimension'[derived_question_text] = "Latest A1C Reading",
+			//     "Health Status & General Health ",
+			//     'survey_dimension'[derived_question_text] = "What motivates you to try to be healthier?" ||
+			//     'survey_dimension'[derived_question_text] = "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?" || 
+			//     'survey_dimension'[derived_question_text] = "When I work to improve my health, I succeed." ||
+			//     'survey_dimension'[derived_question_text] = "I can stick with plans to exercise and eat a healthy diet." ||
+			//     'survey_dimension'[derived_question_text] = "Even when life is stressful, I know I can continue to do the things that keep me healthy.",
+			//     "Change Motivators",
+			    
+			
+			//     // Pain & Functional Status
+			//     'survey_dimension'[derived_question_text] = "During the past four weeks, how much did pain interfere with your normal work?" ||
+			//     'survey_dimension'[derived_question_text] = "During the past four weeks, how much did pain interfere with your normal work? (at your job or at home)" ||
+			//     'survey_dimension'[derived_question_text] = "Does your health limit you while climbing several flights of stairs?" ||
+			//     'survey_dimension'[derived_question_text] = "Does your health limit you while doing moderate activities, such as moving a table, pushing a vacuum cleaner, bowling, or playing golf?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often has your physical health limited your work or other activities?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, has your physical health affected your work or other regular daily activities?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often has your physical health or emotional problems interfered with your social activities? (like visiting with friends, relatives, etc.)" ||
+			//     'survey_dimension'[derived_question_text] = "In the past four weeks, how often have you had a lot of energy?",
+			//     "Pain & Functional Status",
+			
+			//     // Chronic Conditions & Management
+			//     'survey_dimension'[derived_question_text] = "Do you have any arthritis or pain, aching, or stiffness in your joints?" ||   
+			//     'survey_dimension'[derived_question_text] = "Does the pain or stiffness in your joints affect your daily work, school, or recreational activities?"  ||
+			//     'survey_dimension'[derived_question_text] = "Do you have back problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do your back problems affect your daily work, school, or recreational activities?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under treatment by a physician for your back problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any lung problems like asthma or COPD?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any of the following lung problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have chronic bronchitis or emphysema (COPD)?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for your chronic bronchitis / emphysema?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any vision problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any vision problems or wear corrective lenses of any kind (eyeglasses, contact lenses)?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you need to wear glasses or contact lenses?" ||
+			//     'survey_dimension'[derived_question_text] = "Have you had an eye exam and glaucoma test within the last year?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any hearing problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have a hearing aid?" ||
+			//     'survey_dimension'[derived_question_text] = "Have you been diagnosed with diabetes or prediabetes?" ||
+			//     'survey_dimension'[derived_question_text] = "How are you managing your diabetes?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "blood sugar") || CONTAINSSTRING('survey_dimension'[derived_question_text], "azúcar") ||
+			//     'survey_dimension'[derived_question_text] = "In the past three years, have you had a fasting blood sugar test?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past three years, have you had an A1C test for diabetes?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past3 years, have you been screened for diabetes?" ||
+			//     'survey_dimension'[derived_question_text] = "Has a doctor told you that you have high blood pressure?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "presión arterial") ||
+			//     'survey_dimension'[derived_question_text] = "Are you taking any medicine for blood pressure?" ||
+			//     'survey_dimension'[derived_question_text] = "What is your most recent blood pressure reading?" ||
+			//     'survey_dimension'[derived_question_text] = "When was the last time you had your blood pressure checked?" ||
+			//     'survey_dimension'[derived_question_text] = "Has a doctor told you that you have high cholesterol?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you taking any medicines for cholesterol (statins)?" ||
+			//     'survey_dimension'[derived_question_text] = "What are your most recent cholesterol numbers?" ||
+			//     'survey_dimension'[derived_question_text] = "When was the last time you had your cholesterol checked?"  ||
+			//     'survey_dimension'[derived_question_text] = "Do you have heart disease, or have you had a heart attack or stroke?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "cardíaco") ||
+			//     'survey_dimension'[derived_question_text] = "Have you been diagnosed with any of the following cardiovascular problems?" ||
+			//     'survey_dimension'[derived_question_text] = "What kind of heart problems do you have?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for your heart problems?" ||
+			//     'survey_dimension'[derived_question_text] = "What are you doing to manage your heart problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have osteoporosis (brittle bones)?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medicine for osteoporosis or brittle bones?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have any of the following?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for cancer?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "cáncer") ||    'survey_dimension'[derived_question_text] = "Have you ever had breast or cervical cancer?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for heartburn or acid reflux?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you currently pregnant?" ||
+			//     'survey_dimension'[derived_question_text] = "Is your asthma under control?"||
+			//     'survey_dimension'[derived_question_text] = "Are you prescribed medication to manage your asthma?" ||
+			//     'survey_dimension'[derived_question_text] = "How are you managing your asthma?" ||
+			//     'survey_dimension'[derived_question_text] = "Did you have health problems lasting more than 4 weeks and you believe are related to a past COVID infection?" ||
+			//     'survey_dimension'[derived_question_text] = "Are you still experiencing these symptoms or problems?" ||
+			//     'survey_dimension'[derived_question_text] = "Were any of these ER visits or hospital stays related to a chronic condition?",
+			//     "Chronic Conditions & Management",
+			
+			//     // Healthcare Utilization & Access
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "doctor") || CONTAINSSTRING('survey_dimension'[derived_question_text], "médico") || CONTAINSSTRING('survey_dimension'[derived_question_text], "physician") ||
+			//     'survey_dimension'[derived_question_text] = "Have you seen a physician in the last 12 months?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have a doctor or clinic for primary care?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have a doctor who you see regularly?" ||
+			//     'survey_dimension'[derived_question_text] = "Do you have a primary care physician (e.g. family practitioner or internist)?" ||
+			//     'survey_dimension'[derived_question_text] = "Have you had the latest available flu shot?" ||
+			//     'survey_dimension'[derived_question_text] = "When was the last time you had a screening for colorectal cancer?" ||
+			//     'survey_dimension'[derived_question_text] = "What type of colorectal cancer screening did you have?" ||
+			//     'survey_dimension'[derived_question_text] = "When was your last screening for breast cancer (mammogram)?" ||
+			//     'survey_dimension'[derived_question_text] = "When was your last screening for cervical cancer (Pap Smear)?" ||
+			//     'survey_dimension'[derived_question_text] = "Has lack of reliable transportation kept you from any of the following?" ||
+			//     'survey_dimension'[derived_question_text] = "Has the lack of transportation kept you from medical appointments, meetings, work, or from getting things needed for daily living?" ||
+			//     'survey_dimension'[derived_question_text] = "In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",
+			//     "Healthcare Utilization & Access",
+			
+			//     // Medication Use & Adherence
+			//  CONTAINSSTRING('survey_dimension'[derived_question_text], "medicine") || CONTAINSSTRING('survey_dimension'[derived_question_text], "medication") || CONTAINSSTRING('survey_dimension'[derived_question_text], "medicamento"),
+			//     "Medication Use & Adherence",
+			//     'survey_dimension'[derived_question_text] = "How many prescription medicines do you take daily or regularly?" ||
+			//     'survey_dimension'[derived_question_text] = "How many medications are prescribed to you?" ||
+			//     'survey_dimension'[derived_question_text] = "How many over-the-counter medicines and supplements do you take regularly?" ||
+			//     'survey_dimension'[derived_question_text] = "How often do you take your prescription medicines as directed?" ||
+			//     'survey_dimension'[derived_question_text] = "In an average week, how many days per week do you take your medications as prescribed?" ||
+			//     'survey_dimension'[derived_question_text] = "What keeps you from taking your prescription medicines as directed?" ||
+			//     'survey_dimension'[derived_question_text] = "We know there are many reasons why people miss their medications. Please check all the reasons that caused you to miss yours during the past 4 weeks.",
+			//     "Medication Use & Adherence",
+			
+			//     // Health Literacy & Patient Activation
+			//     'survey_dimension'[derived_question_text] = "Do you ever need help filling out medical forms, reading prescription labels, or understanding doctors' instructions?" ||
+			//     'survey_dimension'[derived_question_text] = "I feel comfortable talking to my doctor about my health." ||
+			//     'survey_dimension'[derived_question_text] = "I have brought my own information about my health to show my doctor." ||
+			//     'survey_dimension'[derived_question_text] = "I have lots of experience using the health care system." ||
+			//     'survey_dimension'[derived_question_text] = "I spend a lot of time learning about health." ||
+			//     'survey_dimension'[derived_question_text] = "Different doctors give different advice; it's up to me to choose what's right for me." ||
+			//     'survey_dimension'[derived_question_text] = "I compare doctors using official ratings about how well their patients are doing." ||
+			//     'survey_dimension'[derived_question_text] = "When choosing a new doctor, I look for information online." ||
+			//     'survey_dimension'[derived_question_text] = "When choosing a new doctor, I look for official ratings based on patient health." ||
+			//     'survey_dimension'[derived_question_text] = "Did you think this survey was easy to complete?",
+			//     "Health Literacy & Patient Activation",
+			
+			//     // Social Support & Financial Status
+			// CONTAINSSTRING('survey_dimension'[derived_question_text], "financial") || CONTAINSSTRING('survey_dimension'[derived_question_text], "money") || CONTAINSSTRING('survey_dimension'[derived_question_text], "dinero") || CONTAINSSTRING('survey_dimension'[derived_question_text], "financiero"),
+			//     "Social Support & Financial Status",
+			//     'survey_dimension'[derived_question_text] = "Do you have supportive family and friends?" ||
+			//     'survey_dimension'[derived_question_text] = "How often do you feel supported by family and friends?" ||
+			//     'survey_dimension'[derived_question_text] = "How often do you keep track of your take-home pay and monthly expenses?" ||
+			//     'survey_dimension'[derived_question_text] = "How often do you worry about making ends meet?" ||
+			//     'survey_dimension'[derived_question_text] = "How well do you understand financial matters like credit cards, loans, taxes, investments, and retirement planning?" ||
+			//     'survey_dimension'[derived_question_text] = "In case of an emergency or unexpected expense, can you easily access $500?" ||
+			//     'survey_dimension'[derived_question_text] = "In case of an emergency or unexpected expense, can you easily access $1000?" ||
+			//     'survey_dimension'[derived_question_text] = "Have you built a financial emergency fund (6 months of regular living expenses to include mortgage or rent)?",
+			//     "Social Support & Financial Status",
+			
+			//     // Cancer Screening
+			// CONTAINSSTRING('survey_dimension'[derived_question_text], "cancer") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cáncer"),
+			//     "Chronic Conditions & Management",
+			
+			//     // Heart Health
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "heart") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cardíaco"),
+			//     "Chronic Conditions & Management",
+			
+			//     // Blood Pressure
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "blood pressure") || CONTAINSSTRING('survey_dimension'[derived_question_text], "presión arterial"),
+			//     "Chronic Conditions & Management",
+			
+			//     // Diabetes Management
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "diabetes") || CONTAINSSTRING('survey_dimension'[derived_question_text], "blood sugar") || CONTAINSSTRING('survey_dimension'[derived_question_text], "azúcar"),
+			//     "Chronic Conditions & Management",
+			
+			//     // Tobacco Use
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "tobacco") || CONTAINSSTRING('survey_dimension'[derived_question_text], "smoking") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cigarette") || CONTAINSSTRING('survey_dimension'[derived_question_text], "fumar"),
+			//     "Tobacco Use",
+			
+			//     // Alcohol Consumption
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "alcohol") || CONTAINSSTRING('survey_dimension'[derived_question_text], "drink"),
+			//     "Alcohol Consumption",
+			
+			//     // Mental Health
+			//     CONTAINSSTRING('survey_dimension'[derived_question_text], "depression") || CONTAINSSTRING('survey_dimension'[derived_question_text], "anxiety") || CONTAINSSTRING('survey_dimension'[derived_question_text], "mental health") || CONTAINSSTRING('survey_dimension'[derived_question_text], "emotional"),
+			//     "Stress & Mental Health",
+			
+			//     BLANK()
+			// )
+			SWITCH(
+			    TRUE(),
+			    'survey_dimension'[derived_question_text] = "What is your sex?
+			(So we can offer the right health care recommendations for you.)" ||
+			 
+			    'survey_dimension'[derived_question_text] = "What sex do you want to receive recommendations for? (If your health plan has a different sex on file, you may still get other recommendations.)",
+			    "Sex",
+			    'survey_dimension'[derived_question_text] = "How old are you?",
+			    "Age",
+			    'survey_dimension'[derived_question_text] = "What is your height and weight?",
+			    "Body Metrics",
+			    'survey_dimension'[derived_question_text] = "What is your employment status?",
+			    "Employment Status",
+			    'survey_dimension'[derived_question_text] = "What is your relationship status?",
+			    "Relationship Status",
+			    'survey_dimension'[derived_question_text] = "Do you have children?",
+			    "Family Status",
+			    'survey_dimension'[derived_question_text] = "What is your housing situation today?",
+			    "Housing Status",
+			    'survey_dimension'[derived_question_text] = "What is your living situation?",
+			    "Living Situation",
+			    'survey_dimension'[derived_question_text] = "What is the highest level of education you have received?",
+			    "Education Level",
+			 
+			 
+			    // Work & Life Balance
+			    'survey_dimension'[derived_question_text] = "In the past month, how many days of work did you miss because you were sick?",
+			    "Sick Days*",
+			    'survey_dimension'[derived_question_text] = "How's your work life?",
+			    "Job Satisfaction*",
+			    'survey_dimension'[derived_question_text] = "My employer provides a safe work environment." ||
+			    'survey_dimension'[derived_question_text] = "My employer supports me in maintaining a healthy work environment" ||
+			    'survey_dimension'[derived_question_text] = "I believe a healthy work environment promotes a safe work environment" ||
+			    'survey_dimension'[derived_question_text] = "I believe a safe work environment is a healthy work environment" ||
+			    'survey_dimension'[derived_question_text] = "Sometimes, things going on at home can cause me to feel emotionally off-balance at work." ||
+			    'survey_dimension'[derived_question_text] = "Sometimes, things going on at work can cause me to feel emotionally off-balance at home." ||
+			    'survey_dimension'[derived_question_text] = "In the past 12 months, how many times have you missed work, school, or other obligations due to personal or family health issues?",
+			    "Work & Life Balance",
+			 
+			 
+			    // Sleep
+			    'survey_dimension'[derived_question_text] = "On average, how many hours of sleep do you get at night?",
+			    "Sleep Quantity",
+			    'survey_dimension'[derived_question_text] = "How often do you wake up refreshed in the morning?",
+			    "Sleep Quality",
+			 
+			    // Stress & Mental Health
+			    'survey_dimension'[derived_question_text] = "How often do you feel overwhelmed with stress?", "Stress Perception",
+			    'survey_dimension'[derived_question_text] = "Do you feel that stress is affecting your health?", "Stress Impact on Health*",
+			  'survey_dimension'[derived_question_text] = "How would you describe your outlook?" ||
+			    'survey_dimension'[derived_question_text] = "How much of the time during the past 4 weeks have you felt calm and peaceful?" ||
+			    'survey_dimension'[derived_question_text] = "How much of the time during the past 4 weeks have you felt downhearted or blue?" ||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions affected your work or other activities? (you were not as attentive or careful as usual)"||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions interfered with getting things done?  (you accomplished less than you'd like)"||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often have your emotions interfered with getting things done? (you accomplished less than you'd like)" ||    
+			    'survey_dimension'[derived_question_text] = "Compared to one year ago, how would you rate your emotional health? (feeling anxious, depressed, or irritable)" ||
+			    'survey_dimension'[derived_question_text] = "Have you ever had depression?" ||
+			    'survey_dimension'[derived_question_text] = "Are you getting help or medical treatment for your depression?",
+			    "Stress & Mental Health",
+			 
+			    // Physical Activity & Exercise
+			    'survey_dimension'[derived_question_text] = "How much activity do you do in a week?", "Exercise Quantity",  
+			    'survey_dimension'[derived_question_text] = "How many days a week do you do weight-bearing exercise (weights, bodyweight)?", "Weight Training Exercises",  
+			    'survey_dimension'[derived_question_text] = "How many days a week do you exercise for at least 30 minutes?" ||
+			    'survey_dimension'[derived_question_text] = "How do you feel about exercise?",
+			    "Physical Activity & Exercise",
+			 
+			    // Nutrition & Diet
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "diet") || CONTAINSSTRING('survey_dimension'[derived_question_text], "eat"),
+			    "Nutrition & Diet",
+			    'survey_dimension'[derived_question_text] = "How many servings of fruits and vegetables do you eat in a day?" ||
+			    'survey_dimension'[derived_question_text] = "How many servings of fruits do you eat in a day?" ||
+			    'survey_dimension'[derived_question_text] = "How many servings of vegetables do you eat in a day?" ||
+			    'survey_dimension'[derived_question_text] = "How often do you eat foods high in unhealthy trans or saturated fats?\r\n (Examples: red meat, butter, cheese, fried foods)" ||
+			    'survey_dimension'[derived_question_text] = "How would you rate your diet on most days?",
+			    "Nutrition & Diet",
+			 
+			    // Substance Use
+			CONTAINSSTRING('survey_dimension'[derived_question_text], "tobacco") || CONTAINSSTRING('survey_dimension'[derived_question_text], "smoking") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cigarette") || CONTAINSSTRING('survey_dimension'[derived_question_text], "fumar"),
+			    "Tobacco Use",
+			    'survey_dimension'[derived_question_text] = "How would you describe your cigarette smoking habits (traditional cigarettes, NOT e-cigarettes)?" ||
+			    'survey_dimension'[derived_question_text] = "On average, how many cigarettes do you smoke in a day?" ||
+			    'survey_dimension'[derived_question_text] = "How long have you smoked cigarettes?" ||
+			    'survey_dimension'[derived_question_text] = "How long ago did you stop smoking cigarettes?" ||
+			    'survey_dimension'[derived_question_text] = "On average, how many cigarettes a day did you use to smoke?" ||
+			'survey_dimension'[derived_question_text] = "How often are you exposed to secondhand smoke?",
+			    "Smoking",
+			    'survey_dimension'[derived_question_text] = "Have you been thinking about cutting down or quitting tobacco?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have plans to change your use of tobacco or other nicotine products?" ||
+			    'survey_dimension'[derived_question_text] = "What are your plans to cut down or quit using tobacco?" ||
+			    'survey_dimension'[derived_question_text] = "What are your plans to quit using tobacco?" ||
+			    'survey_dimension'[derived_question_text] = "Do you use other forms of tobacco or nicotine? Select all that apply.",
+			    "Tobacco Use",  
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "alcohol") || CONTAINSSTRING('survey_dimension'[derived_question_text], "drink"),
+			    "Alcohol Consumption",
+			    'survey_dimension'[derived_question_text] = "Number of alcoholic drinks" || 'survey_dimension'[derived_question_text] ="In a typical month, do you ever have 4 or more drinks at a time (within about 2 hours)?" || 'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 5 or more drinks at a time (within about 2 hours)?" ||
+			    'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 4 or more drinks at a time (within about 2 hours)?" ||
+			    'survey_dimension'[derived_question_text] = "In a typical month, do you ever have 5 or more drinks at a time (within about 2 hours)?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any plans to change your drinking habits?",
+			   "Alcohol Consumption",
+			 
+			    // Health Status & General Health
+			    'survey_dimension'[derived_question_text] = "In general, would you say your health is:" ||
+			    'survey_dimension'[derived_question_text] = "Compared to one year ago, how would you rate your physical health in general now?" ||
+			    'survey_dimension'[derived_question_text] = "What are your biggest hurdles to making healthy changes?" ||
+			'survey_dimension'[derived_question_text] = "I handle my health well." ||
+			'survey_dimension'[derived_question_text] = "Blood sugar reading" ||
+			'survey_dimension'[derived_question_text] = "Latest A1C Reading",
+			    "Health Status & General Health ",
+			        'survey_dimension'[derived_question_text] = "How confident are you that you're able to make healthy changes (like eat better, exercise more, or lose weight)?", "Confidence in Ability to Make Positive Change",
+			    'survey_dimension'[derived_question_text] = "What motivates you to try to be healthier?" ||  
+			    'survey_dimension'[derived_question_text] = "When I work to improve my health, I succeed." ||
+			    'survey_dimension'[derived_question_text] = "I can stick with plans to exercise and eat a healthy diet." ||
+			    'survey_dimension'[derived_question_text] = "Even when life is stressful, I know I can continue to do the things that keep me healthy.",
+			    "Change Motivators",
+			   
+			 
+			    // Pain & Functional Status
+			    'survey_dimension'[derived_question_text] = "During the past four weeks, how much did pain interfere with your normal work?" ||
+			    'survey_dimension'[derived_question_text] = "During the past four weeks, how much did pain interfere with your normal work? (at your job or at home)" ||
+			    'survey_dimension'[derived_question_text] = "Does your health limit you while climbing several flights of stairs?" ||
+			    'survey_dimension'[derived_question_text] = "Does your health limit you while doing moderate activities, such as moving a table, pushing a vacuum cleaner, bowling, or playing golf?" ||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often has your physical health limited your work or other activities?" ||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, has your physical health affected your work or other regular daily activities?" ||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often has your physical health or emotional problems interfered with your social activities? (like visiting with friends, relatives, etc.)" ||
+			    'survey_dimension'[derived_question_text] = "In the past four weeks, how often have you had a lot of energy?",
+			    "Pain & Functional Status",
+			 
+			    // Chronic Conditions & Management
+			    'survey_dimension'[derived_question_text] = "Do you have any arthritis or pain, aching, or stiffness in your joints?" ||  
+			    'survey_dimension'[derived_question_text] = "Does the pain or stiffness in your joints affect your daily work, school, or recreational activities?"  ||
+			    'survey_dimension'[derived_question_text] = "Do you have back problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do your back problems affect your daily work, school, or recreational activities?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under treatment by a physician for your back problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any lung problems like asthma or COPD?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any of the following lung problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have chronic bronchitis or emphysema (COPD)?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for your chronic bronchitis / emphysema?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any vision problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any vision problems or wear corrective lenses of any kind (eyeglasses, contact lenses)?" ||
+			    'survey_dimension'[derived_question_text] = "Do you need to wear glasses or contact lenses?" ||
+			    'survey_dimension'[derived_question_text] = "Have you had an eye exam and glaucoma test within the last year?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any hearing problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have a hearing aid?" ||
+			    'survey_dimension'[derived_question_text] = "Have you been diagnosed with diabetes or prediabetes?" ||
+			    'survey_dimension'[derived_question_text] = "How are you managing your diabetes?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "blood sugar") || CONTAINSSTRING('survey_dimension'[derived_question_text], "azúcar") ||
+			    'survey_dimension'[derived_question_text] = "In the past three years, have you had a fasting blood sugar test?" ||
+			    'survey_dimension'[derived_question_text] = "In the past three years, have you had an A1C test for diabetes?" ||
+			    'survey_dimension'[derived_question_text] = "In the past3 years, have you been screened for diabetes?" ||
+			    'survey_dimension'[derived_question_text] = "Has a doctor told you that you have high blood pressure?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "presión arterial") ||
+			    'survey_dimension'[derived_question_text] = "Are you taking any medicine for blood pressure?" ||
+			    'survey_dimension'[derived_question_text] = "What is your most recent blood pressure reading?" ||
+			    'survey_dimension'[derived_question_text] = "When was the last time you had your blood pressure checked?" ||
+			    'survey_dimension'[derived_question_text] = "Has a doctor told you that you have high cholesterol?" ||
+			    'survey_dimension'[derived_question_text] = "Are you taking any medicines for cholesterol (statins)?" ||
+			    'survey_dimension'[derived_question_text] = "What are your most recent cholesterol numbers?" ||
+			    'survey_dimension'[derived_question_text] = "When was the last time you had your cholesterol checked?"  ||
+			    'survey_dimension'[derived_question_text] = "Do you have heart disease, or have you had a heart attack or stroke?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "cardíaco") ||
+			    'survey_dimension'[derived_question_text] = "Have you been diagnosed with any of the following cardiovascular problems?" ||
+			    'survey_dimension'[derived_question_text] = "What kind of heart problems do you have?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for your heart problems?" ||
+			    'survey_dimension'[derived_question_text] = "What are you doing to manage your heart problems?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have osteoporosis (brittle bones)?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medicine for osteoporosis or brittle bones?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have any of the following?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for cancer?" || CONTAINSSTRING('survey_dimension'[derived_question_text], "cáncer") ||    'survey_dimension'[derived_question_text] = "Have you ever had breast or cervical cancer?" ||
+			    'survey_dimension'[derived_question_text] = "Are you under medical treatment or taking medication for heartburn or acid reflux?" ||
+			    'survey_dimension'[derived_question_text] = "Are you currently pregnant?" ||
+			    'survey_dimension'[derived_question_text] = "Is your asthma under control?"||
+			    'survey_dimension'[derived_question_text] = "Are you prescribed medication to manage your asthma?" ||
+			    'survey_dimension'[derived_question_text] = "How are you managing your asthma?" ||
+			    'survey_dimension'[derived_question_text] = "Did you have health problems lasting more than 4 weeks and you believe are related to a past COVID infection?" ||
+			    'survey_dimension'[derived_question_text] = "Are you still experiencing these symptoms or problems?" ||
+			    'survey_dimension'[derived_question_text] = "Were any of these ER visits or hospital stays related to a chronic condition?",
+			    "Chronic Conditions & Management",
+			 
+			    // Healthcare Utilization & Access
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "doctor") || CONTAINSSTRING('survey_dimension'[derived_question_text], "médico") || CONTAINSSTRING('survey_dimension'[derived_question_text], "physician") ||
+			    'survey_dimension'[derived_question_text] = "Have you seen a physician in the last 12 months?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have a doctor or clinic for primary care?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have a doctor who you see regularly?" ||
+			    'survey_dimension'[derived_question_text] = "Do you have a primary care physician (e.g. family practitioner or internist)?" ||
+			    'survey_dimension'[derived_question_text] = "Have you had the latest available flu shot?" ||
+			    'survey_dimension'[derived_question_text] = "When was the last time you had a screening for colorectal cancer?" ||
+			    'survey_dimension'[derived_question_text] = "What type of colorectal cancer screening did you have?" ||
+			    'survey_dimension'[derived_question_text] = "When was your last screening for breast cancer (mammogram)?" ||
+			    'survey_dimension'[derived_question_text] = "When was your last screening for cervical cancer (Pap Smear)?" ||
+			    'survey_dimension'[derived_question_text] = "Has lack of reliable transportation kept you from any of the following?" ||
+			    'survey_dimension'[derived_question_text] = "Has the lack of transportation kept you from medical appointments, meetings, work, or from getting things needed for daily living?" ||
+			    'survey_dimension'[derived_question_text] = "In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",
+			    "Healthcare Utilization & Access",
+			 
+			    // Medication Use & Adherence
+			 CONTAINSSTRING('survey_dimension'[derived_question_text], "medicine") || CONTAINSSTRING('survey_dimension'[derived_question_text], "medication") || CONTAINSSTRING('survey_dimension'[derived_question_text], "medicamento"),
+			    "Medication Use & Adherence",
+			    'survey_dimension'[derived_question_text] = "How many prescription medicines do you take daily or regularly?" ||
+			    'survey_dimension'[derived_question_text] = "How many medications are prescribed to you?" ||
+			    'survey_dimension'[derived_question_text] = "How many over-the-counter medicines and supplements do you take regularly?" ||
+			    'survey_dimension'[derived_question_text] = "How often do you take your prescription medicines as directed?" ||
+			    'survey_dimension'[derived_question_text] = "In an average week, how many days per week do you take your medications as prescribed?" ||
+			    'survey_dimension'[derived_question_text] = "What keeps you from taking your prescription medicines as directed?" ||
+			    'survey_dimension'[derived_question_text] = "We know there are many reasons why people miss their medications. Please check all the reasons that caused you to miss yours during the past 4 weeks.",
+			    "Medication Use & Adherence",
+			 
+			    // Health Literacy & Patient Activation
+			    'survey_dimension'[derived_question_text] = "Do you ever need help filling out medical forms, reading prescription labels, or understanding doctors' instructions?" ||
+			    'survey_dimension'[derived_question_text] = "I feel comfortable talking to my doctor about my health." ||
+			    'survey_dimension'[derived_question_text] = "I have brought my own information about my health to show my doctor." ||
+			    'survey_dimension'[derived_question_text] = "I have lots of experience using the health care system." ||
+			    'survey_dimension'[derived_question_text] = "I spend a lot of time learning about health." ||
+			    'survey_dimension'[derived_question_text] = "Different doctors give different advice; it's up to me to choose what's right for me." ||
+			    'survey_dimension'[derived_question_text] = "I compare doctors using official ratings about how well their patients are doing." ||
+			    'survey_dimension'[derived_question_text] = "When choosing a new doctor, I look for information online." ||
+			    'survey_dimension'[derived_question_text] = "When choosing a new doctor, I look for official ratings based on patient health." ||
+			    'survey_dimension'[derived_question_text] = "Did you think this survey was easy to complete?",
+			    "Health Literacy & Patient Activation",
+			 
+			    // Social Support & Financial Status
+			CONTAINSSTRING('survey_dimension'[derived_question_text], "financial") || CONTAINSSTRING('survey_dimension'[derived_question_text], "money") || CONTAINSSTRING('survey_dimension'[derived_question_text], "dinero") || CONTAINSSTRING('survey_dimension'[derived_question_text], "financiero"),
+			    "Social Support & Financial Status",
+			    'survey_dimension'[derived_question_text] = "Do you have supportive family and friends?" ||
+			    'survey_dimension'[derived_question_text] = "How often do you feel supported by family and friends?" ||
+			    'survey_dimension'[derived_question_text] = "How often do you keep track of your take-home pay and monthly expenses?" ||
+			    'survey_dimension'[derived_question_text] = "How often do you worry about making ends meet?" ||
+			    'survey_dimension'[derived_question_text] = "How well do you understand financial matters like credit cards, loans, taxes, investments, and retirement planning?" ||
+			    'survey_dimension'[derived_question_text] = "In case of an emergency or unexpected expense, can you easily access $500?" ||
+			    'survey_dimension'[derived_question_text] = "In case of an emergency or unexpected expense, can you easily access $1000?" ||
+			    'survey_dimension'[derived_question_text] = "Have you built a financial emergency fund (6 months of regular living expenses to include mortgage or rent)?",
+			    "Social Support & Financial Status",
+			 
+			    // Cancer Screening
+			CONTAINSSTRING('survey_dimension'[derived_question_text], "cancer") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cáncer"),
+			    "Chronic Conditions & Management",
+			 
+			    // Heart Health
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "heart") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cardíaco"),
+			    "Chronic Conditions & Management",
+			 
+			    // Blood Pressure
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "blood pressure") || CONTAINSSTRING('survey_dimension'[derived_question_text], "presión arterial"),
+			    "Chronic Conditions & Management",
+			 
+			    // Diabetes Management
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "diabetes") || CONTAINSSTRING('survey_dimension'[derived_question_text], "blood sugar") || CONTAINSSTRING('survey_dimension'[derived_question_text], "azúcar"),
+			    "Chronic Conditions & Management",
+			 
+			    // Tobacco Use
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "tobacco") || CONTAINSSTRING('survey_dimension'[derived_question_text], "smoking") || CONTAINSSTRING('survey_dimension'[derived_question_text], "cigarette") || CONTAINSSTRING('survey_dimension'[derived_question_text], "fumar"),
+			    "Tobacco Use",
+			 
+			    // Alcohol Consumption
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "alcohol") || CONTAINSSTRING('survey_dimension'[derived_question_text], "drink"),
+			    "Alcohol Consumption",
+			 
+			    // Mental Health
+			    CONTAINSSTRING('survey_dimension'[derived_question_text], "depression") || CONTAINSSTRING('survey_dimension'[derived_question_text], "anxiety") || CONTAINSSTRING('survey_dimension'[derived_question_text], "mental health") || CONTAINSSTRING('survey_dimension'[derived_question_text], "emotional"),
+			    "Stress & Mental Health",
+			 
+			    BLANK()
+			)
+			
+			
+			```
+		lineageTag: 6d2b1feb-9067-4288-9090-532229a5dbba
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition survey_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    survey_dimension_Table = optum_dev_Schema{[Name="survey_dimension",Kind="Table"]}[Data],
+				    #"Added Custom" = Table.AddColumn(survey_dimension_Table, "Unique_key", each [derived_answer_id] & [derived_question_id] & [language]),
+				    #"Replaced Value" = Table.ReplaceValue(#"Added Custom",null,"0",Replacer.ReplaceValue,{"Unique_key"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Replaced Value", each ([Unique_key] <> "0"))
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

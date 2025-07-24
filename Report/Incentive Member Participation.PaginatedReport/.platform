@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "PaginatedReport",
+    "displayName": "Incentive Member Participation"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3cf6877a-6a21-b2f2-47cf-be5e73ad38fe"
+  }
+}

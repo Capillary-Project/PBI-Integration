@@ -1,0 +1,100 @@
+relationship 985b3a8e-da1a-4f84-90de-9f96f098d5c5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_c72697f9-520e-4e79-a834-5637f34ee3a8.Date
+
+relationship 6c76c210-1cff-b3c0-b37f-fe7cef2e9ec4
+	toCardinality: many
+	fromColumn: survey_event_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship dc2f4dbc-d9f7-4795-becc-15466ae8a9bc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_last_activity_bi.last_updated_date
+	toColumn: LocalDateTable_3d095f92-336e-4a8b-a564-80ebe2410048.Date
+
+relationship 78e553d5-be36-c2e0-b2ba-f2563938f908
+	toCardinality: many
+	fromColumn: member_last_activity_bi.user_id
+	toColumn: member_dimension.user_id
+
+relationship 24990b9a-bb29-0fb1-1f61-6b9892607a73
+	fromColumn: member_last_activity_bi.last_session_date
+	toColumn: date_table.date
+
+relationship dd7d2465-52c0-9907-c6f5-f8dc5f23af5e
+	crossFilteringBehavior: bothDirections
+	fromColumn: survey_event_fact.RiskBucket
+	toColumn: 'Bucket Table'.Buckets
+
+relationship deb28e50-7a78-44ae-9497-a31714e791ee
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.end_date
+	toColumn: LocalDateTable_68bde6d6-87ae-4981-8689-6461a36599a4.Date
+
+relationship 18c3ba5e-c657-44c6-afba-e1cbf30c1e93
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.terms_and_conditions_acceptance_date
+	toColumn: LocalDateTable_95aca549-ada6-46c1-9003-0feda3e6fb2a.Date
+
+relationship 8be69b6c-93e6-4ec2-9e1b-b66d2ceab5fd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.date_of_birth
+	toColumn: LocalDateTable_d613f2d6-cb97-4dd0-89fd-2ed6ee5ac1df.Date
+
+relationship 5add17d1-0238-4253-a991-9fae53135b90
+	joinOnDateBehavior: datePartOnly
+	fromColumn: survey_dimension.last_updated_date
+	toColumn: LocalDateTable_817286a4-84fd-4452-83c6-d84b91d796c6.Date
+
+relationship 9fbddc05-12ef-46d0-bc54-ed404b0037c5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: survey_event_fact.survey_start_date
+	toColumn: LocalDateTable_07319453-4217-44c5-aac1-7d2f64c3da9a.Date
+
+relationship 0428f102-fa41-47a9-bbba-c9bc1fd931ba
+	joinOnDateBehavior: datePartOnly
+	fromColumn: survey_event_fact.last_updated_date
+	toColumn: LocalDateTable_0b83709b-7961-4990-a45f-476dfd169b75.Date
+
+relationship 5bc0aa22-bef6-eb2c-c23f-ecdf78884103
+	isActive: false
+	fromColumn: survey_event_fact.survey_end_date
+	toColumn: date_table.date
+
+relationship f054940f-382d-b30d-b3be-a9275da754ec
+	fromColumn: survey_response_fact.unique_key
+	toColumn: survey_dimension.Unique_key
+
+relationship 37a3987e-ee29-33dd-45d6-ea17b7421396
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: survey_event_fact.user_id
+	toColumn: survey_response_fact.user_id
+
+relationship a0033af6-620f-c0d4-8c4e-993c6cd80199
+	isActive: false
+	toCardinality: many
+	fromColumn: survey_response_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship f0d2ac18-771e-7a07-9504-a3d4c3980909
+	crossFilteringBehavior: bothDirections
+	fromColumn: member_dimension.Client_id_name
+	toColumn: Filtered_Clients.Client_id_name
+
+relationship 8cf952c9-c16a-03c0-6e25-6a8ec09b8476
+	isActive: false
+	fromColumn: survey_response_fact.survey_completion_date
+	toColumn: date_table.date
+
+relationship 6f888666-a28a-4148-90df-d972931d0103
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_4ea6fcdb-e96c-4f6b-9213-8613b36d5831.Date
+
+relationship f7a6310b-e2be-d7a6-1487-b26482d49c43
+	isActive: false
+	fromColumn: member_dimension.start_date
+	toColumn: date_table.date
+

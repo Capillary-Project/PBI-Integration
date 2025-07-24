@@ -1,0 +1,57 @@
+table date_table
+	lineageTag: 13615c90-972e-4380-b046-1c4c9c8eed18
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 721bd40d-d3b1-4925-b1d4-08515df87043
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 6d7b41cc-6d0b-4f16-895b-3a51b3a9ce67
+			defaultHierarchy: LocalDateTable_99684247-03d1-4fae-9fbf-408478677f41.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: b42dabb2-32e7-4339-aa55-e8989db79689
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 72e1d5f7-82b6-4977-a80d-0e820197eee8
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column mon = MONTH(date_table[date])
+		formatString: 0
+		lineageTag: bec19805-c5b0-4a12-ba21-93d983c4146c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

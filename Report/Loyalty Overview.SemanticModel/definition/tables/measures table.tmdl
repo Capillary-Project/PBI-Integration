@@ -1,0 +1,323 @@
+table 'measures table'
+	lineageTag: 53861701-6246-4a70-960b-d17d6ce5099d
+
+	measure A = 0.2
+		formatString: 0%;-0%;0%
+		lineageTag: acbe11f4-e5e5-4da0-8d7b-78d8843c12cb
+
+	measure B = 100
+		formatString: 0
+		lineageTag: 5f37a9c1-a228-4908-9c4f-32aaf16b1024
+
+	measure Brac = "(" & 20 & "%)"
+		lineageTag: 6b04ca1e-cfe3-44cf-8d35-df9164ffe988
+
+	measure Campaign_name = "Campaign Name: " & "ABC"
+		lineageTag: b957a3f2-d680-42d2-be09-738a0af10add
+
+	measure Client_name =
+			"Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+			// "Client Name: " & "ABC"
+		lineageTag: 0a86e2f7-77e3-495d-8a18-3c88e103bbd9
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: df85775d-c917-4024-8cba-e81d80ace703
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: bed833b6-5be7-4ea2-b85f-ce0eedbef91f
+
+	measure 'points earned' = ```
+			
+			var a =
+			    CALCULATE(SUM(incentive_earning_detail[amount_earned]), USERELATIONSHIP(date_table[date], incentive_earning_detail[fulfillment_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: 0
+		lineageTag: c2c58381-d5e4-4c08-8a19-c209d5a3e749
+
+	measure 'points redeemed' = ```
+			
+			var a =
+			    CALCULATE(SUM(points_redemptions[deducted_points]),
+			        USERELATIONSHIP(date_table[date], points_redemptions[redemption_date]))
+			
+			// var a = CALCULATE(COUNT(loyalty_redemptions[user_id]), USERELATIONSHIP(date_table[date],loyalty_redemptions[event_entry_date]))
+			
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: #,0
+		lineageTag: fbad0d63-1efa-45fc-bb7f-a298d885b55b
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure ReedemAvgPointsPerMember_Monthly = ```
+			
+			VAR TotalPoints = 
+			    CALCULATE(
+			        SUMX(
+			            loyalty_redemptions,
+			            VALUE(loyalty_redemptions[points_deducted])
+			        ),
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			    )
+			
+			VAR UniqueMembers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(loyalty_redemptions[user_id]),
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			        // ALLEXCEPT(date_table, date_table[month])
+			    )
+			
+			RETURN
+			IF(ISBLANK(DIVIDE(TotalPoints, UniqueMembers)), 0,DIVIDE(TotalPoints, UniqueMembers))
+			
+			```
+		lineageTag: b8c3f31f-0378-4523-afba-b58744c8695a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'auction redeemption' = ```
+			
+			VAR TotalRedemptions = 
+			    CALCULATE(
+			        DISTINCTCOUNT(loyalty_redemptions[user_id]),
+			        loyalty_redemptions[redemption_event_type] = "Auction",
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			    )
+			
+			VAR UniqueUsers =
+			    CALCULATE(
+			        DISTINCTCOUNT(loyalty_redemptions[user_id]),
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(TotalRedemptions) || UniqueUsers = 0,
+			    0,
+			    TotalRedemptions / UniqueUsers
+			)
+			
+			```
+		lineageTag: 6d01e4c0-a17d-43b6-bf6a-baddaf949874
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'sweepstakes redeemption' = ```
+			
+			// avg_sweepstakes_redemption = 
+			VAR TotalRedemptions = 
+			    CALCULATE(
+			        DISTINCTCOUNT(loyalty_redemptions[user_id]),
+			        loyalty_redemptions[redemption_event_type] = "SWEEPSTAKES",
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			    )
+			
+			VAR UniqueUsers =
+			    CALCULATE(
+			        DISTINCTCOUNT(loyalty_redemptions[user_id]),
+			        USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(TotalRedemptions) || UniqueUsers = 0,
+			    0,
+			    TotalRedemptions / UniqueUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: d313f4c6-87f4-4337-bba1-53d259361914
+
+	measure 'points earned new' = ```
+			
+			var a =
+			    CALCULATE(SUM(points_awarded[allocated_points]),
+			        USERELATIONSHIP(date_table[date], points_awarded[award_date]))
+			
+			// var a = CALCULATE(COUNT(loyalty_redemptions[user_id]), USERELATIONSHIP(date_table[date],loyalty_redemptions[event_entry_date]))
+			
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: #,0
+		lineageTag: 94e34266-fdbf-4657-804c-b61b3b1473d3
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure EarnedAvgPointsPerMember_Monthly = ```
+			
+			VAR TotalPoints = 
+			    CALCULATE(
+			        SUMX(
+			            points_awarded,
+			            VALUE(points_awarded[allocated_points])
+			        ),
+			        USERELATIONSHIP(date_table[date], points_awarded[award_date])
+			    )
+			
+			VAR UniqueMembers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(points_awarded[user_id]),
+			        USERELATIONSHIP(date_table[date], points_awarded[award_date])
+			        // ALLEXCEPT(date_table, date_table[month])
+			    )
+			
+			RETURN
+			if(ISBLANK(DIVIDE(TotalPoints, UniqueMembers)) , 0, DIVIDE(TotalPoints, UniqueMembers))
+			
+			```
+		lineageTag: d2c2970b-55d4-4343-a141-153a10d6859d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'point balance' = ```
+			[points earned new] - [points redeemed]
+			
+			```
+		formatString: #,0.00
+		lineageTag: 1de33408-903f-435c-bfed-907b4a37fcc6
+
+	measure '%Enrolled Members Earning Points YTD' = ```
+			
+			var a = CALCULATE(DISTINCTCOUNT(points_awarded[user_id]), USERELATIONSHIP(date_table[date], points_awarded[award_date]))
+			
+			var b = DIVIDE(a, [New EligibleUsers], 0)
+			
+			return 
+			IF(ISBLANK(b),0,b)
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 75d60683-2b69-4a12-874c-a32bfa456032
+
+	measure 'New EligibleUsers' = ```
+			
+			VAR SelectedDate = CALCULATE(
+			    MAX('date_table'[date]), 
+			    VALUES('date_table')
+			) -- Get the selected end date from the slicer
+			
+			-- Create the 'a' variable (similar to previous measures)
+			VAR a = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Eligible_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Eligible_concat])
+			
+			-- The 'reduction' variable to filter based on the join date and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN a &&  -- Filter based on the concatenated fields
+			        member_dimension[start_date] <= SelectedDate  -- Filter join date up to the selected date
+			    )
+			
+			-- Calculating the distinct count of eligible users
+			VAR Result = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        member_dimension[start_date]<=SelectedDate, -- Apply the reduction filters
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Return the final result, returning 0 if no result is found
+			RETURN
+			IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: 0
+		lineageTag: 69778486-9fd8-4379-8a1c-f5e765e5c452
+
+	measure 'avg points balance per user' =
+			
+			var a = CALCULATE(SUM(points_awarded[allocated_points]), USERELATIONSHIP(date_table[date], points_awarded[award_date])) +
+			        CALCULATE(SUM(loyalty_redemptions[points_deducted]), USERELATIONSHIP(date_table[date], loyalty_redemptions[event_entry_date]))
+			var b = CALCULATE(DISTINCTCOUNT(points_awarded[user_id]), USERELATIONSHIP(date_table[date],points_awarded[award_date]))
+			RETURN
+			IF(ISBLANK(DIVIDE(a, b, 0)),0,DIVIDE(a, b, 0))
+		formatString: #,0
+		lineageTag: ccfd0236-6f14-4704-b15a-a12a115bbc34
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '%Enrolled Members Redeeming Points YTD' = ```
+			
+			var a = CALCULATE(DISTINCTCOUNT(points_redemptions[user_id]), USERELATIONSHIP(date_table[date], points_redemptions[redemption_date]))
+			
+			var b = DIVIDE(a, [New EligibleUsers], 0)
+			
+			return 
+			IF(ISBLANK(b),0,b)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 85784ac5-72d3-4d74-9be3-976cd3a54bff
+
+	measure '% Earning Members Retained MoM' = ```
+			
+			VAR ActiveUsersPerMonth =
+			    CALCULATE(
+			        DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			USERELATIONSHIP(date_table[date], member_last_activity_bi[last_session_date]) -- Add this back if needed
+			    )
+			
+			VAR Result = DIVIDE(ActiveUsersPerMonth, [New EligibleUsers], 0)
+			
+			RETURN IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c8d488cf-97fb-4c38-8dd0-960bc77acaa5
+
+	measure '%overall point balance redeemed YTD' = ```
+			
+			
+			var a = CALCULATE(SUM(points_redemptions[user_id]), USERELATIONSHIP(date_table[date],points_redemptions[redemption_date]))
+			var b = CALCULATE(SUM(points_awarded[allocated_points]), USERELATIONSHIP(date_table[date],points_awarded[award_date]))
+			 + CALCULATE(SUM(points_redemptions[user_id]), USERELATIONSHIP(date_table[date],points_redemptions[redemption_date]))
+			
+			RETURN
+			IF(ISBLANK(DIVIDE(a, b, 0)), 0, (DIVIDE(a,b,0)))
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0e8aedd2-ea39-4d5c-a129-50f6037c772e
+
+	partition 'measures table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

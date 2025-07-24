@@ -1,0 +1,173 @@
+table loyalty_redemptions
+	lineageTag: eba99e04-ad40-46c3-9255-f2fa4cf30d87
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: cbf16acf-1c77-4803-991e-aae40667d947
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 52196f9c-2766-4c4e-bd84-ed65dbf8502d
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redemption_event_type
+		dataType: string
+		lineageTag: 66157958-1705-4547-bb7d-164f77e1d0bd
+		summarizeBy: none
+		sourceColumn: redemption_event_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 396eb610-b5c7-4653-8581-0ee24c6777c4
+		summarizeBy: none
+		sourceColumn: event_start_date
+
+		variation Variation
+			isDefault
+			relationship: b14073eb-e1a5-4a4a-a3b2-f63775c673a6
+			defaultHierarchy: LocalDateTable_61b03111-f3f7-42ca-b7ce-6d98e89eea7a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column event_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4420311f-f5c7-4ba2-81d9-7e9a8e72a1cb
+		summarizeBy: none
+		sourceColumn: event_end_date
+
+		variation Variation
+			isDefault
+			relationship: 60817a19-9447-46aa-abba-4cb1c2b210fb
+			defaultHierarchy: LocalDateTable_75ef3702-b913-40a8-994b-a2735d164179.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column private_public
+		dataType: string
+		lineageTag: 9c37c954-bb81-4357-83cb-838fe1ea984b
+		summarizeBy: none
+		sourceColumn: private_public
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: 69d7af96-0670-462a-bca1-e33751147d18
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_entry_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6b15da7e-1c6a-401f-bb5a-f41e163ab391
+		summarizeBy: none
+		sourceColumn: event_entry_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column reward_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 58ed1fe1-fa2e-4773-bee1-cc66f3c38228
+		summarizeBy: sum
+		sourceColumn: reward_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 4978114f-b5ab-4656-8e11-ef6d57d048d8
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_deducted
+		dataType: int64
+		formatString: 0
+		lineageTag: d8b91688-89e0-4eec-ad2a-5371a4d1652f
+		summarizeBy: sum
+		sourceColumn: points_deducted
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column transaction_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e267598b-a7ff-4892-afe2-e08fc87d3bcc
+		summarizeBy: sum
+		sourceColumn: transaction_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8f005af1-f214-4f11-be95-759e645194be
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_ref_id
+		dataType: string
+		lineageTag: 4db456f3-7a8d-4ede-bef2-dd9890959d2e
+		summarizeBy: none
+		sourceColumn: points_ref_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5610183e-071b-41d9-b2a2-5fee39a8d7a2
+		summarizeBy: none
+		sourceColumn: activity_date
+
+		variation Variation
+			isDefault
+			relationship: 9ad784fb-5b95-44b2-a29a-9154fd2f480f
+			defaultHierarchy: LocalDateTable_da2b2e7a-c468-44ae-8205-c4be1d948c6a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition loyalty_redemptions = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    loyalty_redemptions_Table = optum_dev_Schema{[Name="loyalty_redemptions",Kind="Table"]}[Data]
+				in
+				    loyalty_redemptions_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

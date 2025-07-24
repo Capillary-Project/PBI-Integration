@@ -1,0 +1,48 @@
+table 'Parameter 2'
+	lineageTag: 4c4ece87-67c2-4eea-b44c-59bf70479fe3
+
+	column Parameter
+		lineageTag: 2ab4b1f2-47ff-40e8-a738-6490872534cb
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: 944b7ed3-ace8-458a-b521-56b00f13d36c
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: f363d911-3394-4d4e-9355-4db17c6725f6
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Parameter 2' = calculated
+		mode: import
+		source =
+				{
+				    ("Show by Fullfillment Date", NAMEOF('incentive_earning_detail'[fulfillment_date]), 1),
+				    ("Show by Activity date", NAMEOF('incentive_earning_detail'[activity_completion_date]), 0)
+				}
+
+	annotation PBI_Id = 5ce68af609c84c6cb6efb3155451e9bc
+

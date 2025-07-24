@@ -1,0 +1,208 @@
+table mission_members_fact
+	lineageTag: b996f11c-646f-4033-b13d-65b3e93b04a9
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1e63a33d-6530-4979-9f40-05d20211436c
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1fb6743b-c13a-4c6b-9a46-1a56899bffd8
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 862fefe7-6648-44cd-96fc-159f04b9a566
+		summarizeBy: none
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_complete
+		dataType: string
+		lineageTag: 18d2951f-bcb6-4b18-ab26-a507b6b0ccf9
+		summarizeBy: none
+		sourceColumn: mission_complete
+
+		annotation SummarizationSetBy = Automatic
+
+	column completed_intervals
+		dataType: int64
+		formatString: 0
+		lineageTag: b4eb69ca-226c-424b-8ae2-92da724265dd
+		summarizeBy: sum
+		sourceColumn: completed_intervals
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 91c6dd53-63b7-44cf-ad62-93bec72d8dac
+		summarizeBy: none
+		sourceColumn: mission_completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column complete_week_01_ts
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e910d726-e84d-4aa1-a05c-aacc393d5967
+		summarizeBy: none
+		sourceColumn: complete_week_01_ts
+
+		variation Variation
+			isDefault
+			relationship: df8572f3-001e-49a2-98c3-5523d6d70ecf
+			defaultHierarchy: LocalDateTable_1e49a31b-ad33-4fe8-b267-5d4d85ff1dcc.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column complete_week_02_ts
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: faa86671-0489-4b8e-b07a-4ce37eb55c3b
+		summarizeBy: none
+		sourceColumn: complete_week_02_ts
+
+		variation Variation
+			isDefault
+			relationship: d53c1f2c-4924-49b3-a9df-2a3c462b0924
+			defaultHierarchy: LocalDateTable_eac72bf7-694a-4c2d-adc0-9cef5d72c32c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column complete_week_03_ts
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5da06a9b-23ea-4abd-9a41-f6ccf6f037b1
+		summarizeBy: none
+		sourceColumn: complete_week_03_ts
+
+		variation Variation
+			isDefault
+			relationship: aaf6f807-45e5-4dc3-87b9-c9bec67d622b
+			defaultHierarchy: LocalDateTable_10d355d6-5fc2-41b4-9e5b-e0e09aef99ea.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column complete_week_04_ts
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5510eced-1817-472c-8940-70ea7c16c148
+		summarizeBy: none
+		sourceColumn: complete_week_04_ts
+
+		variation Variation
+			isDefault
+			relationship: e216b114-c98f-4cf0-a545-43bdfa681aec
+			defaultHierarchy: LocalDateTable_39b41280-a3aa-48ed-9c14-08088cf97cf9.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column mission_unjoin
+		dataType: int64
+		formatString: 0
+		lineageTag: 10a5d2bc-2ac5-46e1-95d8-a199f60a4d35
+		summarizeBy: sum
+		sourceColumn: mission_unjoin
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_unjoin_date
+		dataType: string
+		lineageTag: f4993c92-c05a-4f58-80c6-9a6eb61590d2
+		summarizeBy: none
+		sourceColumn: mission_unjoin_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5b7c01f8-3a0a-43c7-8af3-74a1d8944bfe
+		summarizeBy: none
+		sourceColumn: mission_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column completion_time_days
+		dataType: int64
+		formatString: 0
+		lineageTag: b02441a3-a699-4d52-a089-df3b454a89da
+		summarizeBy: sum
+		sourceColumn: completion_time_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 091127b6-deac-429c-8103-178f5218123f
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 08ee4b4f-41bb-4b95-982a-46566aedc48b
+			defaultHierarchy: LocalDateTable_90c0e1a4-3b84-43c8-b593-5bed31dbe866.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column be_event_name
+		dataType: string
+		lineageTag: 77d25209-6813-409d-91a1-af5982f99bc8
+		summarizeBy: none
+		sourceColumn: be_event_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column streak_number
+		dataType: int64
+		formatString: 0
+		lineageTag: c3ffc572-4ff0-4d87-93d7-a5b17905b277
+		summarizeBy: sum
+		sourceColumn: streak_number
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mission_members_fact = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    mission_members_fact_Table = optum_dev_Schema{[Name="mission_members_fact",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(mission_members_fact_Table,{{"complete_week_01_ts", type date}, {"complete_week_02_ts", type date}, {"complete_week_03_ts", type date}, {"complete_week_04_ts", type date}, {"mission_unjoin_date", type text}, {"mission_start_date", type date}, {"last_updated_date", type date}, {"id", Int64.Type}, {"mission_completion_date", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

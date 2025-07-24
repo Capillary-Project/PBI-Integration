@@ -1,0 +1,43 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["survey_dimension","member_dimension","date_table","survey_event_fact","survey_response_fact","MeasureTable","member_last_activity_bi","Self_reported_measure","Risk Category","Per Risk","Bucket Table","Survey_welbeing_Measures","DbName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1105.0 (25.07)+decbc46fce458c5b8d5109d6f32a743f2ac949c8
+
+ref table DateTableTemplate_699e6d91-9e6c-4201-a0a9-8831e0dffac4
+ref table survey_dimension
+ref table member_dimension
+ref table date_table
+ref table LocalDateTable_c72697f9-520e-4e79-a834-5637f34ee3a8
+ref table survey_event_fact
+ref table survey_response_fact
+ref table MeasureTable
+ref table member_last_activity_bi
+ref table LocalDateTable_3d095f92-336e-4a8b-a564-80ebe2410048
+ref table Self_reported_measure
+ref table 'Risk Category'
+ref table 'Per Risk'
+ref table 'Bucket Table'
+ref table Survey_welbeing_Measures
+ref table Filtered_Clients
+ref table LocalDateTable_68bde6d6-87ae-4981-8689-6461a36599a4
+ref table LocalDateTable_95aca549-ada6-46c1-9003-0feda3e6fb2a
+ref table LocalDateTable_d613f2d6-cb97-4dd0-89fd-2ed6ee5ac1df
+ref table LocalDateTable_817286a4-84fd-4452-83c6-d84b91d796c6
+ref table LocalDateTable_0b83709b-7961-4990-a45f-476dfd169b75
+ref table ScreeningTable
+ref table LocalDateTable_4ea6fcdb-e96c-4f6b-9213-8613b36d5831
+ref table LocalDateTable_c833d3ed-27bf-4b90-aced-833f29186896
+ref table LocalDateTable_cc2656d7-7952-4259-a6d8-7701c655e70f
+ref table LocalDateTable_3a02d309-de2c-4476-90ae-c77e1039abf3
+
+ref cultureInfo en-US
+

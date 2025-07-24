@@ -1,0 +1,66 @@
+table date_table
+	lineageTag: ede3b8da-0759-48af-a5eb-387c282bc1bd
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d8065567-7893-4956-861e-afd6d95daf5a
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: de8a004d-ddc6-4d20-beb3-80b475d28da3
+			defaultHierarchy: LocalDateTable_6d0e73bb-50d6-4e84-9fa8-5f27a7b5bb08.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: 0a1c2ef1-78a8-4be0-896a-85bb3e837825
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: b988b23a-066d-4f52-9301-18828e16bcd5
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column mon_year = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: 39c490ad-3d4b-47fa-8da4-0f3cc8c8f9ef
+		summarizeBy: none
+		sortByColumn: monthoffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthoffset = DATEDIFF(CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')),'date_table'[date], MONTH)
+		formatString: 0
+		lineageTag: 937bfba0-c7e1-47c1-83e6-d22c6f8b8e7f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

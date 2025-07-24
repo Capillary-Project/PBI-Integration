@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Digital Engagement Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "aa7723e1-5d50-a15c-4e2e-231b5e0c9612"
+  }
+}

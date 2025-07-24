@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Rally Engage Marketing Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c64e088b-ab13-ba35-45ee-2a4e40234d6d"
+  }
+}

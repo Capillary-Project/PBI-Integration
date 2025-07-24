@@ -1,0 +1,165 @@
+table SummarizedTable
+	lineageTag: fb674259-7d80-412a-9608-45d012d865f9
+
+	column Sep_Activity_completion
+		formatString: 0
+		lineageTag: 9b9b236d-c7ef-42c8-a4e6-e5ffb43e43e4
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sep_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Incentive_Participants
+		formatString: 0
+		lineageTag: 39814e29-1f8e-4338-b85f-0f98c40dea5c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Incentive_Participants]
+
+		annotation SummarizationSetBy = User
+
+	column Jan_Activity_completion
+		formatString: 0
+		lineageTag: eefa63b3-92d9-408d-9130-c6603799196c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Jan_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Feb_Activity_completion
+		formatString: 0
+		lineageTag: 53f9a13c-065b-483f-862e-bcf7fdfa6abf
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Feb_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mar_Activity_completion
+		formatString: 0
+		lineageTag: 8caf57a0-7ace-474f-900d-2095947179f1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Mar_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Apr_Activity_completion
+		formatString: 0
+		lineageTag: 23746fee-db6b-4cd4-baa7-2252f141e926
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Apr_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column May_Activity_completion
+		formatString: 0
+		lineageTag: 8326fccb-9758-4d40-82d3-3234540275ad
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [May_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jun_Activity_completion
+		formatString: 0
+		lineageTag: 574c02fb-7f99-4409-ac62-43ef20c76727
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Jun_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jul_Activity_completion
+		formatString: 0
+		lineageTag: 3cb7723c-d78a-4b64-b5c9-bb745b7bf140
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Jul_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Aug_Activity_completion
+		formatString: 0
+		lineageTag: 8726190a-bcf3-47c9-b2cf-8366c0013faa
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Aug_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Oct_Activity_completion
+		formatString: 0
+		lineageTag: aa73fed3-60a1-49ab-b22f-52ac6661d4a9
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Oct_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nov_Activity_completion
+		formatString: 0
+		lineageTag: 803436fc-d7e5-4a10-b993-21611eca0830
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Nov_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dec_Activity_completion
+		formatString: 0
+		lineageTag: 9816f02f-93b4-4b79-bcd8-da09fbeab69a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dec_Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Activity_completion
+		formatString: 0
+		lineageTag: e81112dd-053e-47a3-8685-c51b4bffb543
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Activity_completion]
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_description
+		lineageTag: 22f7283f-def2-4064-8911-f75f74059c9f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: incentive_earning_detail[activity_description]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SummarizedTable = calculated
+		mode: import
+		source = ```
+				
+				    SUMMARIZECOLUMNS(
+				        'incentive_earning_detail'[activity_description],
+				        
+				        // Aggregated Measures
+				        "Sep_Activity_completion", ('Earning_Measure_Table'[Sep_Activity_completion]),
+				        "Incentive_Participants", ('Earning_Measure_Table'[Incentive Participants]),
+				        "Jan_Activity_completion", ('Earning_Measure_Table'[Jan_Activity_completion]),
+				        "Feb_Activity_completion", ('Earning_Measure_Table'[Feb_Activity_completion]),
+				        "Mar_Activity_completion", ('Earning_Measure_Table'[Mar_Activity_completion]),
+				        "Apr_Activity_completion", ('Earning_Measure_Table'[Apr_Activity_completion]),
+				        "May_Activity_completion", ('Earning_Measure_Table'[May_Activity_completion]),
+				        "Jun_Activity_completion", ('Earning_Measure_Table'[Jun_Activity_completion]),
+				        "Jul_Activity_completion", ('Earning_Measure_Table'[Jul_Activity_completion]),
+				        "Aug_Activity_completion", ('Earning_Measure_Table'[Aug_Activity_completion]),
+				        "Oct_Activity_completion", ('Earning_Measure_Table'[Oct_Activity_completion]),
+				        "Nov_Activity_completion", ('Earning_Measure_Table'[Nov_Activity_completion]),
+				        "Dec_Activity_completion", ('Earning_Measure_Table'[Dec_Activity_completion]),
+				        "Activity_completion", ('Earning_Measure_Table'[Activity_completion])
+				    )
+				
+				```
+
+	annotation PBI_Id = d059779f09894996aa4e0da8848bee33
+

@@ -1,0 +1,735 @@
+table Activity_MeasureTable
+	lineageTag: 4e7e2412-b9e5-409c-aabb-f3b5654a9da4
+
+	measure Mobile_Active_users = ```
+			
+			VAR MobileActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			        // 'tracking_action_events'[action] = "logged in",
+			        'member_last_activity_bi'[platform] = "app")
+			RETURN
+			IF(
+			    ISBLANK(MobileActiveUsers), 
+			    0, 
+			    DIVIDE(MobileActiveUsers, [Activity_Active_users])
+			)
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 93ec9328-be0f-4968-a4cc-c0d0f176cd16
+
+	measure Emp_Active_users_ = ```
+			
+			
+			// -- Create the 'b' variable (similar to 'a' in _test1)
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") &&
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			
+			// -- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			// VAR ActiveUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         reduction, 
+			//         USERELATIONSHIP(date_table[date], 'member_last_activity_bi'[last_session_date])
+			//     )
+			
+			// -- Calculate the total distinct count of employees
+			// VAR TotalEmployees = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),
+			//         member_dimension[relationship_code] = "EE" || member_dimension[relationship_code] = "Employee"
+			//     )
+			
+			// -- Return the percentage of active employees out of total employees
+			// RETURN
+			// IF(
+			//     ISBLANK(DIVIDE(ActiveUsers, TotalEmployees)),
+			//     0,
+			//     DIVIDE(ActiveUsers, TotalEmployees)
+			// )
+			IF(ISBLANK(DIVIDE([New Emp_Active_user],[New Eligible_EE])),0,(DIVIDE([New Emp_Active_user],[New Eligible_EE])))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 4a9bc1a1-d265-4ee3-9141-c26712a9ad4f
+
+	measure 'Mission Joins' =
+			
+			var a = CALCULATE(COUNT('mission_members_fact'[user_id]),USERELATIONSHIP(date_table[date],mission_members_fact[mission_start_date]))
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    a
+			)
+		formatString: 0
+		lineageTag: ffd5de48-4cd7-4e0b-9f47-19a33936e2ee
+
+	measure total_mission_completion =
+			
+			//  CALCULATE(COUNTROWS(activity_summary),activity_summary[activity_complete] = 1,USERELATIONSHIP(date_table[date],activity_summary[activity_completion_date]))
+			var a = CALCULATE(COUNT(mission_members_fact[user_id]), USERELATIONSHIP(date_table[date],mission_members_fact[mission_completion_date]),mission_members_fact[mission_complete] = "1")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 054e5e6e-7d2b-4c9d-b643-68d7aaed813a
+
+	measure Spouse_Active_users = ```
+			
+			
+			-- Create the 'b' variable (similar to 'a' in _test1)
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Spouse" || member_dimension[relationship_code] = "SP") &&
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			
+			// -- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			// VAR ActiveUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         reduction, 
+			//         USERELATIONSHIP(date_table[date], 'member_last_activity_bi'[last_session_date])
+			//     )
+			
+			// -- Calculate the total distinct count of employees
+			// VAR TotalSpouse = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),
+			//         member_dimension[relationship_code] = "SP" || member_dimension[relationship_code] = "Spouse"
+			//     )
+			
+			// -- Return the percentage of active employees out of total employees
+			// RETURN
+			// IF(
+			//     ISBLANK(DIVIDE(ActiveUsers, TotalSpouse)),
+			//     0,
+			//     DIVIDE(ActiveUsers, TotalSpouse)
+			// )
+			IF(ISBLANK(DIVIDE([New Other_Active_users_no],[New Eligible_S_P])),0,(DIVIDE([New Other_Active_users_no],[New Eligible_S_P])))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 36ca462c-506b-422f-b391-395f50594b1b
+
+	measure Total_Mobile_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [Mobile_Active_users]
+		formatString: 0%;-0%;0%
+		lineageTag: 73738dee-e358-48df-9d6a-fdf1b92e8cce
+
+	measure UniqueUsersCountOr = ```
+			
+			// VAR a = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]),
+			//         FILTER(
+			//             Append_Fact,
+			//             Append_Fact[mission_complete] = "1" || Append_Fact[milestone_achieved] = 1
+			//         ),USERELATIONSHIP(date_table[date],Append_Fact[join_date])
+			//     )
+			
+			// VAR b = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]), 
+			//         REMOVEFILTERS(Append_Dim),
+			//         ALL('Pseudo Category Table'),
+			//             Append_Fact[mission_complete] = "1" || Append_Fact[milestone_achieved] = 1,USERELATIONSHIP(date_table[date],Append_Fact[join_date])
+			//         )
+			// RETURN 
+			// DIVIDE(a,b)
+			
+			// VAR challenge_joins = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]),
+			//         FILTER(
+			//             Append_Fact,
+			//             Append_Fact[milestone_achieved] = 1
+			//         ),USERELATIONSHIP(date_table[date],Append_Fact[join_date])
+			//     )
+			
+			// VAR mission_joins = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]),
+			//         FILTER(
+			//             Append_Fact,
+			//             Append_Fact[mission_complete] = "1" 
+			//         ),USERELATIONSHIP(date_table[date],Append_Fact[mission_start_date])
+			//     )
+			
+			// var total_joins = challenge_joins + mission_joins
+			
+			// VAR c_t = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]), 
+			//         REMOVEFILTERS(Append_Dim),
+			//         Append_Fact[milestone_achieved] = 1,
+			//         USERELATIONSHIP(date_table[date],Append_Fact[join_date]),
+			//         VALUES(Append_Dim[Both_Categories])
+			//         )
+			// VAR m_t = 
+			//     CALCULATE(
+			//         COUNT(Append_Fact[user_id]), 
+			//         REMOVEFILTERS(Append_Dim),
+			//         Append_Fact[mission_complete] = "1" ,
+			//         USERELATIONSHIP(date_table[date],Append_Fact[mission_start_date]),
+			//         VALUES(Append_Dim[Both_Categories])
+			//         )
+			// var total = c_t+m_t
+			
+			// RETURN 
+			// DIVIDE(total_joins,total)
+			
+			VAR challenge_joins = 
+			    CALCULATE(
+			        COUNT(Append_Fact[user_id]),
+			        FILTER(
+			            Append_Fact,
+			            Append_Fact[milestone_achieved] = 1
+			        ),
+			        USERELATIONSHIP(date_table[date], Append_Fact[join_date])
+			    )
+			
+			VAR mission_joins = 
+			    CALCULATE(
+			        COUNT(Append_Fact[user_id]),
+			        FILTER(
+			            Append_Fact,
+			            Append_Fact[mission_complete] = "1"
+			        ),
+			        USERELATIONSHIP(date_table[date], Append_Fact[mission_start_date])
+			    )
+			
+			VAR total_joins = challenge_joins + mission_joins
+			
+			VAR c_t = 
+			    CALCULATE(
+			        COUNT(Append_Fact[user_id]), 
+			        REMOVEFILTERS(Append_Dim),
+			        Append_Fact[milestone_achieved] = 1,
+			        USERELATIONSHIP(date_table[date], Append_Fact[join_date])
+			    )
+			
+			VAR m_t = 
+			    CALCULATE(
+			        COUNT(Append_Fact[user_id]), 
+			        REMOVEFILTERS(Append_Dim),
+			        Append_Fact[mission_complete] = "1",
+			        USERELATIONSHIP(date_table[date], Append_Fact[mission_start_date])
+			    )
+			
+			VAR total = c_t + m_t
+			
+			RETURN 
+			    DIVIDE(total_joins, total)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: b6123e7d-d804-4287-8298-3351ae8f5528
+
+	measure newSortOrderMeasure = ```
+			
+			IF (
+			    [Top N Categories] = BLANK(),
+			    6,
+			    VAR CurrentPercent = [UniqueUsersCountOr]
+			    VAR CurrentCategory = SELECTEDVALUE('Pseudo Category Table'[Both_Categories])
+			    
+			    RETURN 
+			    RANKX (
+			        FILTER (
+			            ALL ('Pseudo Category Table'),
+			            'Pseudo Category Table'[Top N Categories]
+			        ),
+			        [UniqueUsersCountOr],  -- Using the measure here
+			        ,
+			        DESC,
+			        DENSE
+			    ) + 
+			    COUNTROWS (
+			        FILTER (
+			            FILTER (
+			                ALL ('Pseudo Category Table'),
+			                'Pseudo Category Table'[Top N Categories]
+			            ),
+			            [UniqueUsersCountOr] = CurrentPercent &&
+			            'Pseudo Category Table'[Both_Categories] < CurrentCategory
+			        )
+			    )
+			)
+			
+			
+			
+			```
+		formatString: 0
+		lineageTag: 26aec699-86f8-4205-970f-b3507b104340
+
+	measure 'Activity_Measure Value' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Health Survey", [Health_Survey_Participants],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Joined Mission", [Mission Joins],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Mission Completions", [total_mission_completion],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Challenges Joins", [Challenge_Joined],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Challenge Milestone Completions", [Challenge_completion],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Point Redemption Events", [Redemption Points],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Stride Completions", [Stride Completions],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Gym Check-In Completions", [Gym_check_in Completions],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Quiz Completions", [Quiz_Completion],
+			    BLANK()
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: 513ad113-7504-4edf-aa0b-5b50be6fcb3f
+
+	measure %Incentive_Employee = ```
+			
+			
+			-- Create the 'b' variable (similar to 'a' in _test1)
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('incentive_earning_detail'[user_id]),USERELATIONSHIP(date_table[date],incentive_earning_detail[activity_completion_date]),member_dimension[relationship_code] IN{"EE","Employee"})
+			
+			-- Return the percentage of active employees out of total employees
+			RETURN
+			IF(
+			    ISBLANK(DIVIDE(ActiveUsers, [New Eligible_EE])),
+			    0,
+			    DIVIDE(ActiveUsers, [New Eligible_EE])
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 15d6e819-9e0b-420b-84ba-a1fd6d1a49c7
+
+	measure Total_Incentive_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			// Total_percent - [%Incentive_Employee]-[%Incentive_S/P]
+			Total_percent -[%Incentive_all]
+		lineageTag: 05bb0176-4bcd-4901-af2c-14ff31e2d557
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %Incentive_S/P = ```
+			
+			
+			-- Create the 'b' variable (similar to 'a' in _test1)
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" || member_dimension[relationship_code] = "SP") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('incentive_earning_detail'[user_id]),USERELATIONSHIP(date_table[date],incentive_earning_detail[activity_completion_date]),member_dimension[relationship_code] IN{"SP","Spouse"})
+			
+			-- Return the percentage of active employees out of total employees
+			RETURN
+			IF(
+			    ISBLANK(DIVIDE(ActiveUsers, [New Eligible_S_P])),
+			    0,
+			    DIVIDE(ActiveUsers, [New Eligible_S_P])
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 07ace543-68fa-4381-a474-35d8c2789c7f
+
+	measure EligibleEmployees = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") && (member_dimension[Concated_fiels] IN b)
+			    )
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]), reduction,
+			        'member_dimension'[join_date] <= date_,  -- Filter dates up to the selected date
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: d7609631-0c82-4762-94dc-387f47e1d5f6
+
+	measure %Incentive_all =
+			
+			var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),USERELATIONSHIP(date_table[date],incentive_earning_detail[activity_completion_date]))
+			RETURN
+			if(ISBLANK(DIVIDE(count_user,[EligibleUsers])),0,DIVIDE(count_user,[EligibleUsers]))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 45e53a83-e881-4586-893e-91ad7ba74a76
+
+	measure Eligible_S/P = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" || member_dimension[relationship_code] = "SP") && (member_dimension[Concated_fiels] IN b)
+			    )
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]), reduction,
+			        'member_dimension'[join_date] <= date_,  -- Filter dates up to the selected date
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 4d0850d2-cdb0-42ef-b125-5268063e6fd8
+
+	measure 'Activity_Measure Value_Incented' = ```
+			
+			SWITCH(
+			    TRUE(),
+			
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Mission Completions", [Mission_completion_Incentive],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Challenge Milestone Completions", [Challenge_completion_Incentive],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Stride Completions", [Stride_Incentive],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Gym Check-In Completions", [Gym_checkin_completion_Incentive],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Quiz Completions", [Quiz_Incentive],
+			    SELECTEDVALUE('Activity_Measure_Names'[Measure]) = "Health Survey", [Health_survey_Incentive],
+			    BLANK()
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: 6fff587a-0fe1-423c-90a1-a814f484f1a9
+
+	measure 'New Eligible_S_P' = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of eligible users with the date range filter
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        reduction,  -- Apply the reduction filters
+			        'member_dimension'[join_date] <= date_  -- Filter join_date up to the EndDate
+			-- Filter join_date from the StartDate
+			  -- Ignore any pre-existing date filters
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 9d0d0a9e-8084-4bdb-8545-672a8ba1bdd9
+
+	measure 'New Eligible_EE' = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of eligible users with the date range filter
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        reduction,  -- Apply the reduction filters
+			        'member_dimension'[join_date] <= date_  -- Filter join_date up to the EndDate
+			-- Filter join_date from the StartDate
+			 -- Ignore any pre-existing date filters
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: f4e0d985-211f-44fc-80ce-36b09fbcadff
+
+	measure Quiz_Completion =
+			
+			// var a =CALCULATE(DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP('survey_event_fact'[survey_end_date],date_table[date]))
+			var a = CALCULATE(COUNT(quiz_completions[user_id]),USERELATIONSHIP(date_table[date],quiz_completions[quiz_completion_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 4cb5a433-3746-44d1-ad39-68c9de9387e7
+
+	measure %Incentive_all_Emp = ```
+			
+			-- Create the 'b' variable (similar to 'a' in _test1)
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('incentive_earning_detail'[user_id]),USERELATIONSHIP(date_table[date],incentive_earning_detail[activity_completion_date]),member_dimension[relationship_code] IN{"EE","Employee"})
+			
+			-- Return the percentage of active employees out of total employees
+			RETURN
+			IF(
+			    ISBLANK(DIVIDE(ActiveUsers, [EligibleUsers])),
+			    0,
+			    DIVIDE(ActiveUsers, [EligibleUsers])
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 48016c46-4a61-4ef9-b880-8acb8a2d421e
+
+	measure %Incentive_all_Sp = ```
+			
+			-- Create the 'b' variable (similar to 'a' in _test1)
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" || member_dimension[relationship_code] = "SP") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of active users based on the filtered data and the date range from StartYear to SelectedEndDate
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('incentive_earning_detail'[user_id]),USERELATIONSHIP(date_table[date],incentive_earning_detail[activity_completion_date]),member_dimension[relationship_code] IN{"SP","Spouse"})
+			
+			-- Return the percentage of active employees out of total employees
+			RETURN
+			IF(
+			    ISBLANK(DIVIDE(ActiveUsers, [EligibleUsers])),
+			    0,
+			    DIVIDE(ActiveUsers, [EligibleUsers])
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c23a5ae2-a6b0-4912-aae2-2870959f221b
+
+	column Column
+		type: calculated
+		lineageTag: 3aa38718-77f6-4779-a142-dc174cf60256
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Activity_MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

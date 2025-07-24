@@ -1,0 +1,658 @@
+table member_dimension
+	lineageTag: f7f124c7-9b61-417e-b1d5-e7d0516715d8
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d102e408-47b7-4483-be28-b2e4d878b7ae
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: adcdfc14-4f62-4bfb-aaed-0d6b2243e0c5
+		summarizeBy: none
+		sourceColumn: start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 98cca128-4745-4f23-80f5-0fda5b7e4e0b
+		summarizeBy: none
+		sourceColumn: end_date
+
+		variation Variation
+			isDefault
+			relationship: 6874b4b4-6f52-4ee6-be82-463aa9a6d0ef
+			defaultHierarchy: LocalDateTable_a39fb914-73f4-408c-9d87-7301da0d01f6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column status
+		dataType: string
+		lineageTag: e320f2cc-6a70-47c3-93f4-caa137c1d393
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column terms_and_conditions_acceptance_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f3b610ce-df1d-4f81-b07b-88122abe70cf
+		summarizeBy: none
+		sourceColumn: terms_and_conditions_acceptance_date
+
+		variation Variation
+			isDefault
+			relationship: dd6391aa-04e2-4319-b5e1-440277c0cafc
+			defaultHierarchy: LocalDateTable_6c86a77e-c611-4628-8e80-b2ffd0ea7785.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column screenname
+		dataType: string
+		lineageTag: e3f91e89-dfe2-4e93-a95d-8f7104e57228
+		summarizeBy: none
+		sourceColumn: screenname
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_birth
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c763a8f9-7157-43cc-8af2-b2ddbb5403e6
+		summarizeBy: none
+		sourceColumn: date_of_birth
+
+		variation Variation
+			isDefault
+			relationship: ed6ef5fb-0e26-48e6-955a-6754be503e5e
+			defaultHierarchy: LocalDateTable_9ae11de8-31d3-42d4-a49c-37c8d764b9c5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column join_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7fb0d328-ab02-494e-9af8-0cf564b07ec7
+		summarizeBy: none
+		sourceColumn: join_date
+
+		variation Variation
+			isDefault
+			relationship: f6dd76f7-6625-4833-8f13-334cc6213ac1
+			defaultHierarchy: LocalDateTable_eccb6aee-920a-4bbf-b992-a78582c2c47f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column efid
+		dataType: string
+		lineageTag: 189a3723-0bf7-4de4-9a36-2912068efc98
+		summarizeBy: none
+		sourceColumn: efid
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendor_id
+		dataType: string
+		lineageTag: 5656bcd3-9d4f-416a-9977-973246126313
+		summarizeBy: none
+		sourceColumn: vendor_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_name
+		dataType: string
+		lineageTag: c2848c8e-451f-4348-b69e-94c019645518
+		summarizeBy: none
+		sourceColumn: first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: 5b29eb94-9539-4c0f-963c-831e17ab1666
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column mobile_phone_number
+		dataType: string
+		lineageTag: 1f3470ef-e814-43bc-9ab6-c150314e0dd2
+		summarizeBy: none
+		sourceColumn: mobile_phone_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_name
+		dataType: string
+		lineageTag: 7e501939-e0f8-41ba-b3cf-8cd6c8c3367a
+		summarizeBy: none
+		sourceColumn: last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a4fecc58-892e-491e-9b92-fa03c67df85e
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column middle_name
+		dataType: string
+		lineageTag: 093087d8-f28c-4a8a-8f7c-ffda7162bab6
+		summarizeBy: none
+		sourceColumn: middle_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: 7883a584-0b88-483d-b5d8-db66435014e4
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column division_name
+		dataType: string
+		lineageTag: 605940ad-804c-425f-a5c3-646542704da9
+		summarizeBy: none
+		sourceColumn: division_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column employment_status
+		dataType: string
+		lineageTag: 3fa1d780-c5a7-4f34-b7c7-9ac9f739d88a
+		summarizeBy: none
+		sourceColumn: employment_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_system_code
+		dataType: string
+		lineageTag: 0d364927-1c06-442c-a7ca-e14dc67bcacf
+		summarizeBy: none
+		sourceColumn: source_system_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column funding_arrangement_code
+		dataType: string
+		lineageTag: e0a062ff-cee6-4247-8884-519e568070da
+		summarizeBy: none
+		sourceColumn: funding_arrangement_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column health_plan_product_code
+		dataType: string
+		lineageTag: c30be946-971a-4709-8c92-60705b710774
+		summarizeBy: none
+		sourceColumn: health_plan_product_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column legal_entity_code
+		dataType: string
+		lineageTag: 2ec22fca-0d1e-4256-aa8d-19ea503854be
+		summarizeBy: none
+		sourceColumn: legal_entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column line_of_business
+		dataType: string
+		lineageTag: 7d78232a-ce61-4c1d-9723-b2f7cd57ca01
+		summarizeBy: none
+		sourceColumn: line_of_business
+
+		annotation SummarizationSetBy = Automatic
+
+	column member_effective_date
+		dataType: string
+		lineageTag: 1c05c040-4250-4dc2-90b1-ddcd3d982632
+		summarizeBy: none
+		sourceColumn: member_effective_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column member_termination_date
+		dataType: string
+		lineageTag: afb25280-8961-4009-bb31-50dfbc170761
+		summarizeBy: none
+		sourceColumn: member_termination_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column medical_coverage
+		dataType: string
+		lineageTag: 97972233-73a7-49f1-bbd4-bf01c7a4a962
+		summarizeBy: none
+		sourceColumn: medical_coverage
+
+		annotation SummarizationSetBy = Automatic
+
+	column medical_plan_organization_id
+		dataType: string
+		lineageTag: 63b52ed5-a758-4931-b685-8190c8985a7d
+		summarizeBy: none
+		sourceColumn: medical_plan_organization_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column market_segment_name
+		dataType: string
+		lineageTag: 9f558fcc-b747-4cf1-9356-33ebf9cddbac
+		summarizeBy: none
+		sourceColumn: market_segment_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column marital_status
+		dataType: string
+		lineageTag: 9e33b93b-004d-49ea-bbdc-244c3bc1f10e
+		summarizeBy: none
+		sourceColumn: marital_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_policy_number
+		dataType: string
+		lineageTag: ffc5acb0-c25e-4743-a2cb-a398435a2dc7
+		summarizeBy: none
+		sourceColumn: group_policy_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchaser_code
+		dataType: string
+		lineageTag: c5eb6383-8389-4cd2-b61d-3a758f7075a4
+		summarizeBy: none
+		sourceColumn: purchaser_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_variation_and_branch_reporting_code
+		dataType: string
+		lineageTag: 1e8838de-89e2-4edc-b2f6-a142e4a12e49
+		summarizeBy: none
+		sourceColumn: plan_variation_and_branch_reporting_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column retirement_plan_text
+		dataType: string
+		lineageTag: a7ab441c-78a5-4d49-833d-d3d497e8d07a
+		summarizeBy: none
+		sourceColumn: retirement_plan_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: f6156cf9-9aac-4f90-96c3-38cd7f216194
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column union_status
+		dataType: string
+		lineageTag: 3a1d2d42-f46b-4de6-b4d5-e5c59df6b928
+		summarizeBy: none
+		sourceColumn: union_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column email
+		dataType: string
+		lineageTag: 3ac3f24c-dfcd-4cd6-9e4e-03db9a64cc00
+		summarizeBy: none
+		sourceColumn: email
+
+		annotation SummarizationSetBy = Automatic
+
+	column work_location_name
+		dataType: string
+		lineageTag: 20790d5a-8435-41e1-a955-fc58ec5026d4
+		summarizeBy: none
+		sourceColumn: work_location_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column population_id
+		dataType: string
+		lineageTag: c65e1536-8ba5-4a14-9f79-59f72cbb7b61
+		summarizeBy: none
+		sourceColumn: population_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column insurance_issuance_state_code
+		dataType: string
+		lineageTag: 9f95e6f5-c5e3-40db-bf76-228ac03b6da9
+		summarizeBy: none
+		sourceColumn: insurance_issuance_state_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column partner_name
+		dataType: string
+		lineageTag: 8dbeca44-eaa9-44b6-afae-a21ef45cf722
+		summarizeBy: none
+		sourceColumn: partner_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column relationship_code
+		dataType: string
+		lineageTag: 72cc9b66-3ec6-4e14-bd32-cba12337406e
+		summarizeBy: none
+		sourceColumn: relationship_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column spee_indicator
+		dataType: string
+		lineageTag: 4927ac2b-53e6-43dc-bc0f-7596d7b0c363
+		summarizeBy: none
+		sourceColumn: spee_indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column partner_id
+		dataType: string
+		lineageTag: 43d8a3e5-868f-4a68-8a4f-3d6155a6ad67
+		summarizeBy: none
+		sourceColumn: partner_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column postal_code
+		dataType: string
+		lineageTag: 7985f7c9-2618-464e-8099-646e64b3afd5
+		summarizeBy: none
+		sourceColumn: postal_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_id
+		dataType: string
+		lineageTag: 85e687d1-3351-4c21-b6a7-59d95bae4526
+		summarizeBy: none
+		sourceColumn: employee_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client
+		dataType: string
+		lineageTag: 43c2be6f-4dd1-4162-8963-f5f9e18244b0
+		summarizeBy: none
+		sourceColumn: client
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: string
+		lineageTag: 448eaf58-37fb-4060-ba6a-879688d0b9f9
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: b6aa50d3-8dc5-4f64-bc33-8e283a7fabb1
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column affiliation_id
+		dataType: string
+		lineageTag: 9794cb5a-b02d-4548-8e0c-9f92b00ef9a4
+		summarizeBy: none
+		sourceColumn: affiliation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column affiliation_description
+		dataType: string
+		lineageTag: e8a526d2-efd3-405c-9fce-fc0a5081962a
+		summarizeBy: none
+		sourceColumn: affiliation_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_line_1
+		dataType: string
+		lineageTag: 584761e9-d538-4715-bda4-aa0a38e79b9e
+		summarizeBy: none
+		sourceColumn: address_line_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_line_2
+		dataType: string
+		lineageTag: c760da6d-6512-48cc-bb22-db5418129c69
+		summarizeBy: none
+		sourceColumn: address_line_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column alternate_id
+		dataType: string
+		lineageTag: 5e77ecdf-2d79-4729-974c-2a22ccc432d7
+		summarizeBy: none
+		sourceColumn: alternate_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column cobra_text
+		dataType: string
+		lineageTag: 9e913dfc-9130-47cb-9ee0-eb9adf76dfba
+		summarizeBy: none
+		sourceColumn: cobra_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column salary_hourly_indicator
+		dataType: string
+		lineageTag: 74cb4232-b63b-438a-b925-23d1257fd98d
+		summarizeBy: none
+		sourceColumn: salary_hourly_indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column new_hire_indicator
+		dataType: string
+		lineageTag: 98eb2a0f-bf11-4f67-814a-699da22f0e9b
+		summarizeBy: none
+		sourceColumn: new_hire_indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column hire_date
+		dataType: string
+		lineageTag: 512047a3-e971-4c40-b7d9-1093903ee37d
+		summarizeBy: none
+		sourceColumn: hire_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column option_id
+		dataType: string
+		lineageTag: c15ab062-e9ce-4c56-b55a-2b03db61fb49
+		summarizeBy: none
+		sourceColumn: option_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column incentive_indicator
+		dataType: string
+		lineageTag: 22f34f11-2cc3-4eaf-a590-26e266d7bcfd
+		summarizeBy: none
+		sourceColumn: incentive_indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_code
+		dataType: string
+		lineageTag: 1ca9e6a2-4a8c-4828-957d-b81120a2c48b
+		summarizeBy: none
+		sourceColumn: group_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_1
+		dataType: string
+		lineageTag: 43eff032-9bd7-4b4e-b4f1-b9f6070022f1
+		summarizeBy: none
+		sourceColumn: custom_defined_field_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_2
+		dataType: string
+		lineageTag: c0bc8e92-fb0b-4e5b-8672-4966224bca1b
+		summarizeBy: none
+		sourceColumn: custom_defined_field_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_3
+		dataType: string
+		lineageTag: c9c2ced3-0a69-4441-b859-37dc74a5a100
+		summarizeBy: none
+		sourceColumn: custom_defined_field_3
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_4
+		dataType: string
+		lineageTag: 1fe87eb6-f13b-465d-97bb-5eaa201aa5de
+		summarizeBy: none
+		sourceColumn: custom_defined_field_4
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_5
+		dataType: string
+		lineageTag: d5f5466f-9656-4ff6-9676-80dee1cdae12
+		summarizeBy: none
+		sourceColumn: custom_defined_field_5
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_6
+		dataType: string
+		lineageTag: f28a8783-11bf-4a67-9feb-7c7ce5cd2e4c
+		summarizeBy: none
+		sourceColumn: custom_defined_field_6
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_7
+		dataType: string
+		lineageTag: 64aac697-2edd-47c0-b394-46f903826312
+		summarizeBy: none
+		sourceColumn: custom_defined_field_7
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_8
+		dataType: string
+		lineageTag: 86f23ff1-ca99-4ab6-aaac-0f37692bcb76
+		summarizeBy: none
+		sourceColumn: custom_defined_field_8
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_9
+		dataType: string
+		lineageTag: d2d9462e-f780-4232-bbac-bce54b774d6d
+		summarizeBy: none
+		sourceColumn: custom_defined_field_9
+
+		annotation SummarizationSetBy = Automatic
+
+	column custom_defined_field_10
+		dataType: string
+		lineageTag: f5214bfe-9196-4351-8113-69f54158804c
+		summarizeBy: none
+		sourceColumn: custom_defined_field_10
+
+		annotation SummarizationSetBy = Automatic
+
+	column suffix
+		dataType: string
+		lineageTag: 335a927f-5334-407d-96c8-24e34cdb427a
+		summarizeBy: none
+		sourceColumn: suffix
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 5c35555e-dfe9-408a-b8a9-6f1bdc605a04
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column latest_date
+		dataType: string
+		lineageTag: fde08228-5820-465c-b8c0-71efaa4d24fb
+		summarizeBy: none
+		sourceColumn: latest_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Client_id_name
+		dataType: string
+		lineageTag: 5a791767-2e18-44bd-90da-60412f84c6e4
+		summarizeBy: none
+		sourceColumn: Client_id_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition member_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    member_dimension_Table = optum_dev_Schema{[Name="member_dimension",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(member_dimension_Table,{{"start_date", type date}, {"end_date", type date}, {"terms_and_conditions_acceptance_date", type datetime}, {"date_of_birth", type datetime}, {"join_date", type datetime}}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Changed Type",{{"join_date", type date}, {"date_of_birth", type date}, {"terms_and_conditions_acceptance_date", type date}}),
+				    #"Added Custom" = Table.AddColumn(#"Changed Type1", "Client_id_name", each [client_id] & " " & [client_name])
+				in
+				    #"Added Custom"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

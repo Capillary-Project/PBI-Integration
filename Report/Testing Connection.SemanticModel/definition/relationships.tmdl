@@ -1,0 +1,33 @@
+relationship 3373b88d-7e23-4c5e-8119-0bbac3ef79bc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_2da69769-cd9a-40bd-a4d5-eafb6e343035.Date
+
+relationship 70133b73-56e3-40c0-9b2a-b85b89ced152
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.end_date
+	toColumn: LocalDateTable_37e964d6-a514-44b1-8262-ac91315b1901.Date
+
+relationship ff4d7340-621d-4024-9e4d-3ae4794ecda2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.registration_start_date
+	toColumn: LocalDateTable_b133b70f-37a1-4040-b100-94873b9db55e.Date
+
+relationship 5e7b909d-f742-42a5-83bd-3e33d073e110
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.last_updated_date
+	toColumn: LocalDateTable_719cf5b6-5228-43a2-9c39-b16c8a1788ff.Date
+
+relationship 8bfa1213-531a-45bf-8619-5467d4996bce
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.latest_date
+	toColumn: LocalDateTable_a83b42d4-f154-412c-b817-39924d51e101.Date
+
+relationship 83f826de-76ab-0978-2c3b-7f51614bf18c
+	fromColumn: challenge_dimension.start_date
+	toColumn: date_table.date
+
+relationship a8a83abc-7df9-6e0a-3559-86508e6eb32f
+	fromColumn: member_dimension.end_date
+	toColumn: date_table.date
+

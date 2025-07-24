@@ -1,0 +1,141 @@
+table customer_contact_info_marketing
+	lineageTag: a6f50b04-aca3-484c-af5e-1e1b5cdb32f6
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 69b29054-71ea-498a-9665-2e25a53a4590
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_legend_lebel
+		dataType: string
+		lineageTag: 76221a17-9f76-468d-abc3-e22a4461c24a
+		summarizeBy: none
+		sourceColumn: campaign_legend_lebel
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: f1fbf3fa-7a18-48a8-98d5-8be934bc8629
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_name
+		dataType: string
+		lineageTag: 546d5189-3f4e-4d86-9f12-7efecf765b55
+		summarizeBy: none
+		sourceColumn: campaign_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5c717c36-c2ce-4cc5-999d-b3385f37d320
+		summarizeBy: none
+		sourceColumn: date
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column mon_year = FORMAT('customer_contact_info_marketing'[date],"mmm-yy")
+		lineageTag: 82aac267-9686-46c2-84c0-7ea6cb78fff4
+		summarizeBy: none
+		sortByColumn: monthoffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthoffset = ```
+			DATEDIFF(CALCULATE(MIN('customer_contact_info_marketing'[date]), ALLSELECTED('customer_contact_info_marketing')),'customer_contact_info_marketing'[date], MONTH)
+			
+			```
+		formatString: 0
+		lineageTag: 007283e8-d044-487f-9e48-3693157876ba
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_type
+		dataType: string
+		lineageTag: 19d863f4-2710-4065-a22b-f9f562bd8057
+		summarizeBy: none
+		sourceColumn: group_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_id
+		dataType: string
+		lineageTag: d2253f1e-2d78-46b0-88c5-34f25444af4a
+		summarizeBy: none
+		sourceColumn: campaign_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4cb63b6f-44c7-499d-8d67-ff2b56df20e1
+		summarizeBy: none
+		sourceColumn: campaign_start_date
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column campaign_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 78a83b5f-c3d6-40d8-a54b-fa47c3f77809
+		summarizeBy: none
+		sourceColumn: campaign_end_date
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column org_id
+		dataType: string
+		lineageTag: cb301a2a-e9a5-4bec-83de-62060eb44424
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_type
+		dataType: string
+		lineageTag: 2d4e1eec-b6c5-4ec6-9d8f-bb3a4443291a
+		summarizeBy: none
+		sourceColumn: campaign_type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition customer_contact_info_marketing = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    customer_contact_info_marketing_Table = optum_dev_Schema{[Name="customer_contact_info_marketing",Kind="Table"]}[Data]
+				in
+				    customer_contact_info_marketing_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

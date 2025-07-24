@@ -1,0 +1,38 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","challenge_members_fact","ChallengeDetailsMeasure","challenge_dimension","member_dimension","SchemaName","team_challenge_fact"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1155.0 (25.06)+46435b07013d2a234d7fd007083a9e70b8e79f1c
+
+ref table DateTableTemplate_5e477449-a9f9-4e54-ab2c-0c628b58dae0
+ref table date_table
+ref table LocalDateTable_9324850f-9d3b-418b-a542-2445f2928ec8
+ref table challenge_members_fact
+ref table ChallengeDetailsMeasure
+ref table challenge_dimension
+ref table LocalDateTable_4149931b-aa87-451a-bdd9-6f4e8c66bfa8
+ref table LocalDateTable_cd7a3be7-7453-4c5f-9b71-361fe2c0ff20
+ref table LocalDateTable_acc60145-2a0c-437e-a49d-ca3ccf55035e
+ref table LocalDateTable_d074c852-d855-46a6-9535-da855b2a83f0
+ref table member_dimension
+ref table LocalDateTable_2b9ae149-8d14-4e3a-8721-d6417f7b31be
+ref table LocalDateTable_4931d8f0-4674-40d8-b72a-23f663b32953
+ref table LocalDateTable_8d0018fc-096b-4d8d-b027-5ccdf2accc22
+ref table LocalDateTable_1fbc13d7-5f96-4b13-9db4-4d7d8fd70c5e
+ref table LocalDateTable_e1584295-9266-4b09-933b-5d51ab860adc
+ref table LocalDateTable_afaaa39f-5bcd-411a-bd53-6fc18b4dad5c
+ref table LocalDateTable_3cdf5e00-9928-402b-9fa1-7325f10bbd41
+ref table team_challenge_fact
+ref table LocalDateTable_1cb069f9-743c-4b47-9b79-7107659efd27
+ref table LocalDateTable_eb13a3a0-717b-4796-9cc6-6808c5c64f6c
+
+ref cultureInfo en-US
+

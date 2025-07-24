@@ -1,0 +1,70 @@
+table member_last_activity_bi
+	lineageTag: a738bb7e-62a3-4646-93e5-5f2101045eb3
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d03a550e-c119-40a7-8a53-5b46f06e18d9
+		summarizeBy: none
+		sourceColumn: user_id
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_session_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 04bcd6b3-f0a2-4437-a4f7-169812ef0bd9
+		summarizeBy: none
+		sourceColumn: last_session_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cb1959c4-b239-40d7-8e16-611ea3d1fcbd
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 506c5cf3-ccba-472e-a5cc-ca841613d783
+			defaultHierarchy: LocalDateTable_244ee724-47d0-4613-a8ea-b28876c79dce.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column platform
+		dataType: string
+		lineageTag: 26b3088b-c395-48da-a985-351bcc4abc09
+		summarizeBy: none
+		sourceColumn: platform
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: 628dd217-368a-4467-8f0f-aeaa4c8a7375
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition member_last_activity_bi = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    member_last_activity_bi_Table = optum_dev_Schema{[Name="member_last_activity_bi",Kind="Table"]}[Data]
+				in
+				    member_last_activity_bi_Table
+
+	annotation PBI_ResultType = Table
+

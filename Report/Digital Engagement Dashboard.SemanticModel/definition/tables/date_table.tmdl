@@ -1,0 +1,98 @@
+table date_table
+	lineageTag: b3c022e0-aa3d-45db-af48-bf157337c0e1
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 37f4a158-3628-4995-9191-e2c8ea9280b3
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: c16bf14d-c59e-4af3-9efb-3e3a4468c32a
+			defaultHierarchy: LocalDateTable_cc28da23-9e7e-46a0-8715-2cfa237b2b41.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column month
+		dataType: string
+		lineageTag: d2efd79e-70fb-4703-8d1c-1f57e5ce11af
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 9f3afbc0-87be-4c9b-ae23-7ec1bd09ea91
+		summarizeBy: none
+		sourceColumn: MonthYear
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column short_month = FORMAT('date_table'[date],"mmm")
+		lineageTag: cb6789eb-44a5-498f-b3e5-9a1335657b2b
+		summarizeBy: none
+		sortByColumn: month_no
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_no = FORMAT('date_table'[date],"m")
+		dataType: int64
+		formatString: 0
+		lineageTag: 03c273d7-8c53-4c2a-8860-033bbc798755
+		summarizeBy: sum
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column mon_year = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: 9e5dd04d-6352-4c67-bcf3-a48fe3e8ead9
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')), 
+			    'date_table'[date], 
+			    MONTH
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 47ecdc74-613f-4390-a5c3-37b6eae35785
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,66 @@
+table points_redemptions
+	lineageTag: 4a0f6028-5049-4109-8351-64347e04003e
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 82d4faf7-f1fd-4d5c-a48c-fd6bd8391827
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column deducted_points
+		dataType: double
+		lineageTag: 8ead17e5-664d-4738-a1b8-f626f36df428
+		summarizeBy: sum
+		sourceColumn: deducted_points
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column awarded_ref_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1cc4f9fd-25d4-4872-965c-1df0ccc1497b
+		summarizeBy: sum
+		sourceColumn: awarded_ref_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redemption_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2830f74a-6d13-4bcb-bec5-afff6674bbea
+		summarizeBy: none
+		sourceColumn: redemption_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 04ac84df-79a2-4036-9592-61c364b480b0
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition points_redemptions = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    points_redemptions_Table = optum_dev_Schema{[Name="points_redemptions",Kind="Table"]}[Data]
+				in
+				    points_redemptions_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,24 @@
+table 'Risk Category'
+	lineageTag: b3df082b-67e5-427b-b674-fa19c70bd51d
+
+	column 'Risk Category'
+		dataType: string
+		lineageTag: 5c21bb0c-85c6-4577-9860-3a583b6cd27a
+		summarizeBy: none
+		sourceColumn: Risk Category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Risk Category' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("VY27CgIxEEV/JaRawWKxsPeJgtpEsFi3GMfZ3YGQCcks+PlKUtkdzuVyus5uPMok3vbLzu6ZtMDhQwk5U7OD9GZZ/MsH8ThprvbIAQIyeHMi8DoVeeGBjAPlPAAqSyjWeaJYScrDzTFKqkmniXIueJcXIIp5zm27WpsboygHKlttm2Z7Pf/6/Rc=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Risk Category" = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Risk Category", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

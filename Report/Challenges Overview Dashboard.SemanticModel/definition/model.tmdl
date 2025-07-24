@@ -1,0 +1,46 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","MeasureTable","challenge_members_fact","ChallengeDetailsMeasure","challenge_dimension","member_dimension","incentive_earning_detail","member_last_activity_bi","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1105.0 (25.07)+decbc46fce458c5b8d5109d6f32a743f2ac949c8
+
+ref table DateTableTemplate_5e477449-a9f9-4e54-ab2c-0c628b58dae0
+ref table date_table
+ref table LocalDateTable_9324850f-9d3b-418b-a542-2445f2928ec8
+ref table MeasureTable
+ref table challenge_members_fact
+ref table Parameter
+ref table ChallengeDetailsMeasure
+ref table challenge_dimension
+ref table LocalDateTable_9f339ca8-a66d-431c-b924-2cdf7efa4c6b
+ref table LocalDateTable_ac532cc6-daa8-4169-bbd1-a1ba78e1522b
+ref table LocalDateTable_52ba0866-fdbe-487d-a898-f8f31eada52c
+ref table LocalDateTable_c7280f8e-edc9-4add-a591-f94f04ff4e40
+ref table member_dimension
+ref table incentive_earning_detail
+ref table LocalDateTable_801c8712-c84a-4d62-a4b9-74704b449373
+ref table LocalDateTable_bf4708a7-1c1f-4055-a472-409edec9914a
+ref table LocalDateTable_ce0147d4-831d-4633-a1bb-7407bb217dcd
+ref table LocalDateTable_35375614-f959-4495-b18a-d2844798abad
+ref table LocalDateTable_ae048d54-aac6-4d2b-be85-cdac8b1c294e
+ref table LocalDateTable_897edcec-ae32-49cf-b859-1ba02f19648a
+ref table LocalDateTable_43bb3d8b-4560-4140-b0f7-b79a40a4e8f7
+ref table LocalDateTable_4550d93e-677b-4dbb-9b7e-85f1bc28b23a
+ref table member_last_activity_bi
+ref table LocalDateTable_082069b7-91fa-4fb5-b4ff-96b8e3e6d90f
+ref table LocalDateTable_b097889f-771b-4b3b-88bc-0ede8a3d2d19
+ref table LocalDateTable_9ef67b23-c084-4a35-ba61-e8550d246bb5
+ref table LocalDateTable_892887c7-de91-44d0-824d-dbddbeee5a6a
+ref table 'Challenge Bucket'
+ref table LocalDateTable_5b75ecf4-51f7-4bd4-afdf-cd84dc397022
+
+ref cultureInfo en-US
+

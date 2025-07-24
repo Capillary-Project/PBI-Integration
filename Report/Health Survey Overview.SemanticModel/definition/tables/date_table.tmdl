@@ -1,0 +1,85 @@
+table date_table
+	lineageTag: e096c3b6-2458-4798-b905-ab741c224677
+
+	column date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 56f0ddb9-6111-4ba6-8d04-8acfe349b682
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 985b3a8e-da1a-4f84-90de-9f96f098d5c5
+			defaultHierarchy: LocalDateTable_c72697f9-520e-4e79-a834-5637f34ee3a8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		dataType: string
+		lineageTag: e2912eab-75dc-4457-a372-9542b0fd98e7
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 0f272b91-72ef-43e0-9f5e-b67212cc3436
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('date_table'[date],"mmm-yy")
+		lineageTag: ae714155-135f-44ec-9c63-19366e0cac8c
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_no = FORMAT('date_table'[date],"m")
+		dataType: int64
+		formatString: 0
+		lineageTag: 63fb0b3c-d031-496a-8142-f9075e71697f
+		summarizeBy: sum
+
+		changedProperty = DataType
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('date_table'[date]), ALLSELECTED('date_table')), 
+			    'date_table'[date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 8a11f279-5660-43dc-898e-2420805571b8
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

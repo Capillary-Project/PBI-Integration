@@ -1,0 +1,725 @@
+table survey_event_fact
+	lineageTag: c0a6650c-b273-416e-bf8c-378dc591d43c
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 59ccb572-2f6c-4cb1-88fd-7123bef0f9df
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column surveyid
+		dataType: string
+		lineageTag: 050b4dee-d0e4-4119-8459-8ad869fe9f31
+		summarizeBy: none
+		sourceColumn: surveyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column RiskCount = ```
+			
+			
+			// SUMX(
+			//     VALUES('survey_event_fact'[user_id]),
+			//     IF('survey_event_fact'[riskAlcohol] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskDiet] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskExercise(Cardio)] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskExercise(Weights)] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskFinancialHealth] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskHappiness] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskSleep] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskSocialSupport] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskStress] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskTobacco&Nicotine] IN {"High", "Moderate"}, 1, 0) +
+			//     IF('survey_event_fact'[riskWeight(BMI)] IN {"High", "Moderate"}, 1, 0)
+			// )
+			
+			
+			IF('survey_event_fact'[riskAlcohol] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskDiet] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskexercisecardio] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskexerciseweighttraining] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskfinancial] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[risklifesatisfaction] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[risksleep] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[risksocial] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskstress] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[risktobacconicotineuse] IN {"High", "Moderate"}, 1, 0) +
+			IF('survey_event_fact'[riskbmi] IN {"High", "Moderate"}, 1, 0)
+			
+			```
+		formatString: 0
+		lineageTag: 538279ad-df3f-45ec-86c6-6c23fb8f0843
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column RiskBucket = ```
+			
+			VAR MostRecentSurveyEndDate = 
+			    CALCULATE(
+			        MAX('survey_event_fact'[survey_end_date]), 
+			        ALLEXCEPT('survey_event_fact', 'survey_event_fact'[user_id])
+			    )
+			
+			VAR LatestRiskCount = 
+			    CALCULATE(
+			        MAX('survey_event_fact'[RiskCount]),
+			        'survey_event_fact'[survey_end_date] = MostRecentSurveyEndDate,
+			        ALLEXCEPT('survey_event_fact', 'survey_event_fact'[user_id])
+			    )
+			
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    LatestRiskCount = 0, "0 Risks",
+			    LatestRiskCount = 1, "1 Risk",
+			    LatestRiskCount = 2, "2 Risks",
+			    LatestRiskCount = 3, "3 Risks",
+			    LatestRiskCount = 4, "4 Risks",
+			    LatestRiskCount >= 5, "5+ Risks",
+			    "Unknown"
+			)
+			
+			```
+		lineageTag: fa4d7dcb-0f8f-4c22-ae2f-f76f0372df9d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column language
+		dataType: string
+		lineageTag: 28523d51-756e-47ed-bc8b-f15b9b7850d6
+		summarizeBy: none
+		sourceColumn: language
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_instance_id
+		dataType: string
+		lineageTag: db198d26-0f16-430a-a054-06d00421495d
+		summarizeBy: none
+		sourceColumn: survey_instance_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column no_of_attempts
+		dataType: int64
+		formatString: 0
+		lineageTag: f4978a4c-3311-4d3d-b9f4-0e6837fe5746
+		summarizeBy: sum
+		sourceColumn: no_of_attempts
+
+		annotation SummarizationSetBy = Automatic
+
+	column bmi
+		dataType: string
+		lineageTag: db6a3331-5db6-4205-94de-b0b016d0d51f
+		summarizeBy: none
+		sourceColumn: bmi
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskdiet
+		dataType: string
+		lineageTag: da85b39c-bf1b-4554-9bfc-6a38e2f09bff
+		summarizeBy: none
+		sourceColumn: riskdiet
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskexercisecardio
+		dataType: string
+		lineageTag: c5fa78fb-011c-4478-8747-c389cf369c18
+		summarizeBy: none
+		sourceColumn: riskexercisecardio
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskexerciseweighttraining
+		dataType: string
+		lineageTag: a06c2bd7-c014-4a8b-8031-ed550bf31f9f
+		summarizeBy: none
+		sourceColumn: riskexerciseweighttraining
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskfinancial
+		dataType: string
+		lineageTag: 939a9354-7b0b-4c8c-b89c-e4ae32f85b8c
+		summarizeBy: none
+		sourceColumn: riskfinancial
+
+		annotation SummarizationSetBy = Automatic
+
+	column risklifesatisfaction
+		dataType: string
+		lineageTag: 6e75047a-03e3-45e5-8e91-13388ce3b183
+		summarizeBy: none
+		sourceColumn: risklifesatisfaction
+
+		annotation SummarizationSetBy = Automatic
+
+	column risksleep
+		dataType: string
+		lineageTag: 6f6df0e3-be8e-4c33-bce7-0f0196c02606
+		summarizeBy: none
+		sourceColumn: risksleep
+
+		annotation SummarizationSetBy = Automatic
+
+	column risksocial
+		dataType: string
+		lineageTag: ebd4f834-4995-463a-9ac5-1fc1a79abe83
+		summarizeBy: none
+		sourceColumn: risksocial
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskstress
+		dataType: string
+		lineageTag: 156b5782-daf6-46ec-88a9-b320506adea8
+		summarizeBy: none
+		sourceColumn: riskstress
+
+		annotation SummarizationSetBy = Automatic
+
+	column risktobacconicotineuse
+		dataType: string
+		lineageTag: b2e8d452-0f19-4c99-ae45-3689db9e3fd0
+		summarizeBy: none
+		sourceColumn: risktobacconicotineuse
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionangina
+		dataType: string
+		lineageTag: ef77a0e5-9883-462f-b764-f67df8a830e1
+		summarizeBy: none
+		sourceColumn: conditionangina
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionasthma
+		dataType: string
+		lineageTag: 5c6249b4-4f9c-4a7a-8d39-48583f242634
+		summarizeBy: none
+		sourceColumn: conditionasthma
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionatrialfibrillation
+		dataType: string
+		lineageTag: e2be41b7-63b4-4444-9b58-4f5a0f085855
+		summarizeBy: none
+		sourceColumn: conditionatrialfibrillation
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionbackproblems
+		dataType: string
+		lineageTag: d3f3698f-3577-4e41-8e86-9683bc0ce12b
+		summarizeBy: none
+		sourceColumn: conditionbackproblems
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionbreastcancer
+		dataType: string
+		lineageTag: a80c9069-f1cf-4230-a6c3-b9599c233dc4
+		summarizeBy: none
+		sourceColumn: conditionbreastcancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditioncervicalcancer
+		dataType: string
+		lineageTag: 99a0f5c8-3e6c-46ce-8bb6-6a31688b2d79
+		summarizeBy: none
+		sourceColumn: conditioncervicalcancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditioncopd
+		dataType: string
+		lineageTag: 8c22c4c8-559c-4d1f-9c6d-e94dbc6b6c71
+		summarizeBy: none
+		sourceColumn: conditioncopd
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditioncrnryheartdisease
+		dataType: string
+		lineageTag: 0bf6814d-f483-4bdc-a3e3-f061dfbadbbd
+		summarizeBy: none
+		sourceColumn: conditioncrnryheartdisease
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditiondepression
+		dataType: string
+		lineageTag: 4eba6673-42d7-4ded-856f-8b9308e0fcde
+		summarizeBy: none
+		sourceColumn: conditiondepression
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditiondiabetes
+		dataType: string
+		lineageTag: e698e1d2-9047-46c3-aaa3-027f794b4cf4
+		summarizeBy: none
+		sourceColumn: conditiondiabetes
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionhearingproblems
+		dataType: string
+		lineageTag: 64d23479-9a24-4d05-ade2-28471b5dcde9
+		summarizeBy: none
+		sourceColumn: conditionhearingproblems
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionheartattack
+		dataType: string
+		lineageTag: 27fa6d8c-0315-40b2-935b-a3c6d7f01a4c
+		summarizeBy: none
+		sourceColumn: conditionheartattack
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionhighcholesterol
+		dataType: string
+		lineageTag: 157abcab-0132-439c-9def-3e6981ec8930
+		summarizeBy: none
+		sourceColumn: conditionhighcholesterol
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionjointproblems
+		dataType: string
+		lineageTag: cea8a154-4cc0-4216-b46a-0ecdd58c5952
+		summarizeBy: none
+		sourceColumn: conditionjointproblems
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionosteoporosis
+		dataType: string
+		lineageTag: ac1955d0-3a0c-4029-99fa-42ccea3c58b1
+		summarizeBy: none
+		sourceColumn: conditionosteoporosis
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionprediabetes
+		dataType: string
+		lineageTag: a6e417bc-f552-4d5e-99e1-cab29b335b8e
+		summarizeBy: none
+		sourceColumn: conditionprediabetes
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionpregnancy
+		dataType: string
+		lineageTag: a24aa7de-8553-4423-955e-5314593f57a0
+		summarizeBy: none
+		sourceColumn: conditionpregnancy
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionstress
+		dataType: string
+		lineageTag: 769c595a-a9ec-4da8-be66-6bed6f203f3d
+		summarizeBy: none
+		sourceColumn: conditionstress
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionstroke
+		dataType: string
+		lineageTag: 578c4ef3-fa8d-47dd-bcec-1190023d2057
+		summarizeBy: none
+		sourceColumn: conditionstroke
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionvisionproblems
+		dataType: string
+		lineageTag: 6b9b5c89-0207-4370-8767-221632562353
+		summarizeBy: none
+		sourceColumn: conditionvisionproblems
+
+		annotation SummarizationSetBy = Automatic
+
+	column screeningbreastcancer
+		dataType: string
+		lineageTag: 07d3c1ce-1463-439a-af2e-9e8e2a27f819
+		summarizeBy: none
+		sourceColumn: screeningbreastcancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column screeningcervicalcancer
+		dataType: string
+		lineageTag: 7deedbd2-24d4-4a88-bba5-1eeb0cd19293
+		summarizeBy: none
+		sourceColumn: screeningcervicalcancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column screeningglaucoma
+		dataType: string
+		lineageTag: d29152fe-880d-4caa-b7f4-d31e37def2b3
+		summarizeBy: none
+		sourceColumn: screeningglaucoma
+
+		annotation SummarizationSetBy = Automatic
+
+	column testbloodpressure
+		dataType: string
+		lineageTag: 75dafcdd-1d7f-4bee-9540-ea9e9d67f810
+		summarizeBy: none
+		sourceColumn: testbloodpressure
+
+		annotation SummarizationSetBy = Automatic
+
+	column testcholesterol
+		dataType: string
+		lineageTag: 28216e0b-ab05-4faf-83fc-05b70d6e978b
+		summarizeBy: none
+		sourceColumn: testcholesterol
+
+		annotation SummarizationSetBy = Automatic
+
+	column testa1c
+		dataType: string
+		lineageTag: 7c37cbc1-aa37-40a6-b7cb-e2a14f66f65f
+		summarizeBy: none
+		sourceColumn: testa1c
+
+		annotation SummarizationSetBy = Automatic
+
+	column vaccinationsflu
+		dataType: string
+		lineageTag: 3905e609-66a9-40bc-a7a9-5b65160c9731
+		summarizeBy: none
+		sourceColumn: vaccinationsflu
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_breast
+		dataType: string
+		lineageTag: aad09e4e-bde6-4f6a-bc5f-6ee9b42be502
+		summarizeBy: none
+		sourceColumn: in_rec_time_breast
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_cervical
+		dataType: string
+		lineageTag: 11fbaf01-216a-487a-a12a-759c5a66beca
+		summarizeBy: none
+		sourceColumn: in_rec_time_cervical
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_blood_pressure
+		dataType: string
+		lineageTag: 1a7a10bb-eb92-4a6f-886f-76cd154c2ccf
+		summarizeBy: none
+		sourceColumn: in_rec_time_blood_pressure
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_a1c
+		dataType: string
+		lineageTag: e3079491-2067-49fc-9dd1-f6d8f83516b4
+		summarizeBy: none
+		sourceColumn: in_rec_time_a1c
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_blood_sugar
+		dataType: string
+		lineageTag: babfb064-b4d9-4154-b007-0a7071622084
+		summarizeBy: none
+		sourceColumn: in_rec_time_blood_sugar
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_glaucoma
+		dataType: string
+		lineageTag: 112308e8-bc8b-49bf-af2b-3ea98f8e4bda
+		summarizeBy: none
+		sourceColumn: in_rec_time_glaucoma
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_cholesterol
+		dataType: string
+		lineageTag: 4cd54432-c3a1-43fa-be52-2e7b4abebd12
+		summarizeBy: none
+		sourceColumn: in_rec_time_cholesterol
+
+		annotation SummarizationSetBy = Automatic
+
+	column testbloodsugar
+		dataType: string
+		lineageTag: a2132b91-88f1-4215-8888-d4b4118da96a
+		summarizeBy: none
+		sourceColumn: testbloodsugar
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_flu
+		dataType: string
+		lineageTag: 723fc448-2de3-4696-b781-c459e99dc425
+		summarizeBy: none
+		sourceColumn: in_rec_time_flu
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: string
+		lineageTag: 6705acb5-f103-494b-acb2-4c53fc70d27e
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: string
+		lineageTag: 9692049a-67c1-4d7c-9c24-049e52cfc7ea
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column completion_date
+		dataType: string
+		lineageTag: a2482587-d8dd-47e4-b2a5-8904bbf7800b
+		summarizeBy: none
+		sourceColumn: completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column sl_no
+		dataType: int64
+		formatString: 0
+		lineageTag: e7c66dba-cfcc-4e94-92e7-01e9a6f08fb5
+		summarizeBy: sum
+		sourceColumn: sl_no
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1c92d287-893e-498b-b878-f26f904b8e81
+		summarizeBy: none
+		sourceColumn: survey_start_date
+
+		variation Variation
+			isDefault
+			relationship: 9fbddc05-12ef-46d0-bc54-ed404b0037c5
+			defaultHierarchy: LocalDateTable_07319453-4217-44c5-aac1-7d2f64c3da9a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column survey_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5b1dfe85-37c5-4419-854a-8f6468fd65dc
+		summarizeBy: none
+		sourceColumn: survey_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 04e58514-e1b5-43c1-9e29-80fbd604856d
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 0428f102-fa41-47a9-bbba-c9bc1fd931ba
+			defaultHierarchy: LocalDateTable_0b83709b-7961-4990-a45f-476dfd169b75.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column age
+		dataType: string
+		lineageTag: 7476d34f-41b7-4ec2-b742-414850f33271
+		summarizeBy: none
+		sourceColumn: age
+
+		annotation SummarizationSetBy = Automatic
+
+	column agegroup
+		dataType: string
+		lineageTag: 02dce5bb-6cf4-4d46-a9e4-f7e5b8082d79
+		summarizeBy: none
+		sourceColumn: agegroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column reset_retake
+		dataType: string
+		lineageTag: aa0c6a8f-f79a-401d-88f1-3cebd9a7f05a
+		summarizeBy: none
+		sourceColumn: reset_retake
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_version
+		dataType: string
+		lineageTag: a0453c44-e748-42ef-9bdb-6709ea05c2a7
+		summarizeBy: none
+		sourceColumn: survey_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskbmi
+		dataType: string
+		lineageTag: 026788d4-5d2a-4f13-94cc-1d40422dd974
+		summarizeBy: none
+		sourceColumn: riskbmi
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionhighbmi
+		dataType: string
+		lineageTag: dc03c3da-c342-4f26-bbbf-8166477cb79c
+		summarizeBy: none
+		sourceColumn: conditionhighbmi
+
+		annotation SummarizationSetBy = Automatic
+
+	column surveyresponseage
+		dataType: string
+		lineageTag: 4bb94057-4444-4e16-af39-ae92e5dffb0d
+		summarizeBy: none
+		sourceColumn: surveyresponseage
+
+		annotation SummarizationSetBy = Automatic
+
+	column surveyresponseagegroup
+		dataType: string
+		lineageTag: 224757cf-7f49-4431-88ba-baa2274bdf87
+		summarizeBy: none
+		sourceColumn: surveyresponseagegroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskalcohol
+		dataType: string
+		lineageTag: 88519daf-45c4-4c8b-b84c-df24bdd743f0
+		summarizeBy: none
+		sourceColumn: riskalcohol
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskbloodpressure
+		dataType: string
+		lineageTag: 66a47a5c-1e0c-447d-a94a-d8c6f2c21fd7
+		summarizeBy: none
+		sourceColumn: riskbloodpressure
+
+		annotation SummarizationSetBy = Automatic
+
+	column riskhighcholesterol
+		dataType: string
+		lineageTag: 60d42dc9-753d-4414-91f7-90de669b9b95
+		summarizeBy: none
+		sourceColumn: riskhighcholesterol
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionhypertension
+		dataType: string
+		lineageTag: 5ed8cf56-9201-4a75-98d0-bfccd6e3e22f
+		summarizeBy: none
+		sourceColumn: conditionhypertension
+
+		annotation SummarizationSetBy = Automatic
+
+	column conditionprehypertension
+		dataType: string
+		lineageTag: 7c54b4d5-fb59-4800-b394-f2dcfca1c652
+		summarizeBy: none
+		sourceColumn: conditionprehypertension
+
+		annotation SummarizationSetBy = Automatic
+
+	column screeningcolorectalcancer
+		dataType: string
+		lineageTag: 1e11faaa-1d4c-4bf4-b731-53c0e9c3f399
+		summarizeBy: none
+		sourceColumn: screeningcolorectalcancer
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_rec_time_colorectal
+		dataType: string
+		lineageTag: 8e4bfddd-a4b6-47d8-88e2-a00672f2567b
+		summarizeBy: none
+		sourceColumn: in_rec_time_colorectal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Concated_fiels = survey_event_fact[user_id] &"-"& survey_event_fact[survey_end_date]
+		lineageTag: cd56a4df-4c66-48c0-9eb4-819ff5a364d6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('survey_event_fact'[survey_end_date],"mmm-yy")
+		lineageTag: c07bdb27-3aea-470d-802b-40ad9c368d07
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('survey_event_fact'[survey_end_date]), ALLSELECTED('survey_event_fact')), 
+			    'survey_event_fact'[survey_end_date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 2d5037f8-ef65-41d5-bb93-7bbe0c7a3305
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition survey_event_fact = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    survey_event_fact_Table = optum_dev_Schema{[Name="survey_event_fact",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(survey_event_fact_Table,{{"user_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,77 @@
+table Categories_Table
+	lineageTag: dc98191b-f822-443e-ac85-27fccc12e7bd
+
+	measure Percent_by_id =
+			
+			var a = CALCULATE(DISTINCTCOUNT(Categories_Table[mission_id]),ALL(Categories_Table))
+			var b = DIVIDE([Count_mission_id],a,0)
+			return
+			b
+		formatString: 0%;-0%;0%
+		lineageTag: a892804b-7a3b-43d2-9ca0-ba54683a8531
+
+	measure count_mission_id = CALCULATE(COUNT(mission_members_fact[user_id]))
+		formatString: 0
+		lineageTag: c14ac1e3-28f1-41ad-a0a0-3e0f2a693b34
+
+	measure total_missions = ```
+			COUNTROWS('Categories_Table') 
+			```
+		formatString: 0
+		lineageTag: f4bed25b-7bb1-41fe-89b2-c6dda6f60376
+
+	measure Percent_by_userid =
+			
+			var a = CALCULATE(COUNT(mission_members_fact[user_id]),ALL(mission_dimension),ALL(Categories_Table))
+			var b = DIVIDE([Count_mission_id],a,0)
+			return
+			b
+		formatString: 0%;-0%;0%
+		lineageTag: 83579fdc-5a81-48bd-aa9c-4a17acb67377
+
+	column mission_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f628362-5b88-4f18-ae7b-e3d1e4731a82
+		summarizeBy: none
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 0125916a-538c-4792-bcc4-eb4d0fbc960a
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		lineageTag: 3571c392-eccd-4caf-ac0b-03db24621a7f
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Categories_Table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name="optum_dev",Kind="Schema"]}[Data],
+				    mission_dimension_temp_Table = optum_dev_Schema{[Name="mission_dimension",Kind="Table"]}[Data],
+				    #"Removed Other Columns" = Table.SelectColumns(mission_dimension_temp_Table,{"mission_id", "name", "categories"}),
+				    #"Split Column by Delimiter" = Table.SplitColumn(#"Removed Other Columns", "categories", Splitter.SplitTextByDelimiter(",", QuoteStyle.None), {"categories.1", "categories.2", "categories.3", "categories.4", "categories.5", "categories.6", "categories.7", "categories.8"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Split Column by Delimiter",{"categories.2", "categories.3", "categories.4", "categories.5", "categories.6", "categories.7", "categories.8"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"categories.1", "Value"}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each ([mission_id] <> "zzz")),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"mission_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

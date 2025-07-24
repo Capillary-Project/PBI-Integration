@@ -1,0 +1,156 @@
+table incentive_plan_config
+	lineageTag: 34f6882d-b37b-4bf4-a02d-88709ba6a80f
+
+	column partner
+		dataType: string
+		lineageTag: b2b3b3e7-79c6-4f54-a77c-9d2aadbd4dfa
+		summarizeBy: none
+		sourceColumn: partner
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_id
+		dataType: string
+		lineageTag: 78d85cb3-1953-43e9-a81b-3503f6deaa18
+		summarizeBy: none
+		sourceColumn: client_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column affiliation
+		dataType: string
+		lineageTag: 862a776d-4c72-4f4f-915a-084fa35b702b
+		summarizeBy: none
+		sourceColumn: affiliation
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 88731ac3-233b-4092-8ad4-4980df2038f8
+		summarizeBy: none
+		sourceColumn: plan_start_date
+
+		variation Variation
+			isDefault
+			relationship: 8bd6a3d0-b035-4b8a-8c4b-715e8b45353e
+			defaultHierarchy: LocalDateTable_750fcf02-b2b9-4a30-be2a-b89393d20d7c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column plan_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 56503215-3861-4928-85bf-0f387761ae4d
+		summarizeBy: none
+		sourceColumn: plan_end_date
+
+		variation Variation
+			isDefault
+			relationship: 4bfc3602-2c2d-453a-98dd-86f55d020aa0
+			defaultHierarchy: LocalDateTable_548875a9-5e5b-4192-b587-0dec8cf4f1b9.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column allocation_type
+		dataType: string
+		lineageTag: e6faedcd-1b96-4d3d-9f3b-bef1f889b2e3
+		summarizeBy: none
+		sourceColumn: allocation_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column award_media
+		dataType: string
+		lineageTag: d233dd2c-00c6-46f0-b1b4-9e7fa87ca6db
+		summarizeBy: none
+		sourceColumn: award_media
+
+		annotation SummarizationSetBy = Automatic
+
+	column award_type
+		dataType: string
+		lineageTag: f60c642b-2da2-4d85-b592-95892c3227c4
+		summarizeBy: none
+		sourceColumn: award_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column package_name
+		dataType: string
+		lineageTag: 319302a8-0573-491e-97c0-68994d1a7b24
+		summarizeBy: none
+		sourceColumn: package_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_cap
+		dataType: int64
+		formatString: 0
+		lineageTag: dfa8489e-7ae6-4f1b-a03b-722ad745dff3
+		summarizeBy: sum
+		sourceColumn: max_cap
+
+		annotation SummarizationSetBy = Automatic
+
+	column run_out_days
+		dataType: int64
+		formatString: 0
+		lineageTag: e43674b8-001c-4b98-b218-b4f740c7b94f
+		summarizeBy: sum
+		sourceColumn: run_out_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7b45936d-10d2-4786-9415-533af62c320d
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 97a07bc2-82f3-4d31-bfca-c392cc2f1924
+			defaultHierarchy: LocalDateTable_413b84e9-1bed-4df4-b188-0e071fc08478.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column affiliation_id
+		dataType: string
+		lineageTag: 32b61243-5cf5-4f41-927d-0e5eb8c92c1f
+		summarizeBy: none
+		sourceColumn: affiliation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_name
+		dataType: string
+		lineageTag: 7a198aae-eff0-4dfe-89bb-c7ee215b5cc2
+		summarizeBy: none
+		sourceColumn: client_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition incentive_plan_config = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    incentive_plan_config_Table = optum_dev_Schema{[Name="incentive_plan_config",Kind="Table"]}[Data]
+				in
+				    incentive_plan_config_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

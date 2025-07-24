@@ -1,0 +1,678 @@
+table MeasureTable
+	lineageTag: d3a69d28-9e59-4639-b929-0d229c6bebf7
+
+	measure 'Health_Survey_participants by month' = ```
+			
+			// CALCULATE(
+			//     COUNT('survey_event_fact'[user_id]),
+			//     FILTER(
+			//         'survey_event_fact',
+			//         'survey_event_fact'[survey_end_date] = 
+			//         CALCULATE(
+			//             MAX('survey_event_fact'[survey_end_date]),
+			//             FILTER(
+			//                 'survey_event_fact',
+			//                 'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			//                 'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			//                 'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			//             ),USERELATIONSHIP('survey_dimension'[sl_no],survey_event_fact[sl_no])
+			//         )
+			//     )
+			// )
+			// CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),USERELATIONSHIP(survey_event_fact[survey_end_date],date_table[date]))
+			//------
+			// SUMX(
+			//     VALUES(survey_response_fact[derived_answer_text]),
+			//     CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]))
+			
+			// )
+			
+			//------------
+			
+			// SUMX(
+			//     VALUES(survey_response_fact[derived_answer_text]),
+			//     CALCULATE(
+			//         DISTINCTCOUNT(survey_response_fact[user_id]),
+			//         FILTER(
+			//             ADDCOLUMNS(
+			//                 SUMMARIZE(
+			//                     member_dimension,
+			//                     member_dimension[Client_id_name]
+			//                 ),
+			//                 "user_id_per_client", CALCULATE(DISTINCTCOUNT(member_dimension[user_id]))
+			//             ),
+			//             [user_id_per_client] > 50
+			//         )
+			//     )
+			// )
+			
+			
+			// SUMX(
+			//     VALUES(survey_response_fact[derived_answer_text]),
+			//     CALCULATE(
+			//         DISTINCTCOUNT(survey_response_fact[user_id]),
+			//         FILTER(
+			//             VALUES(survey_response_fact[user_id]),
+			//             CALCULATE(
+			//                 DISTINCTCOUNT(member_dimension[user_id])
+			//             ) >= 50
+			//         )
+			//     )
+			// )
+			
+			// SUMX(
+			//     VALUES(survey_response_fact[derived_answer_text]),
+			//     CALCULATE(
+			//         DISTINCTCOUNT(survey_response_fact[user_id]),
+			//         FILTER(
+			//             VALUES(survey_response_fact[user_id]),
+			//             CALCULATE(
+			//                 DISTINCTCOUNT(member_dimension[user_id])
+			//             ) >= 50
+			//         )
+			//     )
+			// )
+			
+			SUMX(
+			    VALUES(survey_response_fact[derived_answer_text]),
+			    CALCULATE(
+			        DISTINCTCOUNT(survey_response_fact[user_id])
+			    )
+			)
+			```
+		formatString: #,0
+		lineageTag: 944f5c80-11c2-4edc-af48-a8f80de28efa
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_ -- Filter dates up to the selected date
+			     -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: fad6a6e8-20fb-416c-a853-4313c5f03ebb
+
+	measure EmpHealth_Survey_participants = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			var a = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),member_dimension[relationship_code] = "Employee",USERELATIONSHIP(date_table[date],survey_event_fact[survey_end_date]))
+			RETURN
+			IF(ISBLANK(DIVIDE(a,[EmpEligible])),0,(DIVIDE(a,[EmpEligible])))
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: daa861ca-b160-421b-8d36-95c79786d448
+
+	measure EmpEligible = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]), reduction-- Filter dates up to the selected date
+			        // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 4206d8eb-122e-427a-b8df-3a10532b4df2
+
+	measure S/PEligible = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),reduction-- Filter dates up to the selected date
+			        // ALL(date_table[date])
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 9367de57-0cff-4a46-81c6-32c46fede7f4
+
+	measure S/PHealth_Survey_participants = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "Spouse")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			var a = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),member_dimension[relationship_code] = "Spouse",USERELATIONSHIP(date_table[date],'survey_event_fact'[survey_end_date]))
+			RETURN
+			IF(ISBLANK(DIVIDE(a,[S/PEligible])),0,(DIVIDE(a,[S/PEligible])))
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 9bbece68-d87c-4b95-b086-7cdc1390beb8
+
+	measure %Health_Survey_participants = ```
+			
+			// var a = CALCULATE(
+			//     COUNT('survey_response_fact'[user_id]),
+			//     FILTER(
+			//         'survey_response_fact',
+			//         'survey_response_fact'[survey_completion_date] = 
+			//         CALCULATE(
+			//             MAX('survey_response_fact'[survey_completion_date]),
+			//             FILTER(
+			//                 'survey_response_fact',
+			//                 'survey_response_fact'[user_id] = EARLIER('survey_response_fact'[user_id]) &&
+			//                 'survey_response_fact'[survey_completion_date] >= MIN('date_table'[Date]) &&
+			//                 'survey_response_fact'[survey_completion_date] <= MAX('date_table'[Date]) &&'survey_response_fact'[survey_completion_date] <> BLANK()
+			//             )
+			//         )
+			//     )
+			// )
+			// VAR b = 
+			// CALCULATE(
+			//     COUNT('survey_response_fact'[user_id]),
+			//     FILTER(
+			//         'survey_response_fact',
+			//         'survey_response_fact'[survey_completion_date] = 
+			//         CALCULATE(
+			//             MAX('survey_response_fact'[survey_completion_date]),
+			//             FILTER(
+			//                 'survey_response_fact',
+			//                 'survey_response_fact'[user_id] = EARLIER('survey_response_fact'[user_id]) &&
+			//                 'survey_response_fact'[survey_completion_date] >= MIN('date_table'[Date]) &&
+			//                 'survey_response_fact'[survey_completion_date] <= MAX('date_table'[Date]) &&'survey_response_fact'[survey_completion_date] <> BLANK()
+			//             )
+			//         )
+			//     )
+			// )
+			// // CALCULATE(
+			// //     DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP(date_table[date],survey_event_fact[survey_end_date]),ALL(member_dimension),REMOVEFILTERS(survey_event_fact[agegroup]))
+			
+			// RETURN
+			// // DIVIDE(a, b, 0) * 100
+			// b
+			
+			
+			// VAR b = 
+			// CALCULATE(
+			//     COUNT('survey_response_fact'[user_id]),
+			//     FILTER(
+			//         'survey_response_fact',
+			//         'survey_response_fact'[survey_completion_date] = 
+			//         CALCULATE(
+			//             MAX('survey_response_fact'[survey_completion_date]),
+			//             FILTER(
+			//                 'survey_response_fact',
+			//                 'survey_response_fact'[user_id] = EARLIER('survey_response_fact'[user_id]) &&
+			//                 'survey_response_fact'[survey_completion_date] >= MIN('date_table'[Date]) &&
+			//                 'survey_response_fact'[survey_completion_date] <= MAX('date_table'[Date]) &&
+			//                 NOT(ISBLANK('survey_response_fact'[survey_completion_date]))
+			//             )
+			//         )
+			//     ),
+			//     // ⬇️ Only include clients with > 50 users
+			//     FILTER(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[Client_id_name]
+			//             ),
+			//             "user_id_per_client", CALCULATE(DISTINCTCOUNT(member_dimension[user_id]))
+			//         ),
+			//         [user_id_per_client] > 50
+			//     )
+			// )
+			// RETURN b
+			
+			
+			VAR b =
+			CALCULATE(
+			    DISTINCTCOUNT('survey_response_fact'[user_id]),
+			    FILTER(
+			        'survey_response_fact',
+			        'survey_response_fact'[survey_completion_date] =
+			        CALCULATE(
+			            MAX('survey_response_fact'[survey_completion_date]),
+			            FILTER(
+			                'survey_response_fact',
+			                'survey_response_fact'[user_id] = EARLIER('survey_response_fact'[user_id]) &&
+			                'survey_response_fact'[survey_completion_date] >= MIN('date_table'[Date]) &&
+			                'survey_response_fact'[survey_completion_date] <= MAX('date_table'[Date]) &&
+			                NOT(ISBLANK('survey_response_fact'[survey_completion_date]))
+			            )
+			        )
+			    )
+			    // ⬇️ Only include clients with > 50 users
+			    // FILTER(
+			    //     ADDCOLUMNS(
+			    //         SUMMARIZE(
+			    //             member_dimension,
+			    //             member_dimension[Client_id_name]
+			    //         ),
+			    //         "user_id_per_client", CALCULATE(DISTINCTCOUNT(member_dimension[user_id]))
+			    //     ),
+			    //     [user_id_per_client] > 50
+			    // )
+			)
+			 
+			RETURN b
+			 
+			 
+			```
+		formatString: 0
+		lineageTag: 0e4301e0-01b9-4c1c-8291-6017fa26ad4d
+
+	measure Client_name =
+			
+			var a = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+			RETURN
+			a
+		lineageTag: acb27e82-a30b-4df4-9144-380dfa5c2f97
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: dc3e74d4-5475-43af-9712-8e04dab6d988
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: e8aaab31-64bb-452b-8c56-ed08a67c996d
+
+	measure 'Repeat Participants' = ```
+			0
+			// var a =CALCULATE(
+			//     DISTINCTCOUNT(survey_event_fact[user_id]),
+			//     FILTER(
+			//         ADDCOLUMNS(
+			//             VALUES(survey_event_fact[user_id]),
+			//             "UserCount", CALCULATE(COUNTROWS(survey_event_fact))
+			//         ),
+			//         [UserCount] > 1
+			//     )
+			// )
+			// return 
+			// DIVIDE(a,[Health_Survey_participants])
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: c90ab2e3-5c3b-437e-a26e-1b1843ef3454
+
+	measure user_id_per_client = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'member_dimension',
+			        'member_dimension'[client_name] = MAX('member_dimension'[client_name])
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 6031e840-0964-430c-a147-5b6bb9ef18c7
+
+	measure DistinctCountHighModerate_Latest = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[conditionhighbmi] IN {"High", "Moderate"} &&
+			        'survey_event_fact'[survey_end_date] = 
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			
+			
+			```
+		formatString: 0
+		lineageTag: db23e4b9-0754-47c2-b4e7-2e7538ea6419
+
+	measure Response_participants = ```
+			
+			CALCULATE(
+			    COUNT('survey_response_fact'[user_id]),
+			    FILTER(
+			        'survey_response_fact',
+			        'survey_response_fact'[completion_date] = 
+			        CALCULATE(
+			            MAX('survey_response_fact'[completion_date]),
+			            FILTER(
+			                'survey_response_fact',
+			                'survey_response_fact'[user_id] = EARLIER('survey_response_fact'[user_id]) &&
+			                'survey_response_fact'[survey_completion_date] >= MIN('date_table'[Date]) &&
+			                'survey_response_fact'[survey_completion_date] <= MAX('date_table'[Date])
+			            )
+			        )
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 00c98827-3abc-4ed5-b9be-1231889c33fc
+
+	measure _%Health_Survey_participants = ```
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[survey_end_date] =
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date]) &&'survey_event_fact'[survey_end_date] <> BLANK()
+			            )
+			        )
+			    )
+			)
+			VAR b = 
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),ALLEXCEPT('survey_event_fact','survey_event_fact'[agegroup]))
+			
+			// CALCULATE(
+			//     DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP(date_table[date],survey_event_fact[survey_end_date]),ALL(member_dimension),REMOVEFILTERS(survey_event_fact[agegroup]))
+			
+			RETURN
+			DIVIDE(a, b, 0)
+			
+			```
+		lineageTag: 321b7af7-5423-4f51-a998-766ecd60d75d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Health_Survey_participants =
+			
+			VAR a = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),USERELATIONSHIP(date_table[date],'survey_event_fact'[survey_end_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 6d794102-a33a-44df-8797-5c42fbe4d630
+
+	measure %Age_Health_Survey_participants = ```
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),
+			    FILTER(
+			        'survey_event_fact',
+			        'survey_event_fact'[survey_end_date] =
+			        CALCULATE(
+			            MAX('survey_event_fact'[survey_end_date]),
+			            FILTER(
+			                'survey_event_fact',
+			                'survey_event_fact'[user_id] = EARLIER('survey_event_fact'[user_id]) &&
+			                'survey_event_fact'[survey_end_date] >= MIN('date_table'[Date]) &&
+			                'survey_event_fact'[survey_end_date] <= MAX('date_table'[Date]) &&'survey_event_fact'[survey_end_date] <> BLANK()
+			            )
+			        )
+			    )
+			)
+			VAR b = 
+			CALCULATE(
+			    DISTINCTCOUNT('survey_event_fact'[user_id]),ALL(survey_event_fact),REMOVEFILTERS('survey_event_fact'[agegroup]))
+			
+			// CALCULATE(
+			//     DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP(date_table[date],survey_event_fact[survey_end_date]),ALL(member_dimension),REMOVEFILTERS(survey_event_fact[agegroup]))
+			
+			RETURN
+			a
+			```
+		formatString: 0
+		lineageTag: 0005522b-6195-44c3-a0ec-9d5e1c80ff9d
+
+	measure 'warning text' = ```
+			
+			VAR FilteredUsers =
+			    CALCULATETABLE(
+			        VALUES('Filtered_Clients'[user_id_per_client]),
+			        ALLSELECTED('Filtered_Clients')
+			    )
+			 
+			VAR IsFilter = COUNTROWS(FilteredUsers) < CALCULATE(COUNTROWS(VALUES('Filtered_Clients'[user_id_per_client])), ALL('Filtered_Clients'))
+			 
+			VAR UserCount = CALCULATE(
+			    DISTINCTCOUNT('Filtered_Clients'[user_id_per_client]),
+			    FilteredUsers
+			)
+			 
+			RETURN
+			IF(
+			    IsFilter && UserCount < 50,
+			    "Unable to load as the user count is less than 50.",
+			    " "
+			)
+			 
+			 
+			```
+		lineageTag: e22abcae-0af7-455f-8f69-5b41b9d1318d
+
+	measure test# =
+			
+			// SUMX(
+			//     VALUES(survey_response_fact[derived_answer_text]),
+			//     CALCULATE(
+			//         DISTINCTCOUNT(survey_response_fact[user_id]),
+			//         FILTER(
+			//             VALUES(survey_response_fact[user_id]),
+			//             CALCULATE(
+			//                 DISTINCTCOUNT(member_dimension[user_id])
+			//             ) >= 50
+			//         )
+			//     )
+			// )
+			
+			SUMX(
+			    VALUES(survey_response_fact[derived_answer_id]),
+			    CALCULATE(
+			        DISTINCTCOUNT(survey_response_fact[user_id])
+			    )
+			)
+		formatString: 0
+		lineageTag: 3c0236c2-92e5-4ba5-a958-5bce215ba323
+
+	measure Response_count_Agegroup =
+			
+			SUMX(
+			    VALUES(survey_event_fact[agegroup]),
+			    CALCULATE(
+			        DISTINCTCOUNT(survey_response_fact[user_id])
+			    )
+			)
+		formatString: #,0
+		lineageTag: d536e885-bbfc-4a28-8c4d-d278259d2727
+
+	measure Response_count_bucket =
+			
+			SUMX(
+			    VALUES(survey_response_fact[bucketed_answer]),
+			    CALCULATE(
+			        DISTINCTCOUNT(survey_response_fact[user_id])
+			    )
+			)
+		formatString: #,0
+		lineageTag: eaf048b4-c80b-42e7-bdcf-53eccc21cdc6
+
+	partition MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

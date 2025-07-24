@@ -1,0 +1,3735 @@
+table Earning_Measure_Table
+	lineageTag: 5d05674f-2b0b-4cc1-8fbf-d511f3c807ba
+
+	measure EligibleUsers = ```
+			
+			// VAR min_date_ = CALCULATE(
+			//     MIN('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR EligibleUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),
+			//         // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			//         // 'member_dimension'[status] <> "SUSPENDED",
+			//         'member_dimension'[start_date] <= date_,'member_dimension'[start_date] >= min_date_ -- Filter dates up to the selected date
+			//         // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(EligibleUsers),
+			//     0,
+			//     EligibleUsers
+			// )
+			
+			
+			VAR min_date_ = 
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ = 
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			-- Apply client and relationship logic
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(member_dimension[user_id]),
+			        member_dimension[start_date] <= date_,
+			        member_dimension[start_date] >= min_date_,
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        ISBLANK(EligibleUsers),
+			        0,
+			        EligibleUsers
+			    )
+			
+			```
+		formatString: 0
+		lineageTag: edfc633c-4821-4035-90df-6e673d962ac1
+
+	measure %Incentive_Employee = ```
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			    reduction,'incentive_earning_detail'[reward_category] <> "Bonus"
+			)
+			var final =
+			DIVIDE(a,[EligibleEmployees])
+			RETURN
+			IF(ISBLANK(final),0,final)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 885e06dc-604d-4629-84b9-b441081160c8
+
+	measure EligibleEmployees = ```
+			
+			// VAR min_date_ = CALCULATE(
+			//     MIN('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") && (member_dimension[Concated_fiels] IN b)
+			//     )
+			// VAR EligibleUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),reduction,
+			//         member_dimension[start_date]<= date_,member_dimension[start_date]>= min_date_
+			//         // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(EligibleUsers),
+			//     0,
+			//     EligibleUsers
+			// )
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			    
+			VAR EligibleUsers =
+			    CALCULATE(
+			        DISTINCTCOUNT(member_dimension[user_id]),
+			        reduction,
+			        member_dimension[start_date] >= min_date_,
+			        member_dimension[start_date] <= date_
+			    )
+			    
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			
+			```
+		formatString: 0
+		lineageTag: 3459fae5-33e7-4a93-8dcd-9d9f1a2574f0
+
+	measure %Incentive_S/P = ```
+			
+			 VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			var count_user = CALCULATE(
+			    DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			    reduction,'incentive_earning_detail'[reward_category] <> "Bonus"
+			)
+			var final =
+			DIVIDE(count_user,[Eligible_S/P])
+			RETURN
+			IF(ISBLANK(final),0,final)
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: a82896ee-318b-4db7-9b7b-0f241205841e
+
+	measure Eligible_S/P = ```
+			
+			// VAR min_date_ = CALCULATE(
+			//     MIN('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "SP" || member_dimension[relationship_code] = "Spouse" ) && (member_dimension[Concated_fiels] IN b)
+			//     )
+			// VAR EligibleUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),reduction, member_dimension[start_date]<= date_, member_dimension[start_date]>= min_date_-- Filter dates up to the selected date
+			//         // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(EligibleUsers),
+			//     0,
+			//     EligibleUsers
+			// )
+			
+			VAR min_date_ = CALCULATE(
+			    MIN('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			-- Applying filters directly in SUMMARIZE
+			VAR b = 
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "SP" || member_dimension[relationship_code] = "Spouse") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT(member_dimension[user_id]),
+			        reduction, 
+			        member_dimension[start_date] >= min_date_,
+			        member_dimension[start_date] <= date_
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: cfc5084f-1900-4df7-b038-718a22feb02c
+
+	measure %Incentive_all = ```
+			
+			// var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var a =
+			// DIVIDE(count_user,[EligibleUsers])
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			
+			// VAR SelectedClient = SELECTEDVALUE(member_dimension[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			 
+			// VAR count_user =
+			//     CALCULATE(
+			//         DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//         incentive_earning_detail[reward_category] <> "Bonus",
+			//         FILTER(
+			//             member_dimension,
+			//             NOT IsKaiserClient ||
+			//             member_dimension[relationship_code] IN { "Dependent", "Employee", "Spouse" }
+			//         )
+			//     )
+			 
+			// VAR a = DIVIDE(count_user, [EligibleUsers])
+			 
+			// RETURN
+			// IF(ISBLANK(a), 0, a)
+			
+			
+			// VAR count_user = 
+			// CALCULATE(
+			//     DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//     incentive_earning_detail[reward_category] <> "Bonus",
+			//     FILTER(
+			//         member_dimension,
+			//         (
+			//             (
+			//                 SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			//                 member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			//             ) ||
+			//             (
+			//                 SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			//                 member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			//             )
+			//         )
+			//     )
+			// )
+			
+			// VAR a = DIVIDE(count_user, [EligibleUsers])
+			// RETURN IF(ISBLANK(a), 0, a)
+			
+			
+			
+			VAR count_user =
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        'incentive_earning_detail'[reward_category] <> "Bonus",
+			        FILTER(
+			            member_dimension,
+			            (
+			                SEARCH("Kaiser", member_dimension[Client_name], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[Client_name], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR a = DIVIDE(count_user, [EligibleUsers])
+			RETURN
+			    IF(ISBLANK(a), 0, a)
+			
+			
+			
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 69f01756-d38d-48ea-b85f-ebcfeec7b2c3
+
+	measure Total_Incentive_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [%Incentive_all]
+		lineageTag: 4bd38577-02ec-4961-bf1e-a22171973601
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Avg_Earrnings_Incentive = ```
+			
+			// var a = CALCULATE(SUM('incentive_earning_detail'[amount_earned]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var b = CALCULATE(DISTINCTCOUNT('incentive_earning_detail'[user_id]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var c = DIVIDE(a,b)
+			// RETURN
+			// IF(ISBLANK(c),0,c)
+			//----------
+			// VAR SelectedClient = SELECTEDVALUE('member_dimension'[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// VAR a =
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         IF(
+			//             IsKaiserClient,
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"},
+			//             TRUE()
+			//         )
+			//     )
+			
+			// VAR b =
+			//     CALCULATE(
+			//         DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         IF(
+			//             IsKaiserClient,
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"},
+			//             TRUE()
+			//         )
+			//     )
+			
+			// VAR c = DIVIDE(a, b, 0)
+			
+			// RETURN
+			// IF(ISBLANK(c), 0, c)
+			
+			
+			
+			VAR a = 
+			    CALCULATE(
+			        SUM('incentive_earning_detail'[amount_earned]),
+			        'incentive_earning_detail'[reward_category] <> "Bonus",
+			        FILTER(
+			            member_dimension,
+			            (
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			                ) ||
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			                )
+			            )
+			        )
+			    )
+			
+			VAR b = 
+			    CALCULATE(
+			        DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			        'incentive_earning_detail'[reward_category] <> "Bonus",
+			        FILTER(
+			            member_dimension,
+			            (
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			                ) ||
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			                )
+			            )
+			        )
+			    )
+			
+			VAR c = DIVIDE(a, b)
+			RETURN IF(ISBLANK(c), 0, c)
+			
+			```
+		formatString: 0.0
+		lineageTag: 79a21a06-2053-41bf-9e7a-6d5631d451f4
+
+	measure Total_Earrnings = ```
+			
+			// var a =CALCULATE(SUM('incentive_earning_detail'[amount_earned]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			
+			// VAR SelectedClient = SELECTEDVALUE('member_dimension'[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// VAR a =
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         IF(
+			//             IsKaiserClient,
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"},
+			//             TRUE()
+			//         )
+			//     )
+			
+			// RETURN
+			// IF(ISBLANK(a), 0, a)
+			
+			
+			VAR a =
+			    CALCULATE(
+			        SUM('incentive_earning_detail'[amount_earned]),
+			        'incentive_earning_detail'[reward_category] <> "Bonus",
+			        FILTER(
+			            member_dimension,
+			            (
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			                ) ||
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			                )
+			            )
+			        )
+			    )
+			
+			RETURN
+			IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: 0.0
+		lineageTag: e6232358-0fc9-49b8-98e8-1b7de6287220
+
+	measure '% states_Participants' = ```
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var c = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),ALL(member_dimension[state]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var d =DIVIDE(a,c)
+			// RETURN
+			// IF(ISBLANK(d),0,d)
+			//---------
+			// VAR SelectedClient = SELECTEDVALUE('member_dimension'[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN b
+			//     )
+			
+			// VAR a = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//         reduction,
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         IF(
+			//             IsKaiserClient,
+			//             member_dimension[relationship_code] IN {"Dependent", "Employee", "Spouse"},
+			//             TRUE()
+			//         )
+			//     )
+			
+			// VAR c = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//         ALL(member_dimension[state]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         IF(
+			//             IsKaiserClient,
+			//             member_dimension[relationship_code] IN {"Dependent", "Employee", "Spouse"},
+			//             TRUE()
+			//         )
+			//     )
+			
+			// VAR d = DIVIDE(a, c)
+			
+			// RETURN
+			// IF(ISBLANK(d), 0, d)
+			
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            ) ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR a = 
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        reduction,
+			        incentive_earning_detail[reward_category] <> "Bonus"
+			    )
+			
+			VAR c = 
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        ALL(member_dimension[state]),
+			        incentive_earning_detail[reward_category] <> "Bonus"
+			    )
+			
+			VAR d = DIVIDE(a, c)
+			RETURN IF(ISBLANK(d), 0, d)
+			 
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: f5775d0b-a2d9-4f24-9138-1350b2744705
+
+	measure 'Incentive Participants' = ```
+			
+			// VAR c = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Other_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Other_concat])
+			
+			// -- The 'reduction' variable to filter based on the exclusion of "Employee" and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN c)
+			//     )
+			// // var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),incentive_earning_detail[fulfillment_date]<=MAX(date_table[date]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var a = CALCULATE(DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			//------
+			// VAR SelectedClient = SELECTEDVALUE(member_dimension[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// -- Get latest start date per user and create concatenated keys
+			// VAR c =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Other_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Other_concat]
+			//     )
+			
+			// -- Filter member_dimension based on the concat field
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN c
+			//     )
+			
+			// -- Final count with Kaiser condition
+			// VAR a =
+			//     CALCULATE(
+			//         DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus",
+			//         FILTER(
+			//             member_dimension,
+			//             NOT IsKaiserClient || member_dimension[relationship_code] IN { "Dependent", "Employee", "Spouse" }
+			//         ),
+			//         reduction
+			//     )
+			
+			// RETURN
+			// IF(ISBLANK(a), 0, a)
+			//----------------
+			
+			
+			// VAR c =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Other_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Other_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN c
+			//     )
+			
+			// VAR isKaiser =
+			//     CONTAINSSTRING(SELECTEDVALUE(member_dimension[client_name]), "Kaiser")
+			
+			// VAR a =
+			//     IF(
+			//         isKaiser,
+			//         CALCULATE(
+			//             DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//             member_dimension[relationship_code] IN { "dependent", "employee", "spouse" },
+			//             incentive_earning_detail[reward_category] <> "Bonus",
+			//             reduction
+			//         ),
+			//         CALCULATE(
+			//             DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//             incentive_earning_detail[reward_category] <> "Bonus",
+			//             reduction
+			//         )
+			//     )
+			
+			// RETURN
+			//     IF(ISBLANK(a), 0, a)
+			
+			
+			
+			// VAR c = 
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Other_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Other_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN c
+			//     )
+			
+			// -- Detect if client contains "Kaiser"
+			// VAR IsKaiserSelected = 
+			//     CONTAINSSTRING(
+			//         CONCATENATEX(VALUES('member_dimension'[Client_id_name]), 'member_dimension'[Client_id_name], ","), 
+			//         "Kaiser"
+			//     )
+			
+			// -- Base filters (always applied)
+			// VAR BaseFilters = 
+			//     FILTER(
+			//         ALL('incentive_earning_detail'),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus"
+			//     )
+			
+			// -- Apply additional filter logic conditionally
+			// VAR FinalResult = 
+			//     IF(
+			//         IsKaiserSelected,
+			//         CALCULATE(
+			//             DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//             BaseFilters,
+			//             KEEPFILTERS(reduction),
+			//             REMOVEFILTERS(member_dimension[relationship_code])  -- ignore this filter when Kaiser
+			//         ),
+			//         CALCULATE(
+			//             DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//             BaseFilters,
+			//             KEEPFILTERS(reduction)
+			//             -- Keep relationship_code filter as is
+			//         )
+			//     )
+			
+			// RETURN IF(ISBLANK(FinalResult), 0, FinalResult)
+			
+			
+			// VAR c = 
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Other_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Other_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN c &&
+			//         (
+			//             (
+			//                 SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			//                 member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			//             ) ||
+			//             (
+			//                 SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			//                 member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			//             )
+			//         )
+			//     )
+			
+			// VAR a = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//         'incentive_earning_detail'[reward_category] <> "Bonus"
+			//     )
+			
+			// RETURN
+			//     IF(ISBLANK(a), 0, a)
+			 
+			VAR c = 
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                member_dimension,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Other_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Other_concat]
+			    )
+			
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN c &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            ) ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR a = 
+			    CALCULATE(
+			        DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			        'incentive_earning_detail'[reward_category] <> "Bonus",
+			        reduction
+			    )
+			
+			RETURN IF(ISBLANK(a), 0, a)
+			
+			
+			```
+		formatString: #,0
+		lineageTag: e831b345-89dc-4b99-9650-85e175b7d9c5
+
+	measure Activity_completion = ```
+			
+			// var a =CALCULATE(DISTINCTCOUNT(incentive_earning_detail[activity_description]), incentive_earning_detail[activity_completion_date]<=MAX(date_table[date]))
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),reduction, incentive_earning_detail[fulfillment_date]<=MAX(date_table[date]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// RETURN 
+			// if(ISBLANK(a),0,a)
+			//------
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN b
+			//     )
+			
+			// VAR a =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             incentive_earning_detail[fulfillment_date] <= MAX(date_table[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             incentive_earning_detail[fulfillment_date] <= MAX(date_table[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus"
+			//         )
+			//     )
+			
+			// RETURN
+			// IF(IsKaiser, a, IF(ISBLANK(a) || a = 0, 0, a))
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            ) ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR a = 
+			    CALCULATE(
+			        COUNT(incentive_earning_detail[user_id]),
+			        reduction,
+			        incentive_earning_detail[fulfillment_date] <= MAX(date_table[date]),
+			        incentive_earning_detail[reward_category] <> "Bonus"
+			    )
+			
+			RETURN 
+			    IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: #,0
+		lineageTag: ac345aa5-80fa-4216-8e8d-e8fadb6e1579
+
+	measure Avg_Activity_completion = ```
+			
+			// VAR Activity_completion = 
+			//     CALCULATE(
+			//         COUNT(incentive_earning_detail[activity_id]),
+			//         incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),   
+			//         'incentive_earning_detail'[reward_category]<>"Bonus"
+			//     )
+			// VAR user_Activity_completion = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//         incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			//         'incentive_earning_detail'[reward_category]<>"Bonus"
+			//     )
+			// var a =
+			//     DIVIDE(Activity_completion, user_Activity_completion)
+			//     RETURN
+			// IF(ISBLANK(a),0,a)
+			//----------
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR Activity_completion = 
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[activity_id]),
+			//             incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[activity_id]),
+			//             incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus"
+			//         )
+			//     )
+			
+			// VAR user_Activity_completion = 
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			//             'incentive_earning_detail'[reward_category] <> "Bonus"
+			//         )
+			//     )
+			
+			// VAR a = DIVIDE(Activity_completion, user_Activity_completion)
+			
+			// RETURN
+			// IF(IsKaiser, a, IF(ISBLANK(a) || a = 0, 0, a))
+			
+			 
+			VAR KaiserFilter =
+			    FILTER(
+			        member_dimension,
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            ) ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR Activity_completion = 
+			    CALCULATE(
+			        COUNT(incentive_earning_detail[activity_id]),
+			        incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),   
+			        incentive_earning_detail[reward_category] <> "Bonus",
+			        KaiserFilter
+			    )
+			
+			VAR user_Activity_completion = 
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        incentive_earning_detail[fulfillment_date] <= MAX('date_table'[date]),
+			        incentive_earning_detail[reward_category] <> "Bonus",
+			        KaiserFilter
+			    )
+			
+			VAR a = DIVIDE(Activity_completion, user_Activity_completion)
+			
+			RETURN IF(ISBLANK(a), 0, a)
+			
+			```
+		lineageTag: 416dc2bc-aa9e-4e4b-89a3-477a4024afb5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Bonus Participants' = ```
+			
+			// var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]="Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			//------------
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN b
+			//     )
+			
+			// VAR a =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus"
+			//         )
+			//     )
+			
+			// RETURN
+			// IF(IsKaiser, a, IF(ISBLANK(a) || a = 0, 0, a))
+			
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			-- Step 1: Filter member_dimension with Kaiser + relationship_code logic
+			VAR filtered_members =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[start_date] >= min_date_ &&
+			        member_dimension[start_date] <= date_ &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			-- Step 2: Get concatenated user_id and max start_date
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                filtered_members,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			-- Step 3: Filter reduction set
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b
+			    )
+			
+			-- Step 4: Apply to incentive_earning_detail and calculate Bonus logic
+			VAR a =
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        reduction,
+			        'incentive_earning_detail'[reward_category] = "Bonus"
+			    )
+			
+			RETURN
+			    IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: #,0
+		lineageTag: 2ebf0344-8a30-4b85-ada8-7bbbc472479b
+
+	measure Avg_Earrnings_Bonus = ```
+			
+			// var a = CALCULATE(SUM('incentive_earning_detail'[amount_earned]),incentive_earning_detail[reward_category]="Bonus")
+			// var b = CALCULATE(DISTINCTCOUNT('incentive_earning_detail'[user_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			// var c = DIVIDE(a,b)
+			// RETURN
+			// IF(ISBLANK(c),0,c)
+			
+			//---------
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR new =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN new)
+			//     )
+			// var a = CALCULATE(SUM('incentive_earning_detail'[amount_earned]),reduction,'incentive_earning_detail'[reward_category]="Bonus")
+			// var b = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]="Bonus")
+			// Var out = DIVIDE(a,b)
+			// RETURN
+			// IF(ISBLANK(out),0,out)
+			
+			//------
+			
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR new =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN new
+			//     )
+			
+			// VAR a =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             SUM('incentive_earning_detail'[amount_earned]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             SUM('incentive_earning_detail'[amount_earned]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus"
+			//         )
+			//     )
+			
+			// VAR b =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus"
+			//         )
+			//     )
+			
+			// VAR out = DIVIDE(a, b)
+			
+			// RETURN
+			// IF(IsKaiser, out, IF(ISBLANK(out), 0, out))
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			-- Step 1: Filter member_dimension with Kaiser + relationship_code logic
+			VAR filtered_members =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[start_date] >= min_date_ &&
+			        member_dimension[start_date] <= date_ &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			-- Step 2: Get concatenated user_id and max start_date
+			VAR new =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                filtered_members,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			-- Step 3: Filter reduction set
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN new
+			    )
+			
+			-- Step 4: Apply to incentive_earning_detail and calculate Bonus logic
+			VAR a = CALCULATE(
+			    SUM('incentive_earning_detail'[amount_earned]),
+			    reduction,
+			    'incentive_earning_detail'[reward_category] = "Bonus"
+			)
+			
+			VAR b = CALCULATE(
+			    DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			    reduction,
+			    'incentive_earning_detail'[reward_category] = "Bonus"
+			)
+			
+			VAR out = DIVIDE(a, b)
+			
+			RETURN
+			    IF(ISBLANK(out), 0, out)
+			
+			```
+		formatString: #,0
+		lineageTag: fe77d07f-338a-4e38-b22b-7e56c2034752
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure Activity_completion_Bonus = ```
+			
+			// var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[activity_id]),'incentive_earning_detail'[reward_category]="Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			//---------
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(COUNT(incentive_earning_detail[activity_id]),reduction,'incentive_earning_detail'[reward_category]="Bonus")
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR baseReduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN b
+			//     )
+			
+			// VAR a =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[activity_id]),
+			//             baseReduction,
+			//             incentive_earning_detail[reward_category] = "Bonus",
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[activity_id]),
+			//             baseReduction,
+			//             incentive_earning_detail[reward_category] = "Bonus"
+			//             // Keeps existing page-level filters (including relationship_code)
+			//         )
+			//     )
+			
+			// RETURN
+			//     IF(IsKaiser, a, IF(ISBLANK(a), 0, a))
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			-- Apply Kaiser + Relationship filter logic
+			VAR filtered_members =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[start_date] >= min_date_ &&
+			        member_dimension[start_date] <= date_ &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			-- Get latest start date concatenation for filtered members
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                filtered_members,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			-- Match with reduction set
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b
+			    )
+			
+			-- Count of activity IDs for Bonus category with reduction filter
+			VAR a =
+			    CALCULATE(
+			        COUNT(incentive_earning_detail[activity_id]),
+			        reduction,
+			        incentive_earning_detail[reward_category] = "Bonus"
+			    )
+			
+			RETURN
+			    IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: 0
+		lineageTag: 2dffa072-8cc7-465e-8714-932fc97884fd
+
+	measure Total_Earnings_Employee = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			    FILTER(
+			        'incentive_earning_detail',
+			        CALCULATE(SUM('incentive_earning_detail'[amount_earned])) = 
+			        CALCULATE(SUM('incentive_plan_config_activity'[actv_max_amount]))
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: bfb9aa15-3f42-487a-a41d-8488183bd39a
+
+	measure Employees_Surpassing_MaxCap = ```
+			
+			// VAR TotalIncentive = 
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         ALLEXCEPT('incentive_earning_detail', 'incentive_earning_detail'[user_id])
+			//     )
+			// VAR MaxCap = 
+			//     CALCULATE(
+			//         SUM(incentive_plan_config[max_cap]),
+			//         ALLEXCEPT('incentive_plan_config',incentive_plan_config[client_id])
+			//     )
+			// VAR SurpassingCount = 
+			//     IF(TotalIncentive >= MaxCap, 1, 0)
+			// RETURN
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			var final = CALCULATE(
+			    [Achieved],
+			    reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			```
+		formatString: 0
+		lineageTag: b76b6b08-342b-4209-8b07-2eb5db370806
+
+	measure Unique_member_comple_activity = ```
+			
+			
+			// VAR SelectedDateType = MAX('Parameter 2'[Parameter])
+			// VAR MaxDate = MAX(date_table[date])
+			// VAR Result =
+			//     SWITCH(
+			//         SelectedDateType,
+			//         "Show by Activity Date",
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             incentive_earning_detail[reward_category] <> "Bonus",
+			//             incentive_earning_detail[activity_completion_date] <= MaxDate,
+			//             USERELATIONSHIP(date_table[date], incentive_earning_detail[activity_completion_date])
+			//         ),
+			//         "Show by Fullfillment Date",
+			//         CALCULATE(
+			//             DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//             incentive_earning_detail[reward_category] <> "Bonus",
+			//             incentive_earning_detail[fulfillment_date] <= MaxDate
+			//         )
+			//     )
+			// RETURN
+			//     IF(ISBLANK(Result), 0, Result)
+			
+			
+			VAR SelectedDateType = MAX('Parameter 2'[Parameter])
+			VAR MaxDate = MAX(date_table[date])
+			
+			VAR RelationshipLogic =
+			    FILTER(
+			        member_dimension,
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            ) ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR Result =
+			    SWITCH(
+			        SelectedDateType,
+			        "Show by Activity Date",
+			        CALCULATE(
+			            DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			            incentive_earning_detail[reward_category] <> "Bonus",
+			            incentive_earning_detail[activity_completion_date] <= MaxDate,
+			            USERELATIONSHIP(date_table[date], incentive_earning_detail[activity_completion_date]),
+			            RelationshipLogic
+			        ),
+			        "Show by Fullfillment Date",
+			        CALCULATE(
+			            DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			            incentive_earning_detail[reward_category] <> "Bonus",
+			            incentive_earning_detail[fulfillment_date] <= MaxDate,
+			            RelationshipLogic
+			        )
+			    )
+			
+			RETURN IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: 0
+		lineageTag: 42454b89-ca0f-4fac-b03f-b5097bdcf7ad
+
+	measure Client_name =
+			
+			var a = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+			RETURN
+			a
+		lineageTag: b4cc50f5-ad3d-403b-8b95-5694f8f5af85
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 405d9980-08f6-41d1-a992-c0ed051c6eb0
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: b0b9f50d-12b5-4586-a9db-3aaee825ce6d
+
+	measure EmpUsers_Not_Surpassing_MaxCap = ```
+			
+			// VAR TotalIncentive = 
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         ALLEXCEPT('incentive_earning_detail', 'incentive_earning_detail'[user_id])
+			//     )
+			// VAR MaxCap = 
+			//     CALCULATE(
+			//         SUM(incentive_plan_config[max_cap]),
+			//         ALLEXCEPT('incentive_plan_config', 'incentive_plan_config'[client_id])
+			//     )
+			// VAR NotSurpassingCount = 
+			//     IF(TotalIncentive <= MaxCap, 1, 0)
+			// RETURN
+			//     CALCULATE(SUMX(
+			//         VALUES('incentive_earning_detail'[user_id]),
+			//         NotSurpassingCount
+			//     ),member_dimension[relationship_code]="EE"||member_dimension[relationship_code]="Employee")
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			    
+			
+			var final = CALCULATE(
+			    [Not Achieved],
+			    reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			```
+		formatString: 0
+		lineageTag: b06d5bf2-da27-4f43-9cfc-edb7e611bf5e
+
+	measure EmpUsers_Not_Earning_Incentives = ```
+			[EligibleEmployees] -[Employees_Surpassing_MaxCap] - [EmpUsers_Not_Surpassing_MaxCap]
+			
+			```
+		formatString: 0
+		lineageTag: 0d3e6f9f-da34-4f32-8d07-18b29258e659
+
+	measure S/P_Surpassing_MaxCap = ```
+			
+			// VAR TotalIncentive = 
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         ALLEXCEPT('incentive_earning_detail', 'incentive_earning_detail'[user_id])
+			//     )
+			// VAR MaxCap = 
+			//     CALCULATE(
+			//         SUM(incentive_plan_config[max_cap]),
+			//         ALLEXCEPT('incentive_plan_config',incentive_plan_config[client_id])
+			//     )
+			// VAR SurpassingCount = 
+			//     IF(TotalIncentive >= MaxCap, 1, 0)
+			// RETURN
+			//     CALCULATE(SUMX(
+			//         VALUES('incentive_earning_detail'[user_id]),
+			//         SurpassingCount
+			//     ),member_dimension[relationship_code]<>"EE" && member_dimension[relationship_code]<>"Employee")
+			// CALCULATE(DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),member_dimension[relationship_code]="Spouse"||member_dimension[relationship_code]="SP",'Incentive_comppletion_summarize_Table'[Surpassing Count]=1,'Incentive_comppletion_summarize_Table'[user_id]<>BLANK(),'incentive_earning_detail'[reward_category]<>"Bonus")
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			var final = CALCULATE(
+			    [Achieved],reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			
+			```
+		formatString: 0
+		lineageTag: 8dc020fc-f72b-4f7f-9ff7-aa839158f8a0
+
+	measure S/PUsers_Not_Surpassing_MaxCap = ```
+			
+			// VAR TotalIncentive = 
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         ALLEXCEPT('incentive_earning_detail', 'incentive_earning_detail'[user_id])
+			//     )
+			// VAR MaxCap = 
+			//     CALCULATE(
+			//         SUM(incentive_plan_config[max_cap]),
+			//         ALLEXCEPT('incentive_plan_config', 'incentive_plan_config'[client_id])
+			//     )
+			// VAR NotSurpassingCount = 
+			//     IF(TotalIncentive <= MaxCap, 1, 0)
+			// RETURN
+			//     CALCULATE(SUMX(
+			//         VALUES('incentive_earning_detail'[user_id]),
+			//         NotSurpassingCount
+			//     ),member_dimension[relationship_code]<>"EE" && member_dimension[relationship_code]<>"Employee")
+			 
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			    
+			
+			var final = CALCULATE(
+			    [Not Achieved],reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			```
+		formatString: 0
+		lineageTag: 3aeff1c3-b477-4da4-9616-11f193c3c056
+
+	measure S/PUsers_Not_Earning_Incentives = [Eligible_S/P] -[S/P_Surpassing_MaxCap] - [S/PUsers_Not_Surpassing_MaxCap]
+		formatString: 0
+		lineageTag: f77ffbca-bfd9-4e4c-945a-233a5c9b59ac
+
+	measure AchievedCap_Employees_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [Employees_Surpassing_MaxCap],
+			//     0
+			// ) 
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [Employees_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%AchievedCap_Employees_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: 4e8035b8-ee30-4f47-a62e-41e803130d14
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure AchievedCap_SP_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [S/P_Surpassing_MaxCap],0
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [S/P_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%AchievedCap_SP_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: 351d9a2c-bd79-4e2f-9d0a-d18f29f828b4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure EarnedPartialIncentive_EmpUsers_Not_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive", [EmpUsers_Not_Surpassing_MaxCap],
+			//     BLANK()
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [EmpUsers_Not_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%EarnedPartialIncentive_EmpUsers_Not_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: e0f17f56-baf2-4324-bc62-f0d6b68a2933
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure EarnedPartialIncentive_SPUsers_Not_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive", [S/PUsers_Not_Surpassing_MaxCap],
+			//     BLANK()
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [S/PUsers_Not_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%EarnedPartialIncentive_SPUsers_Not_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: e93365f8-d539-440f-8e1f-8c5da687a7ef
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure NonParticipant_EmpUsers_Not_Earning = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [EmpUsers_Not_Earning_Incentives],
+			//     BLANK()
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [EmpUsers_Not_Earning_Incentives],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%NonParticipant_EmpUsers_Not_Earning]*100)
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 962c2f19-4a31-4a0b-b6ed-8712b538678d
+
+	measure NonParticipant_SPUsers_Not_Earning =
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [S/PUsers_Not_Earning_Incentives],
+			//     BLANK()
+			// )
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [S/PUsers_Not_Earning_Incentives],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%NonParticipant_SPUsers_Not_Earning]*100)
+			)
+		lineageTag: 59459fc5-25ad-44bd-a430-195c75106018
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %AchievedCap_Employees_Surpassing =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", DIVIDE([Employees_Surpassing_MaxCap],[EligibleEmployees]),
+			    0
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 10d53255-a6ff-4e59-9e08-e1cad6df380c
+
+	measure %AchievedCap_SP_Surpassing = ```
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", DIVIDE([S/P_Surpassing_MaxCap],[Eligible_S/P]),0
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 33886e72-25f9-4a9e-9d07-3dbc438c30fc
+
+	measure %EarnedPartialIncentive_EmpUsers_Not_Surpassing =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive", DIVIDE([EmpUsers_Not_Surpassing_MaxCap],[EligibleEmployees])
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 15f30790-4044-4d82-aaef-3b8ad4144f42
+
+	measure %EarnedPartialIncentive_SPUsers_Not_Surpassing = ```
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive",DIVIDE( [S/PUsers_Not_Surpassing_MaxCap],[Eligible_S/P])
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 657ebfe4-5582-4e75-962f-599686db9a55
+
+	measure %NonParticipant_EmpUsers_Not_Earning =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", DIVIDE([EmpUsers_Not_Earning_Incentives],[EligibleEmployees])
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 762bcf73-9ee1-45aa-a382-6c6b303e997e
+
+	measure %NonParticipant_SPUsers_Not_Earning =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", DIVIDE([S/PUsers_Not_Earning_Incentives],[Eligible_S/P])
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: f9800199-8c34-45fa-84c6-b9feb13f3728
+
+	measure 'total Incentive Participants' = ```
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),reduction, incentive_earning_detail[fulfillment_date]<=MAX(date_table[date]),'incentive_earning_detail'[reward_category]<>"Bonus")
+			// RETURN 
+			// if(ISBLANK(a),0,a)
+			//-------------
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b
+			    )
+			
+			VAR a =
+			    IF(
+			        IsKaiser,
+			        CALCULATE(
+			            COUNT(incentive_earning_detail[user_id]),
+			            reduction,
+			            incentive_earning_detail[fulfillment_date] <= MAX(date_table[date]),
+			            'incentive_earning_detail'[reward_category] <> "Bonus",
+			            REMOVEFILTERS(member_dimension[relationship_code])
+			        ),
+			        CALCULATE(
+			            COUNT(incentive_earning_detail[user_id]),
+			            reduction,
+			            incentive_earning_detail[fulfillment_date] <= MAX(date_table[date]),
+			            'incentive_earning_detail'[reward_category] <> "Bonus"
+			        )
+			    )
+			
+			RETURN
+			IF(IsKaiser, a, IF(ISBLANK(a) || a = 0, BLANK(), a))
+			
+			
+			```
+		formatString: 0
+		lineageTag: d0210b10-a4cf-4238-b33b-b48bd1251572
+
+	measure Age_Incentive_all = ```
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR new =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN new)
+			//     )
+			// VAR count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]<>"Bonus")
+			// VAR b = CALCULATE(
+			//     DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			//     REMOVEFILTERS(member_dimension[gender]),REMOVEFILTERS(member_dimension[Age_bucket]),member_dimension[Age_bucket]<> "Unknown",member_dimension[Age_bucket]<> BLANK(),member_dimension[gender] <> BLANK(),'incentive_earning_detail'[reward_category]<>"Bonus"
+			// )
+			// var d =
+			// DIVIDE(count_user, b)
+			// RETURN
+			// IF(ISBLANK(d),0,d)
+			
+			
+			 
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			 
+			VAR new =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			 
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[Concated_fiels] IN new)
+			    )
+			 
+			VAR isKaiser =
+			    CONTAINSSTRING(SELECTEDVALUE(member_dimension[client_name]), "Kaiser")
+			 
+			VAR count_user =
+			    IF(
+			        isKaiser,
+			        CALCULATE(
+			            DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			            reduction,
+			            member_dimension[relationship_code] IN { "dependent", "employee", "spouse" },
+			            incentive_earning_detail[reward_category] <> "Bonus"
+			        ),
+			        CALCULATE(
+			            DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			            reduction,
+			            incentive_earning_detail[reward_category] <> "Bonus"
+			        )
+			    )
+			 
+			VAR b =
+			    CALCULATE(
+			        DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			        REMOVEFILTERS(member_dimension[gender]),
+			        REMOVEFILTERS(member_dimension[Age_bucket]),
+			        member_dimension[Age_bucket] <> "Unknown",
+			        NOT(ISBLANK(member_dimension[Age_bucket])),
+			        NOT(ISBLANK(member_dimension[gender])),
+			        incentive_earning_detail[reward_category] <> "Bonus"
+			    )
+			 
+			VAR d = DIVIDE(count_user, b)
+			 
+			RETURN
+			    IF(ISBLANK(d), 0, d)
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: c57ce6dd-0aae-4f2b-bbe3-97e9d25e62e1
+
+	measure 'Incentive Participants Bonus' = ```
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			    
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			    
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			// var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]="Bonus",USERELATIONSHIP(date_table[date],incentive_earning_detail[fulfillment_date]))
+			// RETURN
+			// IF(ISBLANK(a),0,a)
+			//----------
+			
+			
+			// VAR min_date_ =
+			//     CALCULATE(
+			//         MIN('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			
+			// VAR ClientName = SELECTEDVALUE(member_dimension[client_id_name], "")
+			// VAR IsKaiser = SEARCH("Kaiser", ClientName, 1, 0) > 0
+			
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 FILTER(
+			//                     member_dimension,
+			//                     member_dimension[start_date] >= min_date_ &&
+			//                     member_dimension[start_date] <= date_
+			//                 ),
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         member_dimension[Concated_fiels] IN b
+			//     )
+			
+			// VAR a =
+			//     IF(
+			//         IsKaiser,
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus",
+			//             USERELATIONSHIP(date_table[date], incentive_earning_detail[fulfillment_date]),
+			//             REMOVEFILTERS(member_dimension[relationship_code])
+			//         ),
+			//         CALCULATE(
+			//             COUNT(incentive_earning_detail[user_id]),
+			//             reduction,
+			//             'incentive_earning_detail'[reward_category] = "Bonus",
+			//             USERELATIONSHIP(date_table[date], incentive_earning_detail[fulfillment_date])
+			//         )
+			//     )
+			
+			// RETURN
+			// IF(IsKaiser, a, IF(ISBLANK(a) || a = 0, BLANK(), a))
+			
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			
+			VAR filtered_members =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[start_date] >= min_date_ &&
+			        member_dimension[start_date] <= date_ &&
+			        (
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			            )
+			            ||
+			            (
+			                SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			            )
+			        )
+			    )
+			
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                filtered_members,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN b
+			    )
+			
+			VAR a =
+			    CALCULATE(
+			        COUNT(incentive_earning_detail[user_id]),
+			        reduction,
+			        incentive_earning_detail[reward_category] = "Bonus",
+			        USERELATIONSHIP(date_table[date], incentive_earning_detail[fulfillment_date])
+			    )
+			
+			RETURN
+			    IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: #,0
+		lineageTag: 5ddf7e83-22fd-463a-a90a-45da0f99d4cd
+
+	measure 'Final rank' =
+			
+			IF(ISINSCOPE('member_dimension'[state]),
+			RANKX(ALL('member_dimension'[state]),[states_Participants]+DIVIDE([AlphabeticalRank],100),,DESC))
+		formatString: 0
+		lineageTag: 95a9aef3-5cc9-491e-b68d-4425fc88ef98
+
+	measure AlphabeticalRank = ```
+			
+			VAR curr_name = SELECTEDVALUE('member_dimension'[state])
+			var result = 
+			COUNTROWS(FILTER(
+			    ALL('member_dimension'[state]), 'member_dimension'[state]<=curr_name))
+			RETURN
+			result
+			```
+		formatString: 0
+		lineageTag: 65900710-5d59-44ad-80a8-90b392642e10
+
+	measure states_Participants =
+			
+			VAR c = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Other_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Other_concat])
+			
+			-- The 'reduction' variable to filter based on the exclusion of "Employee" and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[Concated_fiels] IN c)
+			    )
+			var a = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction)
+			RETURN
+			a
+		formatString: 0
+		lineageTag: 2a3c257b-0df0-485e-b3fc-0cf654bd1e48
+
+	measure 'Incentive_Measure Value_Emp' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [AchievedCap_Employees_Surpassing],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned PartiaL Incentive", [EarnedPartialIncentive_EmpUsers_Not_Surpassing],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [NonParticipant_EmpUsers_Not_Earning],
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: dc69c1f9-5bb6-464e-b755-81ced4c554bb
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Incentive_Measure Value_SP' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [AchievedCap_SP_Surpassing],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned PartiaL Incentive", [EarnedPartialIncentive_SPUsers_Not_Surpassing],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [NonParticipant_SPUsers_Not_Earning],
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: 65eb1cbe-753b-48b2-8629-95b1e77458af
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure activities_AlphabeticalRank = ```
+			
+			VAR curr_name = SELECTEDVALUE('incentive_earning_detail'[activity_description])
+			var result = 
+			COUNTROWS(FILTER(
+			    ALL('incentive_earning_detail'[activity_description]), 'incentive_earning_detail'[activity_description]<=curr_name))
+			RETURN
+			result
+			```
+		formatString: 0
+		lineageTag: 7725c631-caeb-4e39-b8b1-7660c3753e20
+
+	measure 'activities_Final rank' = ```
+			
+			// IF(ISINSCOPE('incentive_earning_detail'[activity_description]),
+			// RANKX(ALL('incentive_earning_detail'[activity_description]),[Incentive Participants Bonus]+DIVIDE([activities_AlphabeticalRank],100),,DESC))
+			
+			
+			IF(
+			    ISINSCOPE('incentive_earning_detail'[activity_description]),
+			    VAR KaiserFilter =
+			        FILTER(
+			            member_dimension,
+			            (
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			                ) ||
+			                (
+			                    SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			                    member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			                )
+			            )
+			        )
+			    RETURN
+			        RANKX(
+			            ALL('incentive_earning_detail'[activity_description]),
+			            CALCULATE(
+			                [Incentive Participants Bonus] + DIVIDE([activities_AlphabeticalRank], 100),
+			                KaiserFilter
+			            ),
+			            ,
+			            DESC
+			        )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: f3f2afdd-065a-46bf-95af-db814b7f6a87
+
+	measure %Incentive_all_Emp = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") && (member_dimension[Concated_fiels] IN b)
+			    )
+			// var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]<>"Bonus")
+			var a = CALCULATE(
+			    DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			    reduction,'incentive_earning_detail'[reward_category] <> "Bonus"
+			)
+			var final =
+			DIVIDE(a,[EligibleUsers])
+			RETURN
+			IF(ISBLANK(final),0,final)
+			
+			```
+		lineageTag: 53bd7b50-84f2-4761-a49d-ad14d807b4d1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %Incentive_all_SP = ```
+			
+			 VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Emp_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Emp_concat])
+			
+			-- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" || member_dimension[relationship_code]= "SP") && (member_dimension[Concated_fiels] IN b)
+			    )
+			// var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]<>"Bonus")
+			var count_user = CALCULATE(
+			    DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			    reduction,'incentive_earning_detail'[reward_category] <> "Bonus"
+			)
+			var final =
+			DIVIDE(count_user,[EligibleUsers])
+			RETURN
+			IF(ISBLANK(final),0,final)
+			```
+		lineageTag: eaadc622-f52f-4e6a-bbf7-c9b9d3a24ab5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure CumulativeAmount = ```
+			
+			CALCULATE(
+			    SUM(incentive_earning_detail[amount_earned]),
+			    FILTER(
+			        ALLSELECTED(incentive_earning_detail),
+			       
+			        incentive_earning_detail[fulfillment_date] <= MAX(incentive_earning_detail[fulfillment_date])
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 4a0a8e4c-ad6b-451d-a5ae-44b3889437df
+
+	measure UsersAboveCap = ```
+			
+			VAR SelectedDate = MAX(incentive_earning_detail[fulfillment_date])
+			VAR max_cap = SUM(incentive_plan_config[max_cap])
+			 
+			RETURN
+			SUMX(
+			    SUMMARIZE(
+			        incentive_earning_detail,
+			        incentive_earning_detail[user_id],
+			        "CumEarnings",
+			        CALCULATE(
+			            [CumulativeAmount],
+			            incentive_earning_detail[fulfillment_date] <= SelectedDate
+			        )
+			    ),
+			    IF([CumEarnings] > max_cap, 1, 0)
+			)
+			```
+		formatString: 0
+		lineageTag: 5a1d157d-e1ae-42e9-a86b-e47a24a1f575
+
+	measure UsersBelowCap = ```
+			
+			VAR SelectedDate = MAX(incentive_earning_detail[fulfillment_date])
+			VAR max_cap = SUM(incentive_plan_config[max_cap])
+			 
+			RETURN
+			SUMX(
+			    SUMMARIZE(
+			        incentive_earning_detail,
+			        incentive_earning_detail[user_id],
+			        "CumEarnings",
+			        CALCULATE(
+			            [CumulativeAmount],
+			            incentive_earning_detail[fulfillment_date] <= SelectedDate
+			        )
+			    ),
+			    IF([CumEarnings] <= max_cap, 1, 0)
+			)
+			```
+		formatString: 0
+		lineageTag: 72531bd3-d657-43a5-9af3-48988275bcfe
+
+	measure Achieved = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			    FILTER(
+			        VALUES(incentive_earning_detail[user_id]), 
+			        CALCULATE(SUM(incentive_earning_detail[amount_earned])) >= 
+			        CALCULATE(SUM(incentive_plan_config[max_cap]))
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: a19952ca-cd0a-453d-a360-1f929de0f6b1
+
+	measure 'Not Achieved' = ```
+			
+			CALCULATE(
+			    DISTINCTCOUNT(incentive_earning_detail[user_id]),
+			    FILTER(
+			        VALUES(incentive_earning_detail[user_id]), 
+			        CALCULATE(SUM(incentive_earning_detail[amount_earned])) < 
+			        CALCULATE(SUM(incentive_plan_config[max_cap]))
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 1ab5cc41-8dd1-4daa-b989-b3501083e81b
+
+	measure Testing = ```
+			
+			
+			// Incentive Participants = 
+			// VAR LatestUsers =
+			//     ADDCOLUMNS(
+			//         SUMMARIZE(
+			//             member_dimension,
+			//             member_dimension[user_id]
+			//         ),
+			//         "MaxStartDate", CALCULATE(MAX(member_dimension[start_date]))
+			//     )
+			
+			// VAR ActiveUsers =
+			//     SELECTCOLUMNS(
+			//         FILTER(
+			//             member_dimension,
+			//             VAR maxStartDate = 
+			//                 CALCULATE(
+			//                     MAX(member_dimension[start_date]),
+			//                     ALLEXCEPT(member_dimension, member_dimension[user_id])
+			//                 )
+			//             RETURN member_dimension[start_date] = maxStartDate
+			//         ),
+			//         "user_id", member_dimension[user_id]
+			//     )
+			
+			// RETURN
+			// CALCULATE(
+			//     DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			//     'incentive_earning_detail'[reward_category] <> "Bonus",
+			//     TREATAS(ActiveUsers, 'incentive_earning_detail'[user_id])
+			// )
+			
+			
+			// Incentive Participants = 
+			VAR LatestUsers =
+			    ADDCOLUMNS(
+			        SUMMARIZE(
+			            member_dimension,
+			            member_dimension[user_id]
+			        ),
+			        "MaxStartDate", CALCULATE(MAX(member_dimension[start_date]))
+			    )
+			
+			VAR ActiveUsers =
+			    SELECTCOLUMNS(
+			        FILTER(
+			            member_dimension,
+			            VAR maxStartDate = 
+			                CALCULATE(
+			                    MAX(member_dimension[start_date]),
+			                    ALLEXCEPT(member_dimension, member_dimension[user_id])
+			                )
+			            RETURN member_dimension[start_date] = maxStartDate
+			        ),
+			        "user_id", member_dimension[user_id]
+			    )
+			
+			VAR MonthTable =
+			    SUMMARIZE(
+			        'date_table',
+			        'date_table'[MonthYear]  // or use [YearMonth] column if you have one
+			    )
+			
+			VAR Result =
+			    SUMX(
+			        MonthTable,
+			        VAR ThisMonth = 'date_table'[MonthYear]
+			        RETURN
+			            CALCULATE(
+			                DISTINCTCOUNT('incentive_earning_detail'[user_id]),
+			                'incentive_earning_detail'[reward_category] <> "Bonus",
+			                TREATAS(ActiveUsers, 'incentive_earning_detail'[user_id]),
+			                'date_table'[MonthYear] = ThisMonth
+			            )
+			    )
+			
+			RETURN Result
+			```
+		formatString: 0
+		lineageTag: d1818e1a-fb22-4bda-ad8a-7de67c62f7e8
+
+	measure 'Incentive_Measure Value_Dpt' = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [AchievedCap_Dependent_Surpassing],
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned PartiaL Incentive", [EarnedPartialIncentive_DptUsers_Not_Surpassing],
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [NonParticipant_DptUsers_Not_Earning],
+			//     BLANK()
+			// )
+			//------ 
+			// VAR SelectedClient = SELECTEDVALUE('member_dimension'[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// -- Apply logic conditionally per measure
+			// VAR AchievedCap =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([AchievedCap_Dependent_Surpassing], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [AchievedCap_Dependent_Surpassing]
+			//     )
+			
+			// VAR EarnedPartial =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([EarnedPartialIncentive_DptUsers_Not_Surpassing], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [EarnedPartialIncentive_DptUsers_Not_Surpassing]
+			//     )
+			
+			// VAR NonParticipant =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([NonParticipant_DptUsers_Not_Earning], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [NonParticipant_DptUsers_Not_Earning]
+			//     )
+			
+			// RETURN
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", AchievedCap,
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned PartiaL Incentive", EarnedPartial,
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", NonParticipant,
+			//     BLANK()
+			// )
+			//-------------
+			// VAR SelectedClient = SELECTEDVALUE('member_dimension'[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			
+			// VAR AchievedCap =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([AchievedCap_Dependent_Surpassing], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [AchievedCap_Dependent_Surpassing]
+			//     )
+			
+			// VAR EarnedPartial =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([EarnedPartialIncentive_DptUsers_Not_Surpassing], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [EarnedPartialIncentive_DptUsers_Not_Surpassing]
+			//     )
+			
+			// VAR NonParticipant =
+			//     IF(
+			//         IsKaiserClient,
+			//         CALCULATE([NonParticipant_DptUsers_Not_Earning], 
+			//             'member_dimension'[relationship_code] IN {"Dependent", "Employee", "Spouse"}
+			//         ),
+			//         [NonParticipant_DptUsers_Not_Earning]
+			//     )
+			
+			// VAR Result =
+			//     SWITCH(
+			//         TRUE(),
+			//         SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", AchievedCap,
+			//         SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned PartiaL Incentive", EarnedPartial,
+			//         SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", NonParticipant,
+			//         BLANK()
+			//     )
+			
+			// RETURN
+			// IF(Result = 0, BLANK(), Result)
+			
+			
+			VAR SelectedMeasure = SELECTEDVALUE('Incentive_completion_Names'[Measure])
+			
+			VAR ClientFilter =
+			    FILTER(
+			        member_dimension,
+			        (
+			            SEARCH("Kaiser", member_dimension[client], 1, 0) > 0 &&
+			            member_dimension[relationship_code] IN {"Employee", "Spouse", "Dependent"}
+			        )
+			        ||
+			        (
+			            SEARCH("Kaiser", member_dimension[client], 1, 0) = 0 &&
+			            member_dimension[relationship_code] IN {"Employee", "Spouse"}
+			        )
+			    )
+			
+			VAR AchievedCap = CALCULATE([AchievedCap_Dependent_Surpassing], ClientFilter)
+			VAR EarnedPartial = CALCULATE([EarnedPartialIncentive_DptUsers_Not_Surpassing], ClientFilter)
+			VAR NonParticipant = CALCULATE([NonParticipant_DptUsers_Not_Earning], ClientFilter)
+			
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    SelectedMeasure = "Achieved Cap", IF(AchievedCap = 0, BLANK(), AchievedCap),
+			    SelectedMeasure = "Earned PartiaL Incentive", IF(EarnedPartial = 0, BLANK(), EarnedPartial),
+			    SelectedMeasure = "Non-Participant", IF(NonParticipant = 0, BLANK(), NonParticipant),
+			    BLANK()
+			)
+			
+			
+			```
+		formatString: #,0
+		lineageTag: 857efd64-0a98-4aa3-b5bc-b1a8022b084c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure Dependent_Surpassing_MaxCap = ```
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Dependent" ||
+			         member_dimension[relationship_code] = "Dpt")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			var final = CALCULATE(
+			    [Achieved],
+			    reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			```
+		formatString: 0
+		lineageTag: 87223b7e-2760-4a46-99c6-25cc107cf91e
+
+	measure AchievedCap_Dependent_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", [Employees_Surpassing_MaxCap],
+			//     0
+			// ) 
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [Dependent_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%AchievedCap_Dependent_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: 533b556b-fc73-4891-b5c5-1ae8b0629108
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %AchievedCap_Dependent_Surpassing =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Achieved Cap", DIVIDE([Dependent_Surpassing_MaxCap],[EligibleDependent]),
+			    0
+			)
+		lineageTag: 80bd30ce-ce08-4124-8c56-9ba0bc57346b
+
+	measure EligibleDependent = ```
+			
+			// VAR min_date_ = CALCULATE(
+			//     MIN('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE") && (member_dimension[Concated_fiels] IN b)
+			//     )
+			// VAR EligibleUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),reduction,
+			//         member_dimension[start_date]<= date_,member_dimension[start_date]>= min_date_
+			//         // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(EligibleUsers),
+			//     0,
+			//     EligibleUsers
+			// )
+			
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Dependent" ||
+			         member_dimension[relationship_code] = "Dpt")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			    
+			VAR EligibleUsers =
+			    CALCULATE(
+			        DISTINCTCOUNT(member_dimension[user_id]),
+			        reduction,
+			        member_dimension[start_date] >= min_date_,
+			        member_dimension[start_date] <= date_
+			    )
+			    
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: ca642644-cb60-4356-b536-97e6b6490d6b
+
+	measure EarnedPartialIncentive_DptUsers_Not_Surpassing = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive", [EmpUsers_Not_Surpassing_MaxCap],
+			//     BLANK()
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [DptUsers_Not_Surpassing_MaxCap],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%EarnedPartialIncentive_DptUsers_Not_Surpassing]*100)
+			)
+			
+			```
+		lineageTag: bc63f3a7-b2c1-47ef-8eae-327eb9c7f626
+
+	measure DptUsers_Not_Surpassing_MaxCap = ```
+			
+			// VAR TotalIncentive = 
+			//     CALCULATE(
+			//         SUM('incentive_earning_detail'[amount_earned]),
+			//         ALLEXCEPT('incentive_earning_detail', 'incentive_earning_detail'[user_id])
+			//     )
+			// VAR MaxCap = 
+			//     CALCULATE(
+			//         SUM(incentive_plan_config[max_cap]),
+			//         ALLEXCEPT('incentive_plan_config', 'incentive_plan_config'[client_id])
+			//     )
+			// VAR NotSurpassingCount = 
+			//     IF(TotalIncentive <= MaxCap, 1, 0)
+			// RETURN
+			//     CALCULATE(SUMX(
+			//         VALUES('incentive_earning_detail'[user_id]),
+			//         NotSurpassingCount
+			//     ),member_dimension[relationship_code]="EE"||member_dimension[relationship_code]="Employee")
+			
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Dependent" ||
+			         member_dimension[relationship_code] = "Dpt")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			    
+			
+			var final = CALCULATE(
+			    [Not Achieved],
+			    reduction,
+			    'incentive_earning_detail'[reward_category] <> "Bonus",
+			    TREATAS(
+			        VALUES(member_dimension[user_id]),
+			        'Incentive_comppletion_summarize_Table'[user_id]
+			    )
+			)
+			
+			RETURN
+			final
+			```
+		formatString: 0
+		lineageTag: 6eacf039-b554-45db-a381-45313f70036f
+
+	measure %EarnedPartialIncentive_DptUsers_Not_Surpassing =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Earned Partial Incentive", DIVIDE([DptUsers_Not_Surpassing_MaxCap],[EligibleDependent])
+			)
+		lineageTag: 0afad679-0cdb-4427-aee6-b54072153063
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure NonParticipant_DptUsers_Not_Earning = ```
+			
+			// SWITCH(
+			//     TRUE(),
+			//     SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", [EmpUsers_Not_Earning_Incentives],
+			//     BLANK()
+			// )
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Count", [DptUsers_Not_Earning_Incentives],
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant" && SELECTEDVALUE('ParameterTable'[Parameter]) = "Show by Percent",CALCULATE([%NonParticipant_DptUsers_Not_Earning]*100)
+			)
+			
+			```
+		lineageTag: 4381a4c7-1472-4676-854d-75103ab62ae2
+
+	measure DptUsers_Not_Earning_Incentives = ```
+			[EligibleDependent] -[Dependent_Surpassing_MaxCap] - [DptUsers_Not_Surpassing_MaxCap]
+			
+			```
+		formatString: 0
+		lineageTag: 5be266b8-ec2e-469c-b377-61ba36aa1ac1
+
+	measure %NonParticipant_DptUsers_Not_Earning =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Incentive_completion_Names'[Measure]) = "Non-Participant", DIVIDE([DptUsers_Not_Earning_Incentives],[EligibleDependent])
+			)
+		lineageTag: 6aabf75b-07f0-484f-99a3-824078453782
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure %Incentive_all_Dpt = ```
+			
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			 
+			// VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			//     SUMMARIZE(
+			//         member_dimension,
+			//         member_dimension[user_id],
+			//         "Max_Start_Date",
+			//         MAX(member_dimension[start_date])
+			//     ),
+			//     "Emp_concat",
+			//     member_dimension[user_id] & "-" & [Max_Start_Date]
+			// ), [Emp_concat])
+			 
+			// -- The 'reduction' variable to filter based on relationship_code and concatenated fields
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Dependent" || member_dimension[relationship_code] = "Dpt") && (member_dimension[Concated_fiels] IN b)
+			//     )
+			// // var count_user = CALCULATE(DISTINCTCOUNT(incentive_earning_detail[user_id]),reduction,'incentive_earning_detail'[reward_category]<>"Bonus")
+			// var a = CALCULATE(
+			//     DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//     reduction,'incentive_earning_detail'[reward_category] <> "Bonus"
+			// )
+			// var final =
+			// DIVIDE(a,[EligibleUsers])
+			// RETURN
+			// IF(ISBLANK(final),0,final)
+			 
+			// VAR SelectedClient = SELECTEDVALUE(member_dimension[client_id_name])
+			// VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			 
+			// VAR date_ =
+			//     CALCULATE(
+			//         MAX('date_table'[date]),
+			//         VALUES('date_table')
+			//     )
+			 
+			// VAR b =
+			//     SELECTCOLUMNS(
+			//         ADDCOLUMNS(
+			//             SUMMARIZE(
+			//                 member_dimension,
+			//                 member_dimension[user_id],
+			//                 "Max_Start_Date", MAX(member_dimension[start_date])
+			//             ),
+			//             "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			//         ),
+			//         [Emp_concat]
+			//     )
+			 
+			// VAR reduction =
+			//     FILTER(
+			//         member_dimension,
+			//         (member_dimension[relationship_code] = "Dependent" || member_dimension[relationship_code] = "Dpt") &&
+			//         (member_dimension[Concated_fiels] IN b)
+			//     )
+			 
+			// VAR a =
+			//     CALCULATE(
+			//         DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			//         reduction,
+			//         'incentive_earning_detail'[reward_category] <> "Bonus"
+			//     )
+			 
+			// VAR final = DIVIDE(a, [EligibleUsers])
+			 
+			// RETURN
+			// IF(
+			//     IsKaiserClient,
+			//     IF(ISBLANK(final) || final = 0, BLANK(), final),
+			//     BLANK()
+			// )
+			// ----------
+			VAR SelectedClient = SELECTEDVALUE(member_dimension[client_id_name])
+			VAR IsKaiserClient = CONTAINSSTRING(LOWER(SelectedClient), "kaiser")
+			 
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			 
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                member_dimension,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			 
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Dependent" || member_dimension[relationship_code] = "Dpt") &&
+			        (member_dimension[Concated_fiels] IN b)
+			    )
+			 
+			VAR a =
+			    CALCULATE(
+			        DISTINCTCOUNT('Incentive_comppletion_summarize_Table'[user_id]),
+			        reduction,
+			        'incentive_earning_detail'[reward_category] <> "Bonus"
+			    )
+			 
+			VAR final = DIVIDE(a, [EligibleUsers])
+			 
+			RETURN
+			IF(
+			    IsKaiserClient,
+			    final,
+			    BLANK()
+			)
+			 
+			 
+			```
+		lineageTag: 2264dc0d-16ae-467e-bcbf-a15aee01c3ef
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Earning_Measure_Table = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

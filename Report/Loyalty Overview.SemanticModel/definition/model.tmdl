@@ -1,0 +1,38 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","member_dimension","member_last_activity_bi","SchemaName","loyalty_redemptions","loyalty_winners","measures table","points_redemptions","points_awarded"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1155.0 (25.06)+46435b07013d2a234d7fd007083a9e70b8e79f1c
+
+ref table DateTableTemplate_9fe0d8be-ead8-406a-8356-0c4ad705840e
+ref table date_table
+ref table LocalDateTable_f86d5610-3e2b-49b4-92ac-03670accca8c
+ref table member_dimension
+ref table member_last_activity_bi
+ref table LocalDateTable_244ee724-47d0-4613-a8ea-b28876c79dce
+ref table loyalty_redemptions
+ref table LocalDateTable_75ef3702-b913-40a8-994b-a2735d164179
+ref table LocalDateTable_da2b2e7a-c468-44ae-8205-c4be1d948c6a
+ref table loyalty_winners
+ref table LocalDateTable_8ec9e8f0-f40a-4984-9eee-d4b0c2d6c702
+ref table LocalDateTable_13c81515-7d10-440e-96e0-04b9b0ab73df
+ref table LocalDateTable_249606df-a7e1-4b78-9f6e-025490386a2e
+ref table LocalDateTable_e78a831b-7081-415c-abdc-98e979a2d5a8
+ref table 'measures table'
+ref table LocalDateTable_c00d6651-0b6c-486d-85f7-0456c1e87621
+ref table points_redemptions
+ref table points_awarded
+ref table LocalDateTable_a0084029-a757-4dda-b206-2a1cbb7aeb69
+ref table LocalDateTable_61b03111-f3f7-42ca-b7ce-6d98e89eea7a
+ref table LocalDateTable_2cc0f62a-67e2-46ca-b897-e85c1643c75d
+
+ref cultureInfo en-US
+

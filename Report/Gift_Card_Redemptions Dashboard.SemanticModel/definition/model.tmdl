@@ -1,0 +1,37 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["gift_card_redemption","date_table","MeasureTable","member_dimension","SchemaName","incentive_earning_detail"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1155.0 (25.06)+46435b07013d2a234d7fd007083a9e70b8e79f1c
+
+ref table gift_card_redemption
+ref table DateTableTemplate_4b2296d7-ecc8-49a7-bfdc-19d6e39b403e
+ref table date_table
+ref table MeasureTable
+ref table member_dimension
+ref table LocalDateTable_803bc51d-416e-4b20-8ab2-8af1c6120b64
+ref table LocalDateTable_35fa49cc-4b03-445b-a563-2d8535d67473
+ref table New_date
+ref table LocalDateTable_fa0a2739-1eed-4e88-95c8-a371e68abbda
+ref table 'Short Month Summary'
+ref table LocalDateTable_dbd0f2db-4d04-4865-9069-8acb282988b7
+ref table New
+ref table incentive_earning_detail
+ref table LocalDateTable_9e140158-f592-4202-af23-31c0dee30936
+ref table LocalDateTable_7315cf71-74a4-42be-8dc4-d9a81b3f0191
+ref table LocalDateTable_301a3fb7-35c4-47cb-a387-8625e33a851f
+ref table LocalDateTable_a67e0f85-2a1f-43a2-973a-007c315dadb5
+ref table LocalDateTable_cfd67dd3-0384-41a1-a8a2-0be51b13f8ad
+ref table LocalDateTable_b54b2359-c446-4251-8771-6405c3b47c2a
+ref table LocalDateTable_6568fabe-e27b-4afd-b4d5-368cfcd374fd
+
+ref cultureInfo en-US
+

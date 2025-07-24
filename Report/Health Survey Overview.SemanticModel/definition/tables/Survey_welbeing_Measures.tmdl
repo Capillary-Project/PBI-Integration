@@ -1,0 +1,181 @@
+table Survey_welbeing_Measures
+	lineageTag: cf215e3b-2a88-4bb9-a7f5-def8a93d766b
+
+	measure career_social_support =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How often do you feel supported by family and friends?",'survey_response_fact'[derived_answer_text]="Never"||'survey_response_fact'[derived_answer_text]="Sometimes")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: c451c91b-292e-4360-a423-5ec606cc950c
+
+	measure career_social_job =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How's your work life?",'survey_response_fact'[derived_answer_text]="I like my job but it's getting worse"||'survey_response_fact'[derived_answer_text]="I don't like my job")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 4081185e-0b3a-4077-8498-92d921386187
+
+	measure Physical_Workout =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),
+			'survey_dimension'[derived_question_text]="How many days a week do you exercise for at least 30 minutes?",'survey_response_fact'[answer_text]="none"||'survey_response_fact'[derived_answer_text]="one or two")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 6e9525e2-ad45-4e90-bc92-873ea1e094a2
+
+	measure Physical_sleep =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="On average, how many hours of sleep do you get at night?",'survey_response_fact'[derived_answer_text]="6 or less")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 0ab4a664-84d0-468b-aee6-8f99f6b39582
+
+	measure Physical_health =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="On average, how many hours of sleep do you get at night?",'survey_response_fact'[answer_text]="6 or less")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			DIVIDE(a,b)
+		formatString: 0%;-0%;0%
+		lineageTag: ab7157a0-af09-468c-961d-e1b88ba25d4f
+
+	measure Physical_diet =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How would you rate your diet on most days?",'survey_response_fact'[derived_answer_text]="Terrible!"||'survey_response_fact'[derived_answer_text]="not so good"||'survey_response_fact'[derived_answer_text]="ok")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 685fb501-dc84-4b43-82c0-58e006cb3a82
+
+	measure Physical_worsoned =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="Compared to one year ago, how would you rate your physical health in general now?",'survey_response_fact'[derived_answer_text]="Terrible!"||'survey_response_fact'[derived_answer_text]="much worse"||'survey_response_fact'[derived_answer_text]="slightly worse")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 951e5d92-0e03-437b-87aa-aafdc34aa447
+
+	measure Emotional_stress =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="Do you feel that stress is affecting your health?",'survey_response_fact'[derived_answer_text]="A little bit"||'survey_response_fact'[derived_answer_text]="Quite a bit")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: b4f4d799-fcb4-40a4-b7fc-b1e674b0a7f7
+
+	measure Emotional_downhearted =
+			
+			// var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How much of the time during the past 4 weeks have you felt downhearted or blue?",'survey_response_fact'[derived_answer_text]="all of the time"||'survey_response_fact'[derived_answer_text]="most of the time"||'survey_response_fact'[derived_answer_text]="a good bit of the time")
+			// var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			// RETURN
+			// if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How much of the time during the past 4 weeks have you felt downhearted or blue?",'survey_response_fact'[derived_answer_text]="all of the time"||'survey_response_fact'[derived_answer_text]="most of the time"||'survey_response_fact'[derived_answer_text]="a good bit of the time" || 'survey_response_fact'[derived_answer_text]="a little of the time" || 'survey_response_fact'[derived_answer_text]="some of the time" )
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 40421225-a96f-4237-b0e3-35fd7abdcbba
+
+	measure Emotional_outlook =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How would you describe your outlook?",'survey_response_fact'[derived_answer_text]="up and down"||'survey_response_fact'[derived_answer_text]="often blue")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: ed46ae4c-c3ef-45bc-b2d1-c16bedc69590
+
+	measure Emotional_health =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="Compared to one year ago, how would you rate your emotional health? (feeling anxious, depressed, or irritable)",'survey_response_fact'[derived_answer_text]="much worse"||'survey_response_fact'[derived_answer_text]="slightly worse")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 2d46a884-87c8-449f-a47c-04dfa83e7795
+
+	measure Finance_meetingend =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="How often do you worry about making ends meet?",'survey_response_fact'[derived_answer_text]="sometimes"||'survey_response_fact'[derived_answer_text]="often"||'survey_response_fact'[derived_answer_text]="all the time")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 84c41ffb-63af-4e30-8858-347b419acecc
+
+	measure Finance_temp_housing =
+			
+			var a= CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="What is your housing situation today?",'survey_response_fact'[derived_answer_text]="sometimes"||'survey_response_fact'[derived_answer_text]="I have temporary housing"||'survey_response_fact'[derived_answer_text]="i do not have temporary housing")
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: bdd6a95d-81d5-43f9-b55d-7d61f0079203
+
+	measure Finance_transportation =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="Has the lack of transportation kept you from medical appointments, meetings, work, or from getting needed for daily living?",('survey_response_fact'[derived_answer_text]="Yes, it has kept me from medical appointments"||'survey_response_fact'[derived_answer_text]="Yes, it has kept me from non-medical meetings, appointments, work, or from getting things that I need"))
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,ISBLANK(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 90486b10-1fa7-4528-8c4d-ccb9bb6c913e
+
+	measure Food =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",('survey_response_fact'[derived_answer_text]="Food"))
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 3e75cba1-b6eb-4bdd-a6e1-4d8ebe788bfc
+
+	measure Clothing =
+			
+			var a = CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",('survey_response_fact'[derived_answer_text]="Clothing"))
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: a1f4aaf4-8163-4e58-8b7c-4808e8bec519
+
+	measure utilities =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",('survey_response_fact'[derived_answer_text]="Utilities"))var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: cc280af2-3988-420f-b7a2-e0249f0fd6b1
+
+	measure Medicine/Healthcare =
+			
+			var a =CALCULATE(DISTINCTCOUNT('survey_response_fact'[user_id]),'survey_dimension'[derived_question_text]="In the past year, have you, or any family members that you live with, been unable to get any of the following when really needed? Check all that apply.",('survey_response_fact'[derived_answer_text]="Medicine or any health care"))
+			var b = CALCULATE(DISTINCTCOUNT(survey_response_fact[user_id]))
+			RETURN
+			if(ISBLANK(DIVIDE(a,b)),0,(DIVIDE(a,b)))
+		formatString: 0%;-0%;0%
+		lineageTag: 2b1e7277-74e0-4968-8e2f-d2a875dfdec4
+
+	partition Survey_welbeing_Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

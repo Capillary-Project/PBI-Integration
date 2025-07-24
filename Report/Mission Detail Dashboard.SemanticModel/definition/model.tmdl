@@ -1,0 +1,31 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","MissionDetailMeasure","mission_dimension","member_dimension","mission_members_fact","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1155.0 (25.06)+46435b07013d2a234d7fd007083a9e70b8e79f1c
+
+ref table date_table
+ref table DateTableTemplate_55e61269-5c5e-4149-b539-bcb1dcdcc67e
+ref table LocalDateTable_c397a81f-2221-4c60-9b79-e7e194921be0
+ref table MissionDetailMeasure
+ref table mission_dimension
+ref table LocalDateTable_7a0ebe8a-f839-4064-a708-afafadad82fb
+ref table member_dimension
+ref table mission_members_fact
+ref table LocalDateTable_1e49a31b-ad33-4fe8-b267-5d4d85ff1dcc
+ref table LocalDateTable_eac72bf7-694a-4c2d-adc0-9cef5d72c32c
+ref table LocalDateTable_10d355d6-5fc2-41b4-9e5b-e0e09aef99ea
+ref table LocalDateTable_39b41280-a3aa-48ed-9c14-08088cf97cf9
+ref table LocalDateTable_90c0e1a4-3b84-43c8-b593-5bed31dbe866
+ref table LocalDateTable_03a0033c-0419-4543-969f-2a44b7d4f294
+
+ref cultureInfo en-US
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Team Challenge"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "6a989dc7-0a3b-b841-4c02-7abc6b8caa23"
+  }
+}

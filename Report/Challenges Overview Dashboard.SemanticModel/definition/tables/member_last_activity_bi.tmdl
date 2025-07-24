@@ -1,0 +1,71 @@
+table member_last_activity_bi
+	lineageTag: 67eee0a7-501d-4506-8975-45c7229aa323
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2c8c5710-ace9-41e5-a46e-a7e7c6a600b6
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_session_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6194dc57-c72f-4e95-9168-4c5f0bd71251
+		summarizeBy: none
+		sourceColumn: last_session_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2f3ddb15-c894-46f6-81de-977535185307
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 7e7709cf-7f75-4ce6-a515-e869b8512d55
+			defaultHierarchy: LocalDateTable_082069b7-91fa-4fb5-b4ff-96b8e3e6d90f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column platform
+		dataType: string
+		lineageTag: 8e029f9a-0389-4088-8bc5-39d2cc7ccc82
+		summarizeBy: none
+		sourceColumn: platform
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: 4bdfc91f-cb1c-4b60-9050-691ee8ee96c5
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition member_last_activity_bi = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    member_last_activity_bi_Table = optum_dev_Schema{[Name="member_last_activity_bi",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(member_last_activity_bi_Table,{{"user_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

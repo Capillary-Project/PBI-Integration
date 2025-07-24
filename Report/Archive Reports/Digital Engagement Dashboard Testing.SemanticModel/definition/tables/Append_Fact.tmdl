@@ -1,0 +1,94 @@
+table Append_Fact
+	lineageTag: 6715bc1d-a524-4818-8070-c8fb62d696a5
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b15da0c2-8de4-47e9-85b3-4ee36d671584
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 519bacdd-e339-44a9-89af-e0e4457b50e2
+		summarizeBy: sum
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f0916c2d-33f0-454a-b6ab-30e6ffc8b1b0
+		summarizeBy: sum
+		sourceColumn: challenge_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Both_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 46296121-24a1-43e7-8f7d-7a8a0dbe7253
+		summarizeBy: none
+		sourceColumn: Both_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column milestone_achieved
+		dataType: int64
+		formatString: 0
+		lineageTag: 88dac3ce-5beb-45d7-b546-bd018c3fcdb4
+		summarizeBy: none
+		sourceColumn: milestone_achieved
+
+		annotation SummarizationSetBy = User
+
+	column mission_complete
+		dataType: string
+		lineageTag: 5ebaf520-632e-40e1-b059-b2536c5d082c
+		summarizeBy: none
+		sourceColumn: mission_complete
+
+		annotation SummarizationSetBy = Automatic
+
+	column join_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 54e417f8-13d5-40ff-8540-b81a0cbe5f18
+		summarizeBy: none
+		sourceColumn: join_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column mission_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e62d0760-eea9-4d21-9a49-37167cb9b057
+		summarizeBy: none
+		sourceColumn: mission_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Append_Fact = m
+		mode: import
+		source =
+				let
+				    Source = Table.Combine({challenge_members_fact, mission_members_fact}),
+				    #"Added Custom" = Table.AddColumn(Source, "Custom", each if [challenge_id] <> null then [challenge_id] else [mission_id]),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom",{"user_id", "challenge_id", "join_date", "milestone_achieved", "mission_id", "mission_complete", "mission_start_date", "Custom"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Other Columns",{{"Custom", "Both_id"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Both_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

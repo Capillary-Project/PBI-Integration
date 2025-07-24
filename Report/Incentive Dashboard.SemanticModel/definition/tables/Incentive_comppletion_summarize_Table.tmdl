@@ -1,0 +1,139 @@
+table Incentive_comppletion_summarize_Table
+	lineageTag: a89a4c2d-e4c0-4e8f-8874-a74ae1bce332
+
+	column user_id
+		formatString: 0
+		lineageTag: 8f5d8c2b-24be-46cd-abfa-9a2727c084c2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: incentive_earning_detail[user_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Incentive'
+		formatString: 0
+		lineageTag: 64bcfc14-cb68-4972-a78c-91b1e66f18b8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Total Incentive]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Max Cap'
+		formatString: 0
+		lineageTag: e784c2fd-b170-42e3-be6b-35dbeed56cb9
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Max Cap]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surpassing Count'
+		formatString: 0
+		lineageTag: b8190a3b-cbce-463f-893d-fa7a3d60ae47
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Surpassing Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Not Surpassing Count'
+		formatString: 0
+		lineageTag: 1523dee8-f1e1-4aef-a351-86acbad378d9
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Not Surpassing Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Incentive_comppletion_summarize_Table = calculated
+		mode: import
+		source = ```
+				
+				// SUMMARIZE(
+				//     'incentive_earning_detail',
+				//     'incentive_earning_detail'[user_id],
+				//     "Total Incentive",
+				//         CALCULATE(
+				//             SUM('incentive_earning_detail'[amount_earned])),
+				//     "Max Cap",
+				//         CALCULATE(
+				//             SUM('incentive_plan_config'[max_cap]),TREATAS(
+				//                     VALUES('incentive_earning_detail'[affiliation_id]), 
+				//                     'incentive_plan_config'[affiliation_id]
+				//                 )
+				//         ),
+				//     "Surpassing Count",
+				//         IF(
+				//             CALCULATE(
+				//                 SUM('incentive_earning_detail'[amount_earned])
+				//             ) >=
+				//             CALCULATE(
+				//                 SUM(incentive_plan_config[max_cap]),TREATAS(
+				//                     VALUES('incentive_earning_detail'[affiliation_id]), 
+				//                     'incentive_plan_config'[affiliation_id]
+				//                 )
+				//                 // ALLEXCEPT('incentive_plan_config', incentive_plan_config[client_id])
+				//             ),
+				//             1,
+				//             0
+				//         ),    "Not Surpassing Count",
+				//         IF(
+				//             CALCULATE(
+				//                 SUM('incentive_earning_detail'[amount_earned])
+				//             ) <
+				//             CALCULATE(
+				//                 SUM('incentive_plan_config'[max_cap]),TREATAS(
+				//                     VALUES('incentive_earning_detail'[affiliation_id]), 
+				//                     'incentive_plan_config'[affiliation_id]
+				//                 )
+				//                 // ALLEXCEPT('incentive_plan_config', 'incentive_plan_config'[client_id])
+				//             ),
+				//             1,
+				//             0
+				//         )
+				// )
+				// var new_summarized = 
+				// SUMMARIZE(incentive_earning_detail,'incentive_earning_detail'[user_id])
+				
+				var min_date = CALCULATE(MIN(date_table[date]),VALUES(date_table))
+				var max_date = CALCULATE(MAX(date_table[date]),VALUES(date_table))
+				VAR IncentiveSummary = 
+				    ADDCOLUMNS(
+				        SUMMARIZE(
+				            'incentive_earning_detail',
+				            'incentive_earning_detail'[user_id]
+				        ),
+				        "Total Incentive", 
+				            CALCULATE(
+				                SUM('incentive_earning_detail'[amount_earned]),
+				            'incentive_earning_detail'[fulfillment_date] >= min_date,
+				            'incentive_earning_detail'[fulfillment_date] <= max_date
+				            ),
+				"Max Cap",
+				    CALCULATE(
+				        SUM('incentive_plan_config'[max_cap]),
+				        TREATAS(
+				            VALUES('incentive_earning_detail'[affiliation_id]), 
+				            'incentive_plan_config'[affiliation_id]
+				        )
+				    )
+				    )
+				
+				RETURN
+				    FILTER(
+				        ADDCOLUMNS(
+				            IncentiveSummary,
+				            "Surpassing Count", IF([Total Incentive] >= [Max Cap], 1, 0),
+				            "Not Surpassing Count", IF([Total Incentive] < [Max Cap], 1, 0)
+				        ),
+				        NOT(ISBLANK([Total Incentive]))  -- Ensure only relevant users appear
+				    )
+				
+				
+				
+				
+				```
+
+	annotation PBI_Id = f316b765dcef4d889e6c223c655b0f58
+

@@ -1,0 +1,78 @@
+table health_survey_completion
+	lineageTag: e9e908cd-74cd-4f75-87f9-5dcd6f60a219
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: ef8195a9-4ae0-4b07-8d63-d5c0425e8caf
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 479697ae-f74a-46ed-8088-d48900cc4537
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column health_survey_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 59ff793e-9c2c-4ce4-86bd-ca63073b9e69
+		summarizeBy: none
+		sourceColumn: health_survey_completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column health_survey_id
+		dataType: string
+		lineageTag: 5e6aab7d-ec2c-4777-ab21-e1fd5f454889
+		summarizeBy: none
+		sourceColumn: health_survey_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column short_month = FORMAT('health_survey_completion'[health_survey_completion_date],"mmm-yy")
+		lineageTag: 7d1abc20-e52f-4fc1-9f27-5519b528df96
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('health_survey_completion'[health_survey_completion_date]), ALLSELECTED('health_survey_completion')), 
+			    'health_survey_completion'[health_survey_completion_date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 63107f04-d879-41c5-8a10-5d6d4989edc6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition health_survey_completion = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    health_survey_completion_Table = optum_dev_Schema{[Name="health_survey_completion",Kind="Table"]}[Data]
+				in
+				    health_survey_completion_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,186 @@
+table 'Pseudo Category Table'
+	lineageTag: 4a06dd8b-7c6f-48c4-b6e1-0409dcf15d87
+
+	measure 'Top N Categories' = ```
+			
+			VAR Topcattable =
+			    TOPN(5, ALLSELECTED('Pseudo Category Table'), [UniqueUsersCountOr])
+			VAR topcat = 
+			    CALCULATE([UniqueUsersCountOr], KEEPFILTERS(Topcattable))
+			VAR totalpercent =
+			    CALCULATE([UniqueUsersCountOr], ALLSELECTED('Pseudo Category Table'))
+			VAR otherpercent =
+			    totalpercent - CALCULATE([UniqueUsersCountOr], KEEPFILTERS(Topcattable))
+			VAR currentprod = 
+			    SELECTEDVALUE('Pseudo Category Table'[Both_Categories])
+			RETURN
+			    IF(currentprod <> "All Others",
+			        topcat,
+			        otherpercent
+			    )
+			```
+		lineageTag: a2a0faf7-3ef4-4035-bb18-5569a5f91b2b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Rank = ```
+			
+			// VAR TopNRank = 
+			//     RANKX(
+			//         TOPN(5, ALLSELECTED('Pseudo Category Table'), [UniqueUsersCountOr], DESC),
+			//         [UniqueUsersCountOr],
+			//         ,
+			//         DESC,
+			//         Dense
+			//     )
+			// VAR AllOthersRank = 
+			//     IF(
+			//         SELECTEDVALUE('Pseudo Category Table'[Both_Categories]) = "All Others",
+			//         6,
+			//         TopNRank
+			//     )
+			// RETURN
+			//     AllOthersRank
+			
+			VAR RankedTable = 
+			    ADDCOLUMNS(
+			        TOPN(5, ALLSELECTED('Pseudo Category Table'), [UniqueUsersCountOr], DESC),
+			        "RankCalc", RANKX(
+			            ALLSELECTED('Pseudo Category Table'),
+			            [UniqueUsersCountOr],
+			            ,
+			            DESC,
+			            Dense
+			        )
+			    )
+			VAR AllOthersRank = 
+			    IF(
+			        SELECTEDVALUE('Pseudo Category Table'[Both_Categories]) = "All Others",
+			        6,
+			        BLANK()
+			    )
+			VAR Result = 
+			    IF(
+			        NOT ISBLANK(AllOthersRank),
+			        6, 
+			        CALCULATE(
+			            MAXX(FILTER(RankedTable, 
+			                'Pseudo Category Table'[Both_Categories] = SELECTEDVALUE('Pseudo Category Table'[Both_Categories])
+			            ), [RankCalc])
+			    ))
+			RETURN 
+			    Result
+			
+			```
+		formatString: 0
+		lineageTag: 4ff5e474-a7b6-4af7-916f-a42eeb8e6676
+
+	measure 'Top N SUM Table' = ```
+			
+			// VAR TOPNSelected = SELECTEDVALUE('TopN Selection'[Value])
+			VAR CurrentProd = SELECTEDVALUE('Pseudo Category Table'[Both_Categories])
+			VAR TopProducts = 
+			    TOPN(
+			        5,
+			        ALLSELECTED('Pseudo Category Table'[Both_Categories]),
+			        [UniqueUsersCountOr]
+			    )
+			VAR TopProdSales = 
+			    CALCULATE(
+			        [UniqueUsersCountOr],
+			        KEEPFILTERS( TopProducts )
+			    )
+			RETURN
+			    IF(
+			        HASONEVALUE('Pseudo Category Table'[Both_Categories]),
+			        SWITCH(
+			            TRUE(),
+			            CurrentProd <> "All Others",
+			            TopProdSales,
+			            CurrentProd = "All Others",
+			                CALCULATE(
+			                    [UniqueUsersCountOr],
+			                    ALLSELECTED('Pseudo Category Table'[Both_Categories])
+			                ) - 
+			                CALCULATE(
+			                    [UniqueUsersCountOr], 
+			                    TopProducts
+			                )
+			        ),
+			        [UniqueUsersCountOr]
+			    )
+			
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 4821d334-8fd2-446b-992c-03972c7e03f4
+
+	measure 'Final rank' = ```
+			
+			// IF(ISINSCOPE('Pseudo Category Table'[Both_Categories]),
+			// RANKX(ALL('Pseudo Category Table'[Both_Categories]),[UniqueUsersCountOr] * 1000 + RANKX('Pseudo Category Table' 'Pseudo Category Table'[Both_Categories], , ASC, DENSE)
+			//   )) 
+			// IF(ISINSCOPE('Append_Dim'[Both_Categories]),
+			// RANKX(ALL('Append_Dim'[Both_Categories]),[UniqueUsersCountOr]+DIVIDE([AlphabeticalRank],100),,DESC))
+			
+			// IF(
+			//     ISINSCOPE('Append_Dim'[Both_Categories]),
+			//     VAR RankWithTieBreaker = 
+			//         RANKX(
+			//             ALL('Append_Dim'[Both_Categories]),
+			//             [UniqueUsersCountOr] + DIVIDE([AlphabeticalRank], 100),
+			//             ,
+			//             DESC
+			//         )
+			//     RETURN 
+			//         IF(RankWithTieBreaker <= 5, RankWithTieBreaker, BLANK())
+			// )
+			
+			CALCULATE(IF([UniqueUsersCountOr] = BLANK(),BLANK(),RANK(ALL(Append_Dim[Both_Categories]),ORDERBY([UniqueUsersCountOr],DESC,Append_Dim[Both_Categories],ASC))))
+			
+			```
+		formatString: 0
+		lineageTag: 119aae43-5029-4481-ad93-7b9ede75065c
+
+	measure AlphabeticalRank = ```
+			
+			// VAR curr_name = SELECTEDVALUE('Pseudo Category Table'[Both_Categories])
+			// var result = 
+			// COUNTROWS(FILTER(
+			//     ALL('Pseudo Category Table'[Both_Categories]), 'Pseudo Category Table'[Both_Categories]<=curr_name))
+			// RETURN
+			// result
+			// VAR curr_name = SELECTEDVALUE('Append_Dim'[Both_Categories])
+			// var result = 
+			// COUNTROWS(FILTER(
+			//     ALL('Append_Dim'[Both_Categories]), 'Append_Dim'[Both_Categories]<=curr_name))
+			// RETURN
+			
+			RANKX(
+			    ALL('Append_Dim'[Both_Categories]), 
+			    FIRSTNONBLANK('Append_Dim'[Both_Categories], 1), 
+			    , 
+			    ASC, 
+			    Dense
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 67054353-7695-4ae0-b372-2e5622c605f7
+
+	column Both_Categories
+		lineageTag: d1ea8943-dbfb-4fab-948d-debd0687da7c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Append_Dim[Both_Categories]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Pseudo Category Table' = calculated
+		mode: import
+		source =
+				
+				UNION(DISTINCT(Append_Dim[Both_Categories]),DATATABLE("Categories_dim",STRING,{{"All Others"}}))
+
+	annotation PBI_Id = 98ad95405ed24eb3a07d843fcd09c8fe
+

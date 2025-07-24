@@ -1,0 +1,380 @@
+table Measure_StrideTable
+	lineageTag: 3002bdee-8879-41a1-ae9c-9d27283566a0
+
+	measure 'Stride Participants' =
+			
+			var a =CALCULATE(DISTINCTCOUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 21205055-386b-48cf-9131-048ed69e94d2
+
+	measure ActiveUsers = ```
+			
+			// VAR EndDate = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR StartDate = EndDate - 364  -- Use the correct variable
+			// VAR ActiveUser = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         'member_last_activity_bi'[last_session_date]>= StartDate &&
+			//         'member_last_activity_bi'[last_session_date] <= EndDate,  -- Make sure the filter applies up to the EndDate
+			//         USERELATIONSHIP('date_table'[date], 'member_last_activity_bi'[last_session_date]),  -- Ensure correct usage of the inactive relationship
+			//         ALL(date_table[date]) -- Ensure correct table reference
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(ActiveUser),
+			//     0,
+			//     ActiveUser
+			// )
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]), USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 58067ef8-307b-43f0-820b-0c3db5cff59d
+
+	measure EligibleUsers = ```
+			
+			// VAR min_date_ = CALCULATE(
+			//     MIN('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR date_ = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR EligibleUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_dimension'[user_id]),
+			//         // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			//         // 'member_dimension'[status] <> "SUSPENDED",
+			//         'member_dimension'[join_date] <= date_ 
+			//         // 'member_dimension'[join_date] >= date_,
+			//         // ALL(date_table[date])
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(EligibleUsers),
+			//     0,
+			//     EligibleUsers
+			// )
+			
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table'))
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_  -- Filter dates up to the selected date
+			        // ALL(date_table[date]),ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(ISBLANK(EligibleUsers),  0, EligibleUsers)
+			```
+		formatString: 0
+		lineageTag: 42eef755-1e34-4970-adfe-cfeab4c84622
+
+	measure Participation_rate = ```
+			
+			VAR A = MAX(Parameter[Parameter])
+			VAR B = DIVIDE([Stride Participants],A)
+			RETURN 
+			VAR C=
+			IF(A="Show All Eligible Users",DIVIDE([Stride Participants],[EligibleUsers]),DIVIDE([Stride Participants],[ActiveUsers])
+			)
+			RETURN
+			IF(ISBLANK(C),0,C)
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: ba488210-9f53-4990-bc54-f64b21bb6557
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: a3735559-4df9-487c-b1ca-917581d0c064
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: ee605638-e989-4250-8fad-60c97b30f700
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: 1565aa79-2ba9-42a5-aa2c-6c67b210e607
+
+	measure Unique_Members_completed =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[is_complete] = 1,USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 42127c77-1dee-4d2e-b26a-72205348682e
+
+	measure Total_completed =
+			
+			var a = CALCULATE(COUNT(stride[user_id]),'stride'[is_complete]=1,USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 70505bac-f84a-4bc9-8c73-7cf571aed63a
+
+	measure increase_daily_step_goal =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]),
+			    FILTER(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                stride,
+			                stride[user_id],
+			                "EarliestMonth", MIN(stride[month_date]),
+			                "LatestMonth", MAX(stride[month_date])
+			            ),
+			            "EarliestLevelAmount",
+			                CALCULATE(
+			                    MAX(stride[level_amount]),
+			                    stride[month_date] = EARLIER([EarliestMonth])
+			                ),
+			            "LatestLevelAmount",
+			                CALCULATE(
+			                    MAX(stride[level_amount]),
+			                    stride[month_date] = EARLIER([LatestMonth])
+			                )
+			        ),
+			        [EarliestLevelAmount] < [LatestLevelAmount]
+			    )
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 7d14b2a3-bf42-4fc8-9d35-1c4e512e5885
+
+	measure 'Category Percentage' = ```
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]))
+			VAR b = CALCULATE(DISTINCTCOUNT(stride[user_id]),ALLEXCEPT(date_table,date_table[date]),ALL(member_dimension))
+			var c = DIVIDE(a,b)
+			RETURN
+			if(ISBLANK(c),0,c)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2ec69189-a89a-4313-987f-c3f7d74edf8b
+
+	measure 'Total Participation' = 1-[Participation_rate]
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 4069b7f4-b641-465b-a0a4-657343006b72
+
+	measure 'Average Daily Step' = ```
+			
+			VAR a = 
+			DIVIDE(
+			    CALCULATE(sum(stride[no_of_days_achieved])),
+			    CALCULATE(COUNT(stride[user_id]),stride[average_daily_steps_int]<> 0),
+			    0
+			)
+			
+			RETURN
+			IF(ISBLANK(a), 0, a)
+			
+			
+			```
+		formatString: 0.0
+		lineageTag: 6453948e-8930-4185-99b5-220f4f265438
+
+	measure 'Total Participant' = CALCULATE(DISTINCTCOUNT(stride[user_id]),USERELATIONSHIP(date_table[date],stride[month_date]))
+		formatString: 0
+		lineageTag: a19d7b10-4ad6-4e14-ba56-fd2114a5c6e6
+
+	measure 'daily Goal Not meet' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[no_of_days_achieved]=0,USERELATIONSHIP(date_table[date],stride[month_date]))
+			return
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 3f148c32-a8e5-4a65-9a6c-53abd7be7235
+
+	measure 'Partial goal meet' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[no_of_days_achieved]< 12,stride[no_of_days_achieved]<>0,USERELATIONSHIP(date_table[date],stride[month_date]))
+			return
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 54d8db95-0363-4118-b4f4-27c7199d447a
+
+	measure 'Exceeded Goal Met' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[no_of_days_achieved]>=12, stride[is_complete] =1,USERELATIONSHIP(date_table[date],stride[month_date]))
+			return
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: b1ce2281-8d97-44b8-bfc7-f73d63b6d7bd
+
+	measure 'members met each day' =
+			
+			VAR a = CALCULATE(COUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a), 0, a)
+		formatString: #,0
+		lineageTag: 5ebb59be-e744-43d6-8206-f20fd2712978
+
+	measure 'Category with Count Active' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[level_name]="Active")
+			
+			RETURN
+			"Active" & " (" & FORMAT(a, "#,##0") & ")"
+		lineageTag: bd591507-bae3-46ec-96cd-8bf378a54ef7
+
+	measure 'Category with Count Moderate' =
+			
+			var a = CALCULATE(SUM(stride[level_amount]),stride[level_name]="Moderate")
+			RETURN
+			"Moderate" & " (" & FORMAT(a, "#,##0") & ")"
+		lineageTag: 8d603a0c-06ef-4142-ae8f-72b3c14089a2
+
+	measure 'Category with Count Light' =
+			
+			var a = CALCULATE(SUM(stride[level_amount]),stride[level_name]="Light")
+			RETURN
+			"Light" & " (" & FORMAT(a, "#,##0") & ")"
+		lineageTag: c14513a7-9435-4d39-bac9-2030424bca3d
+
+	measure 'Category with Count Somewhat' =
+			
+			var a = CALCULATE(SUM(stride[level_amount]),stride[level_name]="Somewhat Active")
+			RETURN
+			"Somewhat Active" & " (" & FORMAT(a, "#,##0") & ")"
+		lineageTag: 80d3b40f-03a5-4bbb-bf45-73fabd1b0c76
+
+	measure 'Category % Active' =
+			
+			var a =DIVIDE(CALCULATE(DISTINCTCOUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]),stride[level_name]="Active"),[Total Participant],0)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0%;-0%;0%
+		lineageTag: 7126bb34-b43d-495b-a97c-be4e1d871b21
+
+	measure 'Category % Light' = ```
+			
+			var a = DIVIDE(CALCULATE(DISTINCTCOUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]),stride[level_name]="Light"),[Total Participant],0)
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 1ba62715-c513-41d9-855a-af6b30b81db4
+
+	measure 'Category % Moderate' =
+			
+			var a =DIVIDE(CALCULATE(DISTINCTCOUNT(stride[user_id]),USERELATIONSHIP(date_table[date],stride[month_date]),stride[level_name]="Moderate"),[Total Participant],0)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0%;-0%;0%
+		lineageTag: 7eae76a3-35f8-485e-95c1-418707e16e0d
+
+	measure 'Category % Somewhat Active' =
+			
+			var a = DIVIDE(CALCULATE(DISTINCTCOUNT(stride[user_id]), USERELATIONSHIP(date_table[date],stride[month_date]), stride[level_name]="Somewhat Active"), [Total Participant],0)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0%;-0%;0%
+		lineageTag: d5b20d0c-f7db-450e-999c-7eee29a3cf9f
+
+	measure 'Average daily steps of engaged Stride participants by avg' =
+			
+			
+			var a = CALCULATE(sum(stride[average_daily_steps_int]))
+			
+			var b = CALCULATE(COUNT('stride'[user_id]),stride[average_daily_steps_int]<>0)
+			
+			Var c = DIVIDE(a,b)
+			
+			RETURN
+			IF(ISBLANK(c),0,c)
+		formatString: #,0
+		lineageTag: c1fc4dc7-ed66-4e4c-b862-dc544c34e55c
+
+	measure 'Category % Very Active' =
+			
+			var  a = DIVIDE(CALCULATE(DISTINCTCOUNT(stride[user_id]),USERELATIONSHIP(date_table[date],stride[month_date]),stride[level_name]="Very Active"),[Total Participant],0)
+			return
+			if(ISBLANK(a),0,a)
+		formatString: 0%;-0%;0%
+		lineageTag: 1eeaca72-111a-44aa-96fc-41639581c5ed
+
+	measure 'Average daily steps of engaged Stride participants by total' = ```
+			
+			var a = CALCULATE(sum(stride[month_total_int]))
+			var b = CALCULATE(DISTINCTCOUNT('stride'[user_id]),stride[month_total]<> "0")
+			var c = DATEDIFF(MIN(date_table[date]),MAX(date_table[date]),DAY)
+			var d = DIVIDE(a,b)
+			var e = DIVIDE(d,c)
+			return 
+			b
+			```
+		formatString: 0
+		lineageTag: b4cc8ad6-d64b-426b-8065-e882ffcc8d77
+
+	measure DistinctCount_Users_AllMonths = ```
+			
+			VAR RequiredMonths = 12
+			VAR UsersCompletedInAllMonths =
+			    SUMMARIZE (
+			        FILTER (
+			            ADDCOLUMNS (
+			                VALUES ( stride[user_id] ),
+			                "MonthsCompleted", 
+			                CALCULATE ( DISTINCTCOUNT ( stride[month_date] ), stride[is_complete] = 1 )
+			            ),
+			            [MonthsCompleted] = RequiredMonths
+			        ),
+			        stride[user_id]
+			    )
+			    var a =
+			    IF(ISBLANK(COUNTROWS ( UsersCompletedInAllMonths )),0,(COUNTROWS ( UsersCompletedInAllMonths ))
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: 0
+		lineageTag: 3d313147-46ba-4ec0-85b3-5a1a9cb06669
+
+	partition Measure_StrideTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

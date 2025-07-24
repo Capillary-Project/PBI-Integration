@@ -1,0 +1,56 @@
+table quiz_completions
+	lineageTag: 1b2b4c84-e16a-4d9e-9918-75cb8e3125aa
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8769b6ae-2fd5-4982-990e-890e60825871
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b74cc2c4-11b5-4577-90c9-5bc804863da8
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column quiz_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9c3f4e18-5033-4ee9-b568-4cd274c9d3e7
+		summarizeBy: none
+		sourceColumn: quiz_completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column quiz_id
+		dataType: string
+		lineageTag: 35da5ab3-2b5f-45b8-90c3-dcce92564a65
+		summarizeBy: none
+		sourceColumn: quiz_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition quiz_completions = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_extracts_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    quiz_completions_Table = optum_extracts_Schema{[Name="quiz_completions",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(quiz_completions_Table,{{"quiz_completion_date", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

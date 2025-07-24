@@ -1,0 +1,40 @@
+table 'Visit Buckets'
+	lineageTag: b2a571ab-694b-4567-9711-00935555d7cc
+
+	column 'Visit Bucket'
+		lineageTag: e9628d4d-83bc-4930-b27d-1c4d4596f455
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Visit Bucket]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Bucket Rank'
+		formatString: 0
+		lineageTag: 35c65efe-22a6-4e2f-9ebb-2c3b2088e695
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Bucket Rank]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Visit Buckets' = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Visit Bucket", STRING,
+				    "Bucket Rank", INTEGER,
+				    {
+				        {"0", 1},
+				        {"1-2", 2},
+				        {"3-5", 3},
+				        {"6-9", 4},
+				        {"10+", 5}
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = 2c0e327aba4d4b1abadb691ba0f4f0a2
+

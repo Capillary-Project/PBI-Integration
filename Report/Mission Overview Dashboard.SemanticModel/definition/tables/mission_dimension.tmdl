@@ -1,0 +1,154 @@
+table mission_dimension
+	lineageTag: 3f3c304e-4b6f-4aac-ae79-7ee2254e0cb2
+
+	column mission_id
+		dataType: string
+		lineageTag: 91f4f983-f9cf-4445-8bff-f87846d58108
+		summarizeBy: none
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 4e579ace-8166-4be4-a5f8-5ee39dce6f4e
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column categories
+		dataType: string
+		lineageTag: d5a70058-7a60-4766-b58b-5582d26501c8
+		summarizeBy: none
+		sourceColumn: categories
+
+		annotation SummarizationSetBy = Automatic
+
+	column overview
+		dataType: string
+		lineageTag: 8a38d5aa-a72e-4fca-a7b4-7f8c6be8f973
+		summarizeBy: none
+		sourceColumn: overview
+
+		annotation SummarizationSetBy = Automatic
+
+	column effort_intensity
+		dataType: string
+		lineageTag: 5b6382ae-a8b4-49ea-aaf7-b2a82568d249
+		summarizeBy: none
+		sourceColumn: effort_intensity
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 5f77f800-201b-4de8-997c-a9257c847dba
+		summarizeBy: sum
+		sourceColumn: target_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column frequency_interval_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b8fc4da-b299-4366-bdf4-c1495afbaad9
+		summarizeBy: sum
+		sourceColumn: frequency_interval_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_interval_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: d6becd0a-1c33-4bb2-b9c5-c5a74b8b3b2e
+		summarizeBy: sum
+		sourceColumn: duration_interval_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_interval_type
+		dataType: string
+		lineageTag: 61113527-4ed1-4d5e-864e-1a34161f9911
+		summarizeBy: none
+		sourceColumn: duration_interval_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_a_day
+		dataType: int64
+		formatString: 0
+		lineageTag: 95c22d3a-a49b-4e4d-a45c-aed45cc60b4b
+		summarizeBy: sum
+		sourceColumn: points_for_completing_a_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_a_week
+		dataType: int64
+		formatString: 0
+		lineageTag: 4b945ec2-4e98-4236-931b-02e36af16000
+		summarizeBy: sum
+		sourceColumn: points_for_completing_a_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_the_mission
+		dataType: int64
+		formatString: 0
+		lineageTag: 3c53df4f-cd04-4d47-9a00-3224e102274c
+		summarizeBy: sum
+		sourceColumn: points_for_completing_the_mission
+
+		annotation SummarizationSetBy = Automatic
+
+	column clinical_mission
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a95c015-2c68-47df-9f27-0ff961e5e70e
+		summarizeBy: sum
+		sourceColumn: clinical_mission
+
+		annotation SummarizationSetBy = Automatic
+
+	column wellness_benefit_level
+		dataType: string
+		lineageTag: 354b615a-5e4b-4925-924d-83fb5daa899e
+		summarizeBy: none
+		sourceColumn: wellness_benefit_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 69018de0-2873-453f-ab53-fa2f175d5c6c
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 167eef84-d5a5-4fdb-ae04-8e6d084bb30c
+			defaultHierarchy: LocalDateTable_3ab72a6e-fd60-464e-a5eb-c86905d50827.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition mission_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    mission_dimension_Table = optum_dev_Schema{[Name="mission_dimension",Kind="Table"]}[Data],
+				    #"Removed Duplicates" = Table.Distinct(mission_dimension_Table, {"mission_id"})
+				in
+				    #"Removed Duplicates"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,174 @@
+table MeasureTable
+	lineageTag: 78b0b3a8-db1a-4f41-8aba-cea289698009
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: e09569e7-a1e7-4ea4-b704-187b9072d183
+
+	measure End_date =
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" )
+		lineageTag: 744961a5-f9f0-4630-b47c-95dc73a50000
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: a3c1710b-0d27-4186-8b49-af2ba916f547
+
+	measure 'Plan Year' =
+			
+			var a = CALCULATE(
+			    MAX('gift_card_redemption'[plan_year_date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"Incentive Plan Year: " & FORMAT( a, "YYYY" )
+		lineageTag: ed7734cf-2c6f-4926-b485-9e04607cf136
+
+	measure User_Redeemed =
+			
+			var a =CALCULATE(DISTINCTCOUNT(gift_card_redemption[user_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 4c37c575-f137-4edc-a661-a542329cf8a6
+
+	measure 'Avg card redem' = ```
+			
+			var a = CALCULATE(COUNT('gift_card_redemption'[user_id]))
+			var b = CALCULATE(DISTINCTCOUNT('gift_card_redemption'[user_id]))
+			var c =
+			DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+			
+			```
+		formatString: 0.00
+		lineageTag: f6b55cb1-a383-41b3-9182-463b12ba7500
+
+	measure Order_Amount =
+			
+			// var a =CALCULATE(SUM('gift_card_redemption'[amount]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			var a = [Plan_year_redeemed]
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: ac4b28ca-317a-44a5-b66c-26c35b49e048
+
+	measure 'Avg amt redem' = ```
+			
+			var a = CALCULATE(SUM('gift_card_redemption'[amount]))
+			var b = CALCULATE(DISTINCTCOUNT('gift_card_redemption'[user_id]))
+			var c= DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: f96dab22-7b42-4bb6-9487-9895d5378a8e
+
+	measure 'Plan Order_Amount' =
+			
+			VAR a=
+			CALCULATE(
+			    // SUM('gift_card_redemption'[amount]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			    SUM(incentive_earning_detail[amount_earned]), incentive_earning_detail[reward_type] IN {"GIFTCARD","ACH"})
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 14cfff7d-f804-430c-b8f2-f33bd2904dbe
+
+	measure 'Gift card redeem' = ```
+			
+			VAR a = 
+			    CALCULATE(
+			        COUNT('gift_card_redemption'[user_id]),
+			        'gift_card_redemption'[redemption_id] <> 0 ,USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date])
+			    )
+			RETURN
+			IF(ISBLANK(a), 0, a)
+			
+			
+			
+			```
+		formatString: 0
+		lineageTag: 0b82855f-d8d4-4e43-b60f-16af39d48559
+
+	measure Plan_year_redeemed =
+			
+			// var a =CALCULATE(SUM(gift_card_redemption[plan_year_redeemed]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			var a =CALCULATE(SUM(gift_card_redemption[amount]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: bad23b9a-ae01-42be-88ca-289921681d6a
+
+	measure Plan_year_remaining =
+			
+			// var a =CALCULATE(SUM(gift_card_redemption[plan_year_remaining]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			// var a = CALCULATE(SUM(New[Unredeemed_amount]),USERELATIONSHIP(date_table[date],New[Max_Date]))
+			var a = [Plan Order_Amount]- [Plan_year_redeemed]
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 09414396-e980-4069-acfb-44a2da33c69d
+
+	measure %Plan_year_redeemed =
+			
+			var a = [Plan_year_redeemed]
+			var b = [Plan_year_redeemed] + [Plan_year_remaining]
+			var c = DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: cbe8a32c-6180-4f1f-b320-73c667ca5122
+
+	measure %Plan_year_remaining =
+			
+			var a = [Plan_year_remaining]
+			var b = [Plan_year_redeemed] + [Plan_year_remaining]
+			VAR c= DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 642eb343-5fc0-4be8-9bfb-4c292c5f15ff
+
+	measure '_Plan Order_Amount' =
+			
+			VAR a=
+			CALCULATE(
+			    // SUM('gift_card_redemption'[amount]),USERELATIONSHIP(date_table[date],gift_card_redemption[reward_issue_date]))
+			    SUM(incentive_earning_detail[amount_earned]), incentive_earning_detail[reward_type] = "GIFTCARD" ,USERELATIONSHIP(gift_card_redemption[user_id],incentive_earning_detail[user_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: d2ba9a06-fc3e-4155-b2a2-35a7fdac94ad
+
+	measure Rank =
+			
+			CALCULATE(IF([Plan_year_redeemed] = BLANK(),BLANK(),RANK(ALL(gift_card_redemption[brand_name]),ORDERBY([Plan_year_redeemed],DESC,gift_card_redemption[brand_name],ASC))))
+		formatString: 0
+		lineageTag: ebca68eb-b447-40b2-854b-77f440acf139
+
+	partition MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

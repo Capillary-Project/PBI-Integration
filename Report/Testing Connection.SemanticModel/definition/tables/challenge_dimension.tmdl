@@ -1,0 +1,230 @@
+table challenge_dimension
+	lineageTag: 7a4c0ebc-7da6-4edf-aed4-b0fbacbe889d
+
+	column challenge_id
+		dataType: string
+		lineageTag: a3b3af7e-7e65-43be-b78e-5e4555367b61
+		summarizeBy: none
+		sourceColumn: challenge_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: fbdd294e-04b0-4b88-9eaf-848a3ec548e3
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column overview
+		dataType: string
+		lineageTag: 7e061cc8-042e-4370-a4b7-b9cd2d2d2ac4
+		summarizeBy: none
+		sourceColumn: overview
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_team_challenge
+		dataType: int64
+		formatString: 0
+		lineageTag: 83323519-bfa0-43d3-8c67-af6fa569d6e4
+		summarizeBy: sum
+		sourceColumn: is_team_challenge
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_private_challenge
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d1a53ab-5edc-447a-b37c-d1c551afdabf
+		summarizeBy: sum
+		sourceColumn: is_private_challenge
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_user_created_challenge
+		dataType: int64
+		formatString: 0
+		lineageTag: 921ca9f7-f434-48f6-93e0-d046d5e5aefb
+		summarizeBy: sum
+		sourceColumn: is_user_created_challenge
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2477b7de-642b-4f88-a7fa-03c5a0f7c7ab
+		summarizeBy: none
+		sourceColumn: start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2f7a268e-5321-4dab-b2d1-b3e5a3b54c31
+		summarizeBy: none
+		sourceColumn: end_date
+
+		variation Variation
+			isDefault
+			relationship: 70133b73-56e3-40c0-9b2a-b85b89ced152
+			defaultHierarchy: LocalDateTable_37e964d6-a514-44b1-8262-ac91315b1901.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column registration_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 95bc03e6-4c6b-4134-b641-7ec3c29019c8
+		summarizeBy: none
+		sourceColumn: registration_start_date
+
+		variation Variation
+			isDefault
+			relationship: ff4d7340-621d-4024-9e4d-3ae4794ecda2
+			defaultHierarchy: LocalDateTable_b133b70f-37a1-4040-b100-94873b9db55e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column duration_interval_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 5c22159d-c483-4ffe-86d6-3ba1826e8b4e
+		summarizeBy: sum
+		sourceColumn: duration_interval_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_interval_type
+		dataType: string
+		lineageTag: 563d150e-bfe9-4cb7-b34f-5f973fbf2c49
+		summarizeBy: none
+		sourceColumn: duration_interval_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 3afae277-9126-4a78-bc00-2000688dba25
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column scoring_method
+		dataType: string
+		lineageTag: 48d51557-b44d-4d3c-baa2-ce6c11bc13e3
+		summarizeBy: none
+		sourceColumn: scoring_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_milestone
+		dataType: double
+		lineageTag: baf97503-4c84-4d7d-bcd2-0b93f1936171
+		summarizeBy: sum
+		sourceColumn: challenge_milestone
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column target_type
+		dataType: string
+		lineageTag: dcc44f61-1fe1-46b5-9a91-989e84927b4f
+		summarizeBy: none
+		sourceColumn: target_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_category
+		dataType: string
+		lineageTag: 996c1106-c26b-4d63-b207-f5a7a78c4490
+		summarizeBy: none
+		sourceColumn: challenge_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column number_of_checkpoints
+		dataType: string
+		lineageTag: 9ca77e4e-4a04-4386-87b4-4dec852211d3
+		summarizeBy: none
+		sourceColumn: number_of_checkpoints
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 77f159ab-7341-4e22-b534-9cbbcbac7f4e
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: 5e7b909d-f742-42a5-83bd-3e33d073e110
+			defaultHierarchy: LocalDateTable_719cf5b6-5228-43a2-9c39-b16c8a1788ff.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column is_hidden
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f2453eff-5ee5-496e-bc6f-b659c507a0c4
+		summarizeBy: none
+		sourceColumn: is_hidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column promotion_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 89d81176-f399-466e-92bd-d2d97e8182e0
+		summarizeBy: sum
+		sourceColumn: promotion_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column challenge_type
+		dataType: string
+		lineageTag: be0f28c4-40bc-42a4-b1d3-c84f56fcb3c0
+		summarizeBy: none
+		sourceColumn: challenge_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column row_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 0d7d7108-8e12-490a-b013-752ca13ffed3
+		summarizeBy: sum
+		sourceColumn: row_num
+
+		annotation SummarizationSetBy = Automatic
+
+	partition challenge_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    challenge_dimension_Table = optum_dev_Schema{[Name="challenge_dimension",Kind="Table"]}[Data]
+				in
+				    challenge_dimension_Table
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

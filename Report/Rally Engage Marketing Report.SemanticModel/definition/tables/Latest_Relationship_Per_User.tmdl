@@ -1,0 +1,61 @@
+table Latest_Relationship_Per_User
+	lineageTag: 31a3fe2c-82ea-453d-8051-0ce9470889e5
+
+	column user_id
+		formatString: 0
+		lineageTag: aa78f8ac-1791-4e64-a6a8-bc7973631045
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: member_dimension[user_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaxDate
+		formatString: General Date
+		lineageTag: 25ce4c6a-411f-408c-b76b-9aa3b543e2e2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MaxDate]
+
+		variation Variation
+			isDefault
+			relationship: 5a56ce0f-f95d-4d30-a054-f8d5d4c59ec5
+			defaultHierarchy: LocalDateTable_57bf1d50-a791-4087-83b4-b3e40a838e7f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column RelationshipCode
+		lineageTag: 64563684-6c82-4318-8131-5c989b734ebd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [RelationshipCode]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Latest_Relationship_Per_User = calculated
+		mode: import
+		source =
+				
+				// SUMMARIZE(member_dimension,member_dimension[user_id],"MaxDate",max(member_dimension[start_date]))
+				ADDCOLUMNS(
+				    SUMMARIZE(
+				        member_dimension,
+				        member_dimension[user_id],
+				        "MaxDate", MAX(member_dimension[start_date])
+				    ),
+				    "RelationshipCode",
+				    VAR currentUser = [user_id]
+				    VAR currentMaxDate = [MaxDate]
+				    RETURN
+				        CALCULATE(
+				            MAX(member_dimension[relationship_code]),
+				            FILTER(
+				                member_dimension,
+				                member_dimension[user_id] = currentUser &&
+				                member_dimension[start_date] = currentMaxDate
+				            )
+				        )
+				)
+
+	annotation PBI_Id = e661c043de874c42ab8440d6a0373aa7
+

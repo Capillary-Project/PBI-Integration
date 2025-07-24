@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Health Survey"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "35014293-ed7f-ad17-4ee9-301f6991a45f"
+  }
+}

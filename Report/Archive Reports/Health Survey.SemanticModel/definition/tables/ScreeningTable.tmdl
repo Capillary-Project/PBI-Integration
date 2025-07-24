@@ -1,0 +1,41 @@
+table ScreeningTable
+	lineageTag: 197a7629-0698-4356-95db-894123e7193a
+
+	column Category
+		lineageTag: b9471a2a-b2a8-44d2-b156-0a1dbe529825
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Screening Type'
+		lineageTag: 666e261e-adda-430d-91f6-29e66997f273
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Screening Type]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ScreeningTable = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Category", STRING,
+				    "Screening Type", STRING,
+				    {
+				        {"Cancer Screenings", "Breast"},
+				        {"Cancer Screenings", "Cervical"},
+				        {"Cancer Screenings", "Colorectal"},
+				        {"Tests", "A1C"},
+				        {"Tests", "Blood Pressure"},
+				        {"Tests", "Cholesterol"},
+				        {"Vaccinations", "Flu"}
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = a8901beceab0432b9144cfa3648fa257
+

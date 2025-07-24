@@ -1,0 +1,26 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["date_table","challenge_dimension","member_dimension","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1105.0 (25.07)+decbc46fce458c5b8d5109d6f32a743f2ac949c8
+
+ref table date_table
+ref table DateTableTemplate_2645782b-cfd8-498b-be4f-66c07cb4ffba
+ref table LocalDateTable_2da69769-cd9a-40bd-a4d5-eafb6e343035
+ref table challenge_dimension
+ref table LocalDateTable_37e964d6-a514-44b1-8262-ac91315b1901
+ref table LocalDateTable_b133b70f-37a1-4040-b100-94873b9db55e
+ref table LocalDateTable_719cf5b6-5228-43a2-9c39-b16c8a1788ff
+ref table member_dimension
+ref table LocalDateTable_a83b42d4-f154-412c-b817-39924d51e101
+
+ref cultureInfo en-US
+

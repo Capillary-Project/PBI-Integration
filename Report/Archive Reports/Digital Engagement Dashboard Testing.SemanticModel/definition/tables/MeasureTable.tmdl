@@ -1,0 +1,977 @@
+table MeasureTable
+	lineageTag: 23e8befa-8c38-44ba-a61f-3535cac40cd4
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_ -- Filter dates up to the selected date
+			        // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 439c7075-1371-485d-99b3-966df53570ff
+
+	measure Monthly_Active_users = ```
+			
+			// VAR MaxDate = MAX('date_table'[date])
+			// VAR MaxMonthStartDate = DATE(YEAR(MaxDate), MONTH(MaxDate), 1)
+			// VAR MaxMonthEndDate = EOMONTH(MaxMonthStartDate, 0)
+			// VAR DistinctActiveUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         // 'tracking_action_events'[action] = "logged in",
+			//         'member_last_activity_bi'[last_session_date] >= MaxMonthStartDate,
+			//         'member_last_activity_bi'[last_session_date] <= MaxMonthEndDate,USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(DIVIDE(DistinctActiveUsers, [EligibleUsers])),
+			//     0,
+			//     DIVIDE(DistinctActiveUsers, [EligibleUsers])
+			// )
+			
+			VAR ReportingStart = MIN('date_table'[date])  -- Start date of the reporting period
+			VAR ReportingEnd = MAX('date_table'[date])    -- End date of the reporting period
+			VAR ActiveUsersPerMonth = 
+			    ADDCOLUMNS(
+			        VALUES('date_table'[MonthYear]),
+			        "ActiveUsers", 
+			        CALCULATE(
+			            DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			            member_last_activity_bi[last_session_date] >= ReportingStart,
+			            member_last_activity_bi[last_session_date] <= ReportingEnd, USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			        )
+			    )
+			VAR AvgMAU = AVERAGEX(ActiveUsersPerMonth,[ActiveUsers])
+			
+			RETURN 
+			    // IF([EligibleUsers] > 0, DIVIDE(AvgMAU, [EligibleUsers], 0), 0)
+			IF(ISBLANK(DIVIDE(AvgMAU, [EligibleUsers])),0,DIVIDE(AvgMAU, [EligibleUsers]))
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: c3e366ef-5267-4604-80d5-7dc954309c73
+
+	measure Monthly_Mobile_Active_users = ```
+			
+			// VAR MaxDate = MAX('date_table'[date])
+			// VAR MaxMonthStartDate = DATE(YEAR(MaxDate), MONTH(MaxDate), 1)
+			// VAR MaxMonthEndDate = EOMONTH(MaxMonthStartDate, 0)
+			// VAR MobileActiveUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         // 'tracking_action_events'[action] = "logged in",
+			//         'member_last_activity_bi'[platform] = "app",
+			//         'member_last_activity_bi'[last_session_date] >= MaxMonthStartDate,
+			//         'member_last_activity_bi'[last_session_date] <= MaxMonthEndDate,USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(DIVIDE(MobileActiveUsers, [EligibleUsers])), 
+			//     0, 
+			//     DIVIDE(MobileActiveUsers, [EligibleUsers])
+			// )
+			VAR ReportingStart = MIN('date_table'[date])  -- Start date of the reporting period
+			VAR ReportingEnd = MAX('date_table'[date])    -- End date of the reporting period
+			VAR ActiveUsersPerMonth = 
+			    ADDCOLUMNS(
+			        VALUES('date_table'[MonthYear]),
+			        "ActiveUsers", 
+			        CALCULATE(
+			            DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			            'member_last_activity_bi'[platform] = "app",
+			            member_last_activity_bi[last_session_date] >= ReportingStart,
+			            member_last_activity_bi[last_session_date] <= ReportingEnd, USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			        )
+			    )
+			VAR AvgMAU = AVERAGEX(ActiveUsersPerMonth, [ActiveUsers])
+			
+			RETURN 
+			    // IF([EligibleUsers] > 0, DIVIDE(AvgMAU, [EligibleUsers], 0), 0)
+			IF(ISBLANK(DIVIDE(AvgMAU, [EligibleUsers])),0,DIVIDE(AvgMAU, [EligibleUsers]))
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 57741f75-5af5-439e-9ecf-5a892879ad41
+
+	measure New = ```
+			
+			var start_date = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			var end_date = CALCULATE(
+			    MAX('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			VAR CountOfUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),
+			            'member_dimension'[terms_and_conditions_acceptance_date] >= start_date &&
+			            'member_dimension'[terms_and_conditions_acceptance_date] <= end_date
+			        )
+			RETURN
+			IF(
+			    ISBLANK(CountOfUsers),
+			    0,
+			    DIVIDE(CountOfUsers, CountOfUsers))
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 0b718d01-0580-4493-8423-f30e77557f9a
+
+	measure Lapsed = ```
+			
+			VAR EngagedUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			        FILTER(
+			            ADDCOLUMNS(
+			                FILTER(
+			                    'member_last_activity_bi',
+			                    NOT(ISBLANK('member_last_activity_bi'[last_session_date]))  // Ensure there is a timestamp to compare
+			                ),
+			                "PreviousVisitDate", 
+			                CALCULATE(
+			                    MAX('member_last_activity_bi'[last_session_date]),
+			                    FILTER(
+			                        'member_last_activity_bi',
+			                        'member_last_activity_bi'[user_id] = EARLIER('member_last_activity_bi'[user_id]) &&
+			                        'member_last_activity_bi'[last_session_date] < EARLIER('member_last_activity_bi'[last_session_date])  // Find the latest previous session
+			                    )
+			                )
+			            ),
+			            NOT(ISBLANK([PreviousVisitDate])) &&
+			            DATEDIFF([PreviousVisitDate], 'member_last_activity_bi'[last_session_date], DAY) > 364  // Users who haven't logged in for over 364 days
+			        )
+			    )
+			VAR TotalActiveUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),
+			        'member_dimension'[status] = "ACTIVE" &&
+			        NOT(ISBLANK('member_dimension'[terms_and_conditions_acceptance_date])) &&
+			        'member_dimension'[terms_and_conditions_acceptance_date] >= 'member_dimension'[start_date] &&
+			        'member_dimension'[terms_and_conditions_acceptance_date] <= 'member_dimension'[end_date]
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EngagedUsers),
+			    0,
+			    DIVIDE(EngagedUsers, TotalActiveUsers)
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 3db964f3-9a38-4dc3-b3cc-423c9ed751cd
+
+	measure Total_registration_rate = ```
+			
+			VAR max_SelectedDate = CALCULATE(
+			    MAX('date_table'[date]), 
+			    VALUES('date_table')
+			)
+			
+			VAR min_SelectedDate = CALCULATE(
+			    Min('date_table'[date]), 
+			    VALUES('date_table')
+			)
+			Var a =
+			CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] = "ACTIVE" &&
+			        // NOT(ISBLANK('member_dimension'[terms_and_conditions_acceptance_date])),
+			           'member_dimension'[terms_and_conditions_acceptance_date]>= min_SelectedDate,
+			           'member_dimension'[terms_and_conditions_acceptance_date]<= max_SelectedDate,USERELATIONSHIP(date_table[date],member_dimension[terms_and_conditions_acceptance_date])
+			    )
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    // DIVIDE(a,[All_User_id])
+			 DIVIDE(a,[New EligibleUsers])
+			)
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 481aa764-7fbc-4352-991c-3d922748d337
+
+	measure Active_users_no = ```
+			
+			// VAR SelectedEndDate = MAX('date_table'[date]) -- Get the selected end date from the slicer
+			// VAR StartYear = DATE(YEAR(SelectedEndDate), 1, 1) -- Get the start of the year of the selected end date
+			// VAR Result = CALCULATE(
+			//     DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//     // 'tracking_action_events'[action] = "logged in",
+			//      'member_last_activity_bi'[last_session_date] >= StartYear , 'member_last_activity_bi'[last_session_date]<= SelectedEndDate, USERELATIONSHIP(date_table[date], 'member_last_activity_bi'[last_session_date]),ALL(date_table[date])
+			// )
+			// RETURN
+			// IF(ISBLANK(Result),0,Result)
+			 
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),USERELATIONSHIP(date_table[date], 'member_last_activity_bi'[last_session_date]))
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 76c1e81d-1c79-4c08-9a8d-aa24fbf782c7
+
+	measure LoginCount = ```
+			
+			VAR VisitCounts =
+			    SUMMARIZE(
+			        member_last_activity_bi,
+			        member_last_activity_bi[user_id],
+			        "VisitCount", 
+			        CALCULATE(
+			            COUNT(member_last_activity_bi[last_session_date])
+			        )
+			    )
+			
+			VAR BucketedUsers = 
+			    ADDCOLUMNS(
+			        VisitCounts,
+			        "VisitBucket",
+			        SWITCH(
+			            TRUE(),
+			            [VisitCount] = 0, "0",
+			            [VisitCount] <= 2, "1-2",
+			            [VisitCount] <= 5, "3-5",
+			            [VisitCount] <= 9, "6-9",
+			            [VisitCount] >= 10, "10+"
+			        )
+			    )
+			VAR TotalUsers = 
+			    COUNTROWS(SUMMARIZE(member_last_activity_bi, member_last_activity_bi[user_id]))
+			VAR UsersInBucket = 
+			    COUNTROWS(
+			        FILTER(
+			            BucketedUsers,
+			            [VisitBucket] = SELECTEDVALUE('Visit Buckets'[Visit Bucket])
+			        )
+			    )
+			VAR a=
+			    DIVIDE(UsersInBucket, TotalUsers, 0)
+			RETURN
+			IF(ISBLANK(a),0,a)
+			// TotalUsers
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: f5e3267b-4fcd-48fb-8750-e18cac5ace00
+
+	measure All_User_id = ```
+			CALCULATE(DISTINCTCOUNT('member_dimension'[user_id]))
+			// 'member_dimension_table'[status]="ACTIVE",
+			
+			```
+		formatString: 0
+		lineageTag: b5ffa7dc-1eee-4972-a167-5ec9b58644f5
+
+	measure Total_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [Total_registration_rate]
+		lineageTag: 9b803493-e7f2-4257-90f9-91eb798a5f00
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Re_Engaged = ```
+			
+			VAR EngagedUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			        FILTER(
+			            ADDCOLUMNS(
+			                FILTER(
+			                    'member_last_activity_bi',
+			                    NOT(ISBLANK('member_last_activity_bi'[last_session_date]))  // Ensure we have valid session dates
+			                ),
+			                "PreviousVisitDate", 
+			                CALCULATE(
+			                    MAX('member_last_activity_bi'[last_session_date]),
+			                    FILTER(
+			                        'member_last_activity_bi',
+			                        'member_last_activity_bi'[user_id] = EARLIER('member_last_activity_bi'[user_id]) &&
+			                        'member_last_activity_bi'[last_session_date] < EARLIER('member_last_activity_bi'[last_session_date])  // Get the most recent session before the current one
+			                    )
+			                )
+			            ),
+			            NOT(ISBLANK([PreviousVisitDate])) &&
+			            DATEDIFF([PreviousVisitDate], 'member_last_activity_bi'[last_session_date], DAY) > 364  // Users who had been inactive for more than 364 days before this login
+			        )
+			    )
+			VAR TotalActiveUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),
+			        'member_dimension'[status] = "ACTIVE" &&
+			        NOT(ISBLANK('member_dimension'[terms_and_conditions_acceptance_date]))  // Only count users who accepted terms and conditions
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EngagedUsers),
+			    0,
+			    DIVIDE(EngagedUsers, TotalActiveUsers)
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 1c310d98-2899-42b7-812c-5723675c337f
+
+	measure Client_name =
+			
+			var a = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+			var b = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			a
+		lineageTag: b36a7aec-2433-4209-be4a-249a5bf80279
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 5349ea16-af3c-4e4a-8b95-22263aff84b9
+
+	measure Emp_Active_users_no = ```
+			
+			VAR SelectedEndDate = MAX('date_table'[date]) -- Get the selected end date from the slicer
+			VAR StartYear = DATE(YEAR(SelectedEndDate), 1, 1) -- Get the start of the year of the selected end date
+			VAR Result = CALCULATE(
+			    DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			    // 'member_last_activity_bi'[action] = "logged in",
+			     member_dimension[relationship_code] = "Employee" || member_dimension[relationship_code] = "EE",
+			     'member_last_activity_bi'[last_session_date] >= StartYear , 
+			     'member_last_activity_bi'[last_session_date] <= SelectedEndDate, 
+			     USERELATIONSHIP(date_table[date],'member_last_activity_bi'[last_session_date]),
+			     ALL(date_table[date])
+			)
+			RETURN
+			IF(ISBLANK(Result),0,Result)
+			```
+		formatString: 0
+		lineageTag: a41c199c-45a6-4081-b3e2-0a8cd4d81736
+
+	measure other_Active_users_no = ```
+			
+			VAR SelectedEndDate = MAX('date_table'[date]) -- Get the selected end date from the slicer
+			VAR StartYear = DATE(YEAR(SelectedEndDate), 1, 1) -- Get the start of the year of the selected end date
+			VAR Result = CALCULATE(
+			    DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			    member_dimension[relationship_code] <> "Employee",
+			    'member_last_activity_bi'[last_session_date] >= StartYear , 
+			    'member_last_activity_bi'[last_session_date] <= SelectedEndDate, 
+			    USERELATIONSHIP('date_table'[date], 'member_last_activity_bi'[last_session_date]),
+			    ALL('date_table'[date])
+			)
+			RETURN
+			IF(ISBLANK(Result), 0, Result)
+			
+			
+			```
+		formatString: 0
+		lineageTag: f7201204-3724-4130-8e0c-73dbc43b2649
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: a947fcf6-b18b-4740-80f1-d00642022904
+
+	measure '% Eligible_Active_users' = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_-- Filter dates up to the selected date
+			        // ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    DIVIDE([Activity_Active_users],EligibleUsers)
+			)
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 11a9d8b7-a73a-42c8-ab59-fee96a3c04d2
+
+	measure Activity_Active_users = ```
+			
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]), USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			```
+		formatString: #,0
+		lineageTag: 8588df57-38b4-484b-bad4-0254cf0c0ebd
+
+	measure 'New Newly Active' = ```
+			
+			VAR start_date = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			VAR end_date = CALCULATE(
+			    MAX('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			
+			-- Creating the 'a' variable (similar to the one in _test1)
+			VAR a = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "New_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [New_concat])
+			
+			-- The 'reduction' variable to apply the necessary filtering
+			VAR reduction = 
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[Concated_fiels] IN a)  -- Filter based on concatenated fields (as in _test1)
+			    )
+			
+			-- Calculating the count of users within the date range and applying the reduction filters
+			VAR CountOfUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),
+			        reduction,  -- Apply the reduction filters
+			        'member_dimension'[terms_and_conditions_acceptance_date] >= start_date && 
+			        'member_dimension'[terms_and_conditions_acceptance_date] <= end_date  -- Filter the date range
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(CountOfUsers),
+			    0,
+			    DIVIDE(CountOfUsers, CountOfUsers)  -- This will always return 1, consider if it's necessary or if you need a different calculation
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 2f878610-531c-473b-9efa-05f5e922a5bd
+
+	measure 'New Engaged' = ```
+			
+			VAR EndDate = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			-- Creating the 'b' variable (similar to the 'a' variable in New Eligible_S_P)
+			VAR b = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_last_activity_bi,
+			        member_last_activity_bi[user_id],
+			        "Max_Visit_Date",
+			        MAX(member_last_activity_bi[last_session_date])
+			    ),
+			    "Engaged_concat",
+			    member_last_activity_bi[user_id] & "-" & [Max_Visit_Date]
+			), [Engaged_concat])
+			
+			-- The 'reduction' variable to apply the necessary filtering for engaged users
+			VAR reduction = 
+			    FILTER(
+			        member_dimension, -- Filter for relationship_code = "SP"
+			        (member_dimension[Concated_fiels] IN b)  -- Filter based on concatenated fields (like in _test1)
+			    )
+			
+			-- Calculating the distinct count of engaged users with the date range filter
+			VAR EngagedUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			        reduction,  -- Apply the reduction filters
+			        'member_last_activity_bi'[last_session_date] <= EndDate,  -- Filter activity up to the EndDate
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Calculate the eligible users for engagement, including those who have accepted terms
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),reduction,
+			        'member_dimension'[terms_and_conditions_acceptance_date] < EndDate,  -- Filter users who accepted terms before EndDate
+			        ALL(member_dimension),  -- Ignore any pre-existing filters on member_dimension
+			        ALL(date_table)  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Return the final value for N_Engaged_S_P (engaged users ratio)
+			RETURN
+			IF(
+			    ISBLANK(EngagedUsers),
+			    0,
+			    DIVIDE(EngagedUsers, EligibleUsers)  -- The ratio of engaged users to eligible users
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 2e3a1301-f7a6-42e3-b6ee-822dd10958cb
+
+	measure 'New Re_Engaged' = ```
+			
+			VAR EndDate = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			
+			-- Creating the 'c' variable (similar to the 'a' and 'b' variables)
+			VAR c = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_last_activity_bi,
+			        member_last_activity_bi[user_id],
+			        "Max_Visit_Date",
+			        MAX(member_last_activity_bi[last_session_date])
+			    ),
+			    "ReEngaged_concat",
+			    member_last_activity_bi[user_id] & "-" & [Max_Visit_Date]
+			), [ReEngaged_concat])
+			
+			-- The 'reduction' variable to apply the necessary filtering for re-engaged users
+			VAR reduction = 
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[Concated_fiels] IN c)  -- Filter based on concatenated fields (like in _test1)
+			    )
+			
+			-- Calculating the distinct count of re-engaged users with the date range filter
+			VAR ReEngagedUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			        reduction,  -- Apply the reduction filters
+			        'member_last_activity_bi'[last_session_date] <= EndDate,  -- Filter activity up to the EndDate
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Calculate the eligible users for re-engagement, including those who accepted terms
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        COUNT('member_dimension'[user_id]),reduction,
+			        'member_dimension'[terms_and_conditions_acceptance_date] < EndDate,  -- Filter users who accepted terms before EndDate
+			        ALL(member_dimension),  -- Ignore any pre-existing filters on member_dimension
+			        ALL(date_table)  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Return the final value for Re_Engaged_S_P (re-engaged users ratio)
+			RETURN
+			IF(
+			    ISBLANK(ReEngagedUsers),
+			    0,
+			    DIVIDE(ReEngagedUsers, EligibleUsers)  -- The ratio of re-engaged users to eligible users
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 75a75994-d233-4bb7-ab1e-66782044ffa6
+
+	measure 'New Emp_Active_user' = ```
+			
+			-- Step 1: Create the 'b' variable to store concatenated user_id and Max_Start_Date
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    // member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Employee" ||
+			         member_dimension[relationship_code] = "EE")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Step 3: Calculate the distinct count of user_id based on the filtered data and active relationship with the date table
+			VAR Result =
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),reduction)
+			
+			-- Step 4: Return the result, ensuring 0 is returned if the result is blank
+			RETURN
+			IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: 0
+		lineageTag: 72ccd1c9-a73f-45c1-8fbb-858d2cc796a6
+
+	measure 'New Other_Active_users_no' = ```
+			
+			
+			-- Create the 'c' variable (similar to 'a' or 'b' in the other measures)
+			VAR min_date_ =
+			    CALCULATE(
+			        MIN('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			VAR date_ =
+			    CALCULATE(
+			        MAX('date_table'[date]),
+			        VALUES('date_table')
+			    )
+			    
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                FILTER(
+			                    member_dimension,
+			                    // member_dimension[start_date] >= min_date_ &&
+			                    member_dimension[start_date] <= date_
+			                ),
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        [Emp_concat]
+			    )
+			    
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        (member_dimension[relationship_code] = "Spouse" ||
+			         member_dimension[relationship_code] = "SP")
+			         && (member_dimension[Concated_fiels] IN b)
+			    )
+			
+			-- Calculating the distinct count of users based on the filtered data and the date range from StartYear to SelectedEndDate
+			VAR Result = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),reduction)
+			
+			-- Return the final result, returning 0 if no result is found
+			RETURN
+			IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: 0
+		lineageTag: bed11755-831d-415a-91a4-990b243b8c24
+
+	measure 'New EligibleUsers' = ```
+			
+			VAR SelectedDate = CALCULATE(
+			    MAX('date_table'[date]), 
+			    VALUES('date_table')
+			) -- Get the selected end date from the slicer
+			
+			-- Create the 'a' variable (similar to previous measures)
+			VAR a = SELECTCOLUMNS(ADDCOLUMNS(
+			    SUMMARIZE(
+			        member_dimension,
+			        member_dimension[user_id],
+			        "Max_Start_Date",
+			        MAX(member_dimension[start_date])
+			    ),
+			    "Eligible_concat",
+			    member_dimension[user_id] & "-" & [Max_Start_Date]
+			), [Eligible_concat])
+			
+			-- The 'reduction' variable to filter based on the join date and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[Concated_fiels] IN a &&  -- Filter based on the concatenated fields
+			        member_dimension[start_date] <= SelectedDate  -- Filter join date up to the selected date
+			    )
+			
+			-- Calculating the distinct count of eligible users
+			VAR Result = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        member_dimension[start_date]<=SelectedDate, -- Apply the reduction filters
+			        ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			
+			-- Return the final result, returning 0 if no result is found
+			RETURN
+			IF(ISBLANK(Result), 0, Result)
+			
+			```
+		formatString: #,0
+		lineageTag: 7b26d078-2820-4168-8292-38d3aeeb9d99
+
+	measure Registration_count = ```
+			
+			VAR max_SelectedDate = CALCULATE(
+			    MAX('date_table'[date]), 
+			    VALUES('date_table')
+			)
+			
+			VAR min_SelectedDate = CALCULATE(
+			    Min('date_table'[date]), 
+			    VALUES('date_table')
+			)
+			var a = CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] = "ACTIVE" &&
+			        // NOT(ISBLANK('member_dimension'[terms_and_conditions_acceptance_date])),
+			           'member_dimension'[terms_and_conditions_acceptance_date]>= min_SelectedDate,
+			           'member_dimension'[terms_and_conditions_acceptance_date]<= max_SelectedDate,USERELATIONSHIP(date_table[date],member_dimension[terms_and_conditions_acceptance_date])
+			    )
+			RETURN
+			IF(ISBLANK(a),0,a)
+			```
+		formatString: #,0
+		lineageTag: 44a8cab5-3e99-4363-ad41-c223199b70de
+
+	measure Monthly_web_Active_users = ```
+			
+			// VAR MaxDate = MAX('date_table'[date])
+			// VAR MaxMonthStartDate = DATE(YEAR(MaxDate), MONTH(MaxDate), 1)
+			// VAR MaxMonthEndDate = EOMONTH(MaxMonthStartDate, 0)
+			// VAR MobileActiveUsers = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         // 'tracking_action_events'[action] = "logged in",
+			//         'member_last_activity_bi'[platform] = "web",
+			//         'member_last_activity_bi'[last_session_date] >= MaxMonthStartDate,
+			//         'member_last_activity_bi'[last_session_date] <= MaxMonthEndDate,USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK( DIVIDE(MobileActiveUsers, [EligibleUsers])), 
+			//     0, 
+			//     DIVIDE(MobileActiveUsers, [EligibleUsers])
+			// )
+			
+			VAR ReportingStart = MIN('date_table'[date])  -- Start date of the reporting period
+			VAR ReportingEnd = MAX('date_table'[date])    -- End date of the reporting period
+			VAR ActiveUsersPerMonth = 
+			    ADDCOLUMNS(
+			        VALUES('date_table'[MonthYear]),
+			        "ActiveUsers", 
+			        CALCULATE(
+			            DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			            'member_last_activity_bi'[platform] = "web",
+			            member_last_activity_bi[last_session_date] >= ReportingStart,
+			            member_last_activity_bi[last_session_date] <= ReportingEnd, USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			        )
+			    )
+			VAR AvgMAU = AVERAGEX(ActiveUsersPerMonth, [ActiveUsers])
+			
+			RETURN 
+			    // IF([EligibleUsers] > 0, DIVIDE(AvgMAU, [EligibleUsers], 0), 0)
+			IF(ISBLANK(DIVIDE(AvgMAU, [EligibleUsers])),0,DIVIDE(AvgMAU, [EligibleUsers]))
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 838d6dcf-4fc5-4eae-82b5-1280d6795ab3
+
+	measure Reduction =
+			
+			-- Step 1: Create the 'b' variable to store concatenated user_id and Max_Start_Date
+			VAR b =
+			    SELECTCOLUMNS(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                member_dimension,
+			                member_dimension[user_id],
+			                "Max_Start_Date", MAX(member_dimension[start_date])
+			            ),
+			            "Emp_concat", member_dimension[user_id] & "-" & [Max_Start_Date]
+			        ),
+			        "Emp_concat", [Emp_concat]
+			    )
+			
+			-- Step 2: Create the 'reduction' variable to filter rows based on relationship_code and concatenated fields
+			VAR reduction =
+			    FILTER(
+			        member_dimension,
+			        member_dimension[relationship_code] = "Employee" &&
+			        member_dimension[Concated_fiels] IN b
+			    )
+			VAR Result =
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]),reduction)
+			RETURN
+			Result
+		formatString: 0
+		lineageTag: 38df8f72-e031-49ad-a278-cf4e87d1db6a
+
+	measure Monthly_Active_users_LY = ```
+			
+			// VAR ReportingStart = MIN('date_table'[date])
+			// VAR ReportingEnd = MAX('date_table'[date])
+			
+			// -- Calculate exact prior year range
+			// VAR PriorStart = EDATE(ReportingStart, -12)
+			// VAR PriorEnd = EDATE(ReportingEnd, -12)
+			
+			// -- Build list of months in the prior year range
+			// VAR PriorMonths =
+			//     ADDCOLUMNS(
+			//         CALENDAR(PriorStart, PriorEnd),
+			//         "MonthYear", FORMAT([Date], "MMM YYYY")
+			//     )
+			
+			// -- Summarize Active Users per Prior MonthYear
+			// VAR ActiveUsersPerMonth = 
+			//     SUMMARIZE(
+			//         PriorMonths,
+			//         [MonthYear],
+			//         "ActiveUsers",
+			//             CALCULATE(
+			//                 DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			//                 FILTER(
+			//                     ALL(member_last_activity_bi),
+			//                     member_last_activity_bi[last_session_date] >= PriorStart &&
+			//                     member_last_activity_bi[last_session_date] <= PriorEnd
+			//                 )
+			//             )
+			//     )
+			
+			// -- Average Monthly Active Users
+			// VAR AvgMAU = AVERAGEX(ActiveUsersPerMonth, [ActiveUsers])
+			
+			// RETURN 
+			//     IF(
+			//         ISBLANK(AvgMAU),
+			//         0,
+			//         DIVIDE(AvgMAU, [EligibleUsers])
+			//     )
+			
+			
+			VAR ReportingStart = MIN('date_table'[date])
+			VAR ReportingEnd = MAX('date_table'[date])
+			
+			-- Shift the range by 1 year
+			VAR PriorStart = DATE(YEAR(ReportingStart) - 1, MONTH(ReportingStart), DAY(ReportingStart))
+			VAR PriorEnd = DATE(YEAR(ReportingEnd) - 1, MONTH(ReportingEnd), DAY(ReportingEnd))
+			
+			-- Calculate prior period dates using REMOVEFILTERS
+			VAR PriorDates =
+			    FILTER(
+			        ALL('date_table'),
+			        'date_table'[date] >= PriorStart &&
+			        'date_table'[date] <= PriorEnd
+			    )
+			
+			-- Monthly Active Users in the prior period
+			VAR ActiveUsersPerMonth =
+			    ADDCOLUMNS(
+			        CALCULATETABLE(
+			            VALUES('date_table'[MonthYear]),
+			            PriorDates
+			        ),
+			        "ActiveUsers",
+			        CALCULATE(
+			            DISTINCTCOUNT(member_last_activity_bi[user_id]),
+			            USERELATIONSHIP('date_table'[date], member_last_activity_bi[last_session_date]),
+			            PriorDates
+			        )
+			    )
+			
+			-- Average of monthly active users
+			VAR AvgMAU = AVERAGEX(ActiveUsersPerMonth, [ActiveUsers])
+			
+			RETURN 
+			    IF(
+			        ISBLANK(DIVIDE(AvgMAU, [EligibleUsers_LY])),
+			        0,
+			        DIVIDE(AvgMAU, [EligibleUsers_LY])
+			    )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 00f5d036-7246-4ec1-bd4d-f51e73d542c8
+
+	measure EligibleUsers_LY =
+			
+			VAR ReportingEnd =
+			    MAX('date_table'[date])
+			
+			-- Shift end of current period to prior year
+			VAR PriorEnd =
+			    DATE(YEAR(ReportingEnd) - 1, MONTH(ReportingEnd), DAY(ReportingEnd))
+			
+			-- Calculate eligible users up to PriorEnd, ignoring current filter
+			VAR EligibleUsers =
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        'member_dimension'[join_date] <= PriorEnd,
+			        REMOVEFILTERS('date_table')  -- ensures we don't filter by current selection
+			    )
+			
+			RETURN
+			    IF(ISBLANK(EligibleUsers), 0, EligibleUsers)
+		formatString: 0
+		lineageTag: 07ab3621-2c83-4067-bab3-ceaf462144fc
+
+	partition MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

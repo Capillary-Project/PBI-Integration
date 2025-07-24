@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "PaginatedReport",
+    "displayName": "Health Survey Q&A Paginated"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "6247f090-6627-9222-41b5-d71920aab2d4"
+  }
+}

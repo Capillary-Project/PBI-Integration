@@ -1,0 +1,235 @@
+table Gym-MeasureTable
+	lineageTag: 255c8dae-6907-46e0-a8f3-22db52a8a4a5
+
+	measure ActiveUsers = ```
+			
+			// VAR EndDate = CALCULATE(
+			//     MAX('date_table'[date]),
+			//     VALUES('date_table')
+			// )
+			// VAR StartDate = EndDate - 364  -- Use the correct variable
+			// VAR ActiveUser = 
+			//     CALCULATE(
+			//         DISTINCTCOUNT('member_last_activity_bi'[user_id]),
+			//         'member_last_activity_bi'[last_session_date]>= StartDate &&
+			//         'member_last_activity_bi'[last_session_date] <= EndDate,  -- Make sure the filter applies up to the EndDate
+			//         USERELATIONSHIP('date_table'[date], 'member_last_activity_bi'[last_session_date]),  -- Ensure correct usage of the inactive relationship
+			//         ALL(date_table[date]) -- Ensure correct table reference
+			//     )
+			// RETURN
+			// IF(
+			//     ISBLANK(ActiveUser),
+			//     0,
+			//     ActiveUser
+			// )
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]), USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 816c4d66-33cc-4aba-8a27-eaa31fe34e6e
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_  -- Filter dates up to the selected date
+			        // ALL(date_table[date]),ALL(date_table[date])  -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			```
+		formatString: 0
+		lineageTag: 59c4944c-13b8-4ad2-b811-98b57dc1d961
+
+	measure Participation_rate =
+			
+			VAR A = MAX(Parameter[Parameter])
+			VAR B = DIVIDE([Gym Participants],A)
+			var C=
+			IF(A="Show All Eligible Users",DIVIDE([Gym Participants],[EligibleUsers]),DIVIDE([Gym Participants],[ActiveUsers])
+			)
+			RETURN
+			IF(ISBLANK(C),0,C)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: b98c3645-a3b8-4574-ad8f-9e7c708d3ab6
+
+	measure 'Gym Participants' =
+			
+			var a= CALCULATE(DISTINCTCOUNT(gym_checkin[user_id]), USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 9d7a3404-4112-4a05-9711-8eae3e5f11b4
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 9369caf0-1db6-4954-b994-7ab2261eaadc
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: bd1cfbf6-f7b6-425b-85cc-0604befbbc9f
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: 2a5cfd3c-121a-4304-b78b-104d1bb46103
+
+	measure Gym_Participants_completed =
+			
+			var a = CALCULATE(DISTINCTCOUNT(gym_checkin[user_id]),'gym_checkin'[achievement_status_id]=1, USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 560c6eb0-0aff-4daa-b630-77f0208c9895
+
+	measure Total_Gym_Participants_completed =
+			
+			var a = CALCULATE(COUNT(gym_checkin[user_id]), 'gym_checkin'[achievement_status_id]=1,USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: eaae9946-1298-43f3-b731-2900f72e7ad4
+
+	measure Average_Checkins_Per_Month =
+			
+			// var b =AVERAGEX(
+			//     SUMMARIZE(
+			//         'gym_checkin', 'gym_checkin'[user_id], 'gym_checkin'[month_date], "UserMonthCheckins", [Checkins_Per_User_Month]
+			//     ),
+			//     [UserMonthCheckins]
+			// )
+			
+			var c = DIVIDE(CALCULATE(SUM(gym_checkin[achieved_value]),gym_checkin[achieved_value] <> 0),CALCULATE(COUNT(gym_checkin[user_id]),gym_checkin[achieved_value] <> 0))
+			RETURN
+			IF(ISBLANK(c),0,c)
+		lineageTag: deb86386-6d8e-46d8-a471-376011cbcd39
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Checkins_Per_User_Month = ```
+			
+			var a = CALCULATE(
+			    COUNT('gym_checkin'[user_id]), USERELATIONSHIP(date_table[date],gym_checkin[month_date])
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: #,0
+		lineageTag: a7aa0b30-4b79-40bf-ad4c-8ecd111152fb
+
+	measure 'Repeat Participants Count' =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]),  -- Count of unique users
+			    'gym_checkin'[is_repeat_user] = 1,      -- Only count repeat users
+			    ALLEXCEPT('gym_checkin', 'gym_checkin'[month_date])  -- Keep the context of month_date for trend
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: fadff82f-c00f-4b05-8936-ccea4f7e464a
+
+	measure 'Goal Attainment' =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]), gym_checkin[achievement_status_id] = 2, gym_checkin[achieved_value]<> 0,USERELATIONSHIP(date_table[date],gym_checkin[month_date])
+			
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: f82b087b-d727-4509-9b2c-bb40239dd0a0
+
+	measure 'Goal Attainment Exceeded' =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]),'gym_checkin'[achievement_status_id]=1,USERELATIONSHIP(date_table[date],gym_checkin[month_date])
+			
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 80e4116f-0a82-4b84-9d21-cecc060064bf
+
+	measure 'New GCI User' = ```
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]),gym_checkin[Is_new_repeat]= "New" , USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			
+			RETURN
+			if(ISBLANK(a),0,a)
+			
+			```
+		formatString: 0
+		lineageTag: 0fc9b9b0-652d-445c-b49a-111f3af1cee4
+
+	measure 'Total Participation' = 1 - [Participation_rate]
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ed2e605b-f21e-4bd5-b0c3-ee5638d343ce
+
+	measure 'Repeated GCI User' =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]),gym_checkin[Is_new_repeat]= "Repeat" ,USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 7bce7f71-d772-4e86-ae7d-33251291ff56
+
+	measure 'No Checkins' =
+			
+			var a = CALCULATE(
+			    DISTINCTCOUNT('gym_checkin'[user_id]), gym_checkin[achieved_value] =0,USERELATIONSHIP(date_table[date],gym_checkin[month_date])
+			
+			)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: b6a6bbae-095e-486d-a523-5e92121a16e2
+
+	partition Gym-MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "incentive member participation testing"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "13232101-0820-88b4-4033-aec4d9f249e4"
+  }
+}

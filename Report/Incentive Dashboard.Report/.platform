@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Incentive Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a435960e-4fe1-a544-45ca-b831e3697b00"
+  }
+}

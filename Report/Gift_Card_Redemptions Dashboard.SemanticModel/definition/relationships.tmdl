@@ -1,0 +1,103 @@
+relationship 9fe45cac-708b-827a-77c8-29a28d60f230
+	isActive: false
+	fromColumn: gift_card_redemption.plan_year_date
+	toColumn: date_table.date
+
+relationship c93eddae-3b14-0438-1e86-9b334c0fa84b
+	fromColumn: gift_card_redemption.reward_issue_date
+	toColumn: date_table.date
+
+relationship dccc6649-f27b-8ddb-f52f-2a48a3da4890
+	toCardinality: many
+	fromColumn: gift_card_redemption.user_id
+	toColumn: member_dimension.user_id
+
+relationship 37547dc6-584f-4e71-a0c6-7d400182bc6a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gift_card_redemption.last_updated_date
+	toColumn: LocalDateTable_803bc51d-416e-4b20-8ab2-8af1c6120b64.Date
+
+relationship d90aa506-3f08-4263-9cb4-f4b4c6cd2e3c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_35fa49cc-4b03-445b-a563-2d8535d67473.Date
+
+relationship 9489cdf4-9b23-9b4e-0b0e-2f025b7a2599
+	fromColumn: member_dimension.start_date
+	toColumn: date_table.date
+
+relationship 81e6efd6-806c-4690-844e-5f14723f6d22
+	joinOnDateBehavior: datePartOnly
+	fromColumn: New_date.date
+	toColumn: LocalDateTable_fa0a2739-1eed-4e88-95c8-a371e68abbda.Date
+
+relationship b04845b8-5410-4854-b0d7-640a26ece2e5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_dbd0f2db-4d04-4865-9069-8acb282988b7.Date
+
+relationship f59dd6b6-1764-fb8e-dab2-0409c0e09a7b
+	fromColumn: gift_card_redemption.reward_issue_date
+	toColumn: New_date.date
+
+relationship 77e44b6f-af96-1645-06f9-9ec74a13a314
+	crossFilteringBehavior: bothDirections
+	fromColumn: gift_card_redemption.user_id
+	toColumn: New.user_id
+
+relationship e14793e5-8ee5-bdb5-2dcf-1c464b1671ac
+	isActive: false
+	fromColumn: New.Max_Date
+	toColumn: date_table.date
+
+relationship bdb4454b-1a60-432a-9fd5-135330331611
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.activity_completion_date
+	toColumn: LocalDateTable_9e140158-f592-4202-af23-31c0dee30936.Date
+
+relationship b64edcff-5c27-4ce9-9f1e-1e5e9bd2fa7f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.activity_start_date
+	toColumn: LocalDateTable_7315cf71-74a4-42be-8dc4-d9a81b3f0191.Date
+
+relationship 40443436-9a0f-48a1-9595-7774c2e4b8f7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.award_date
+	toColumn: LocalDateTable_301a3fb7-35c4-47cb-a387-8625e33a851f.Date
+
+relationship 41cb75ab-5859-499e-84cc-a0a6de76f84c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_startdate
+	toColumn: LocalDateTable_a67e0f85-2a1f-43a2-973a-007c315dadb5.Date
+
+relationship bb7a225a-2c68-4830-a6d7-82bcd94530f0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_enddate
+	toColumn: LocalDateTable_cfd67dd3-0384-41a1-a8a2-0be51b13f8ad.Date
+
+relationship fd564569-8e5b-43ad-bd51-2f658255815c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_runout_end_date
+	toColumn: LocalDateTable_b54b2359-c446-4251-8771-6405c3b47c2a.Date
+
+relationship b04723db-9a48-4e4d-81ff-0d5a79d08b6c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.last_updated_date
+	toColumn: LocalDateTable_6568fabe-e27b-4afd-b4d5-368cfcd374fd.Date
+
+relationship b9b61e8d-2792-27bd-1e65-941836f81353
+	fromColumn: incentive_earning_detail.fulfillment_date
+	toColumn: date_table.date
+
+relationship f851576b-ca38-964e-bcfc-ee15ca94c252
+	toCardinality: many
+	fromColumn: incentive_earning_detail.user_id
+	toColumn: member_dimension.user_id
+
+relationship 3edf88a0-91f9-e73b-3699-459eb220c490
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: gift_card_redemption.user_id
+	toColumn: incentive_earning_detail.user_id
+

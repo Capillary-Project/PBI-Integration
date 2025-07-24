@@ -1,0 +1,232 @@
+table loyalty_winners
+	lineageTag: cfc206a6-6488-4100-be0f-f6fea2e75cd8
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: e1104b15-c437-4e6e-a5f0-4ce2dff254fe
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 14dcc02a-b479-4dba-a73c-d8fa0564e9b1
+		summarizeBy: sum
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redemption_event_type
+		dataType: string
+		lineageTag: 5abcdb57-ba8e-47e3-8adc-4babe471c03f
+		summarizeBy: none
+		sourceColumn: redemption_event_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e8d4c9e4-1e93-48f1-839a-8d5f99f49704
+		summarizeBy: none
+		sourceColumn: event_start_date
+
+		variation Variation
+			isDefault
+			relationship: 1c73f469-93b5-4810-93a5-28a494ad0420
+			defaultHierarchy: LocalDateTable_c00d6651-0b6c-486d-85f7-0456c1e87621.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column event_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a3868269-6e0f-4020-bb0a-3bb58cd9db29
+		summarizeBy: none
+		sourceColumn: event_end_date
+
+		variation Variation
+			isDefault
+			relationship: b0ad3c8d-2820-4dc2-a5b1-41f6051a0000
+			defaultHierarchy: LocalDateTable_8ec9e8f0-f40a-4984-9eee-d4b0c2d6c702.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column private_public
+		dataType: string
+		lineageTag: fc0649f7-93e5-4a0b-b3ee-56fede10b652
+		summarizeBy: none
+		sourceColumn: private_public
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: ff3848e7-d6fd-4801-964e-055b1ba06ebc
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_entry_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b2b7ec2f-db47-4be4-8883-48bfde26d24b
+		summarizeBy: none
+		sourceColumn: event_entry_date
+
+		variation Variation
+			isDefault
+			relationship: 66f190ca-8778-4eae-81da-dd9b980386dc
+			defaultHierarchy: LocalDateTable_a0084029-a757-4dda-b206-2a1cbb7aeb69.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column reward_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d93a406e-ca68-4a43-b8af-a75a2f5c9c5b
+		summarizeBy: sum
+		sourceColumn: reward_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: c4a5f720-0673-46ba-a64a-b34e04719f49
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_type
+		dataType: string
+		lineageTag: d46651e6-949d-42d7-bfe2-51b28f9e5bae
+		summarizeBy: none
+		sourceColumn: reward_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_deducted
+		dataType: string
+		lineageTag: 65ab8aa0-7278-4b1e-8af8-6be98aa3e00c
+		summarizeBy: none
+		sourceColumn: points_deducted
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_issue_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d0a5b518-f198-4a7f-b5db-82858f53a761
+		summarizeBy: sum
+		sourceColumn: reward_issue_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 7073bb14-9668-45a1-81b3-f2f37d77e72b
+		summarizeBy: sum
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_ref_id
+		dataType: string
+		lineageTag: 99355984-ce66-4146-b210-f88e1cd00642
+		summarizeBy: none
+		sourceColumn: points_ref_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column reward_win_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: bbe8a41a-1a6e-42d8-b09d-ef12ffd0c92b
+		summarizeBy: none
+		sourceColumn: reward_win_date
+
+		variation Variation
+			isDefault
+			relationship: ef1ef2d9-b708-42a1-afe0-14172b7a7b45
+			defaultHierarchy: LocalDateTable_13c81515-7d10-440e-96e0-04b9b0ab73df.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column activity_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c9ce5aaf-b9e4-4b9b-b684-9d0565b5d90a
+		summarizeBy: none
+		sourceColumn: activity_date
+
+		variation Variation
+			isDefault
+			relationship: 6dea7814-cfb1-43bb-8cd3-dfefdc6c5ed0
+			defaultHierarchy: LocalDateTable_249606df-a7e1-4b78-9f6e-025490386a2e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column retail_value
+		dataType: int64
+		formatString: 0
+		lineageTag: 07e4e5c6-0546-482d-afbd-88425e334641
+		summarizeBy: sum
+		sourceColumn: retail_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column claim_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d35d7cc7-602b-4ed2-b4fb-6ab2cdc2f971
+		summarizeBy: none
+		sourceColumn: claim_date
+
+		variation Variation
+			isDefault
+			relationship: 73a18988-b49c-4d44-af14-d633be9587f7
+			defaultHierarchy: LocalDateTable_e78a831b-7081-415c-abdc-98e979a2d5a8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column distribution_partner
+		dataType: string
+		lineageTag: 8eb9aebc-e3f4-456e-8399-27bb2562f93b
+		summarizeBy: none
+		sourceColumn: distribution_partner
+
+		annotation SummarizationSetBy = Automatic
+
+	partition loyalty_winners = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    loyalty_winners_Table = optum_dev_Schema{[Name="loyalty_winners",Kind="Table"]}[Data]
+				in
+				    loyalty_winners_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

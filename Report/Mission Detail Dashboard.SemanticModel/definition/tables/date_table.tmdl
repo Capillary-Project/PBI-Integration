@@ -1,0 +1,67 @@
+table date_table
+	lineageTag: cf241575-e4ca-4531-894a-44fac081dcd0
+
+	column date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 6be16656-9dd1-47ff-8e02-c72767a6a4b4
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: b3d16e47-5ef7-4d15-aa25-976dbbc0ca49
+			defaultHierarchy: LocalDateTable_c397a81f-2221-4c60-9b79-e7e194921be0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column month
+		dataType: string
+		lineageTag: 84c6b08b-baa6-480c-a152-c67f9b89aa28
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: d7d25f6f-8721-438a-ab31-bff37a89687f
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column short_month = FORMAT(date_table[date],"mmm")
+		lineageTag: 05a02899-106d-4f5d-a649-9f12f3b47643
+		summarizeBy: none
+		sortByColumn: month_no
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_no = FORMAT(date_table[date],"m")
+		lineageTag: 23aa21e9-b8ca-4bed-81ba-9cb230cf9c7e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    date_table_Table = optum_dev_Schema{[Name="date_table",Kind="Table"]}[Data]
+				in
+				    date_table_Table
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

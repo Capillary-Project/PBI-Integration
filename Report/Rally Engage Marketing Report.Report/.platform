@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Rally Engage Marketing Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ca30469f-1115-ab8f-4c4d-a70e44d58c3e"
+  }
+}

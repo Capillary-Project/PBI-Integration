@@ -1,0 +1,39 @@
+table Append_Dim
+	lineageTag: 9f64a8e9-b42a-45de-9075-db0c2ef0db0a
+
+	column Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 961c6e8c-3b8b-4430-ad88-7765f509eeb5
+		summarizeBy: none
+		sourceColumn: Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Both_Categories
+		dataType: string
+		lineageTag: 1c294e14-4950-4e10-8c4a-894b45209a34
+		summarizeBy: none
+		sourceColumn: Both_Categories
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Append_Dim = m
+		mode: import
+		source =
+				let
+				    Source = Table.Combine({mission_dimension, challenge_dimension}),
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"mission_id", "categories", "challenge_id", "challenge_category"}),
+				    #"Inserted Text Before Delimiter" = Table.AddColumn(#"Removed Other Columns", "Text Before Delimiter", each Text.BeforeDelimiter([categories], ","), type text),
+				    #"Added Custom Column" = Table.AddColumn(#"Inserted Text Before Delimiter", "Custom", each Text.Combine({Text.Start([Text Before Delimiter], 1), Text.Start(Text.Lower([challenge_category]), 1), Text.Middle([challenge_category], 1), Text.Middle([Text Before Delimiter], 1)}), type text),
+				    #"Added Custom" = Table.AddColumn(#"Added Custom Column", "Custom.1", each if [challenge_id] <> null then [challenge_id] else [mission_id]),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Added Custom",{"Custom.1", "Custom"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Other Columns1",{{"Custom.1", Int64.Type}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Custom.1", "Id"}, {"Custom", "Both_Categories"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,57 @@
+table Activity_Measure_Names
+	lineageTag: 79d2f1c4-c683-49ac-ba82-0571dc0294de
+
+	column Measure
+		lineageTag: 991327aa-9cdc-4202-9498-3152d1f65f06
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: 32146230-c073-4781-bed6-6bd8631f24f8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legend
+		lineageTag: 961397b9-b59a-4192-86fd-bd38ef3f277d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Legend]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Activity_Measure_Names = calculated
+		mode: import
+		source = ```
+				
+				// UNION(
+				    ADDCOLUMNS(
+				        DATATABLE(
+				            "Measure", STRING, 
+				             "SortOrder", INTEGER,
+				            { 
+				                {"Joined Mission",2}, 
+				                {"Mission Completions",3},
+				                {"Challenges Joins",4},
+				                {"Challenge Milestone Completions",5},
+				                {"Quiz Completions",6},
+				                {"Health Survey",1},
+				                {"Stride Completions",7},
+				                {"Gym Check-In Completions",8},
+				                {"Point Redemption Events",9}
+				            }
+				        ),
+				    "Legend", "Current Total"
+				    )
+				
+				
+				```
+
+	annotation PBI_Id = ca851622be034c2dadaee3add813191f
+

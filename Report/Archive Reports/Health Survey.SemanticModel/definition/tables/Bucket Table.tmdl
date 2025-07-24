@@ -1,0 +1,24 @@
+table 'Bucket Table'
+	lineageTag: 9e6b82d1-f488-4cb9-8fe5-b206eb769f7a
+
+	column Buckets
+		dataType: string
+		lineageTag: cca86230-de8b-43ac-8c4e-1a2131bd23fa
+		summarizeBy: none
+		sourceColumn: Buckets
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Bucket Table' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlAIyizOLlaK1YlWMgSzwUwjJGFjJLYJEttUG8qOBQA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Buckets = _t]),
+				    #"Replaced Value" = Table.ReplaceValue(Source,"5+Risks","5+ Risks",Replacer.ReplaceText,{"Buckets"})
+				in
+				    #"Replaced Value"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

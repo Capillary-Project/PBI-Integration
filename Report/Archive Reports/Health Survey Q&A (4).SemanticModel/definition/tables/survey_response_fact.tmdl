@@ -1,0 +1,199 @@
+table survey_response_fact
+	lineageTag: 00f10c0b-199f-4ec2-b1f0-c0c14598c3c1
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e187d23c-d8f4-4b2f-b86b-b142dacab353
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column language
+		dataType: string
+		lineageTag: ef15cfa8-fdf9-417c-85ca-bf30bf010d2d
+		summarizeBy: none
+		sourceColumn: language
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_id
+		dataType: string
+		lineageTag: 78c97854-0199-4681-b4bf-8de8d2906f5f
+		summarizeBy: none
+		sourceColumn: derived_answer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_text
+		dataType: string
+		lineageTag: d96a59f7-b3b2-4cb9-9780-d738158f4984
+		summarizeBy: none
+		sourceColumn: answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_instance_id
+		dataType: string
+		lineageTag: 3e9d7cac-d40a-4180-8e3f-22cc0689124f
+		summarizeBy: none
+		sourceColumn: survey_instance_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column surveyid
+		dataType: string
+		lineageTag: 001c1e41-3bac-4b30-9114-a1f1f97f381a
+		summarizeBy: none
+		sourceColumn: surveyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_question_id
+		dataType: string
+		lineageTag: 56e40e3c-5a82-477e-a5a1-291d2d629dc1
+		summarizeBy: none
+		sourceColumn: derived_question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column question_type
+		dataType: string
+		lineageTag: 9b8fb661-9fa8-404c-8f0f-1df5f08f0faf
+		summarizeBy: none
+		sourceColumn: question_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucketed_answer
+		dataType: string
+		lineageTag: e2945e6a-464a-4955-af74-24e6490861e8
+		summarizeBy: none
+		sourceColumn: bucketed_answer
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_code
+		dataType: string
+		lineageTag: d5aee3b5-a594-445e-b924-7e18fcb323bd
+		summarizeBy: none
+		sourceColumn: answer_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column sanity_document_id
+		dataType: string
+		lineageTag: 6d11ca94-74a8-4577-bff6-fa4f9c698933
+		summarizeBy: none
+		sourceColumn: sanity_document_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column no_of_attempts
+		dataType: string
+		lineageTag: 5c55daee-646a-44ac-8221-432898c1ecad
+		summarizeBy: none
+		sourceColumn: no_of_attempts
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: string
+		lineageTag: 9ab79b8e-0e45-462c-8b81-388504d211a4
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: string
+		lineageTag: 738789eb-f4f1-4cc6-a916-6d2e4eb2cc0f
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column completion_date
+		dataType: string
+		lineageTag: fd3bf5d2-44e4-4c09-894c-b96559fc1831
+		summarizeBy: none
+		sourceColumn: completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column sl_no
+		dataType: int64
+		formatString: 0
+		lineageTag: 779b7ee6-cf43-44f1-8628-f03ce5a3cc46
+		summarizeBy: sum
+		sourceColumn: sl_no
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_version
+		dataType: string
+		lineageTag: 24cc8841-9e8a-4e98-8d93-e1909bcafda4
+		summarizeBy: none
+		sourceColumn: survey_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column survey_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d9ca3947-2490-4252-87ba-03be62d97bb1
+		summarizeBy: none
+		sourceColumn: survey_completion_date
+
+		variation Variation
+			isDefault
+			relationship: 3f333225-0512-4791-b4c4-45fe974dfcf8
+			defaultHierarchy: LocalDateTable_c833d3ed-27bf-4b90-aced-833f29186896.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column question_id
+		dataType: string
+		lineageTag: 61c81c31-dbb8-4e57-8bd8-b9f758f3b963
+		summarizeBy: none
+		sourceColumn: question_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_key
+		dataType: string
+		lineageTag: fbea2211-5cf4-4597-8295-19fe219d0e73
+		summarizeBy: none
+		sourceColumn: unique_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_answer_text
+		dataType: string
+		lineageTag: ac39f0d6-cb78-4153-bfac-702ba4b65d8d
+		summarizeBy: none
+		sourceColumn: derived_answer_text
+
+		annotation SummarizationSetBy = Automatic
+
+	partition survey_response_fact = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=DbName,Kind="Schema"]}[Data],
+				    survey_response_fact_Table = optum_dev_Schema{[Name="survey_response_fact",Kind="Table"]}[Data],
+				    #"Added Custom" = Table.AddColumn(survey_response_fact_Table, "unique_key", each [derived_answer_id] & [derived_question_id] & [language]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"user_id", Int64.Type}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each true)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

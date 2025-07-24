@@ -1,0 +1,7 @@
+role Untitled
+	modelPermission: read
+
+	tablePermission member_dimension = [NewEmailColumn] = USERPRINCIPALNAME()
+
+	annotation PBI_Id = 8c2b6e12e4934d918d62e9e96fe44839
+

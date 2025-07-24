@@ -1,0 +1,62 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["customer_contact_info_marketing","member_dimension","date_table","incentive_earning_detail","member_last_activity_bi","SchemaName","gift_card_redemption","mission_members_fact","points_redemptions","challenge_members_fact","challenge_dimension","mission_dimension","stride","incentive_plan_config","points_awarded","New_Table"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1105.0 (25.07)+decbc46fce458c5b8d5109d6f32a743f2ac949c8
+
+ref table DateTableTemplate_9fe0d8be-ead8-406a-8356-0c4ad705840e
+ref table customer_contact_info_marketing
+ref table member_dimension
+ref table date_table
+ref table LocalDateTable_6d0e73bb-50d6-4e84-9fa8-5f27a7b5bb08
+ref table incentive_earning_detail
+ref table LocalDateTable_a29a627c-d827-4084-8ac8-d154eb8894aa
+ref table LocalDateTable_983cb800-b570-44b9-89cb-654c24fef48a
+ref table LocalDateTable_0d786d6c-9b25-406e-a518-da5bdc9f46fc
+ref table LocalDateTable_651a88fd-a48d-4ac1-86c1-c3a092b17eaa
+ref table LocalDateTable_1c55a4d6-a615-4780-b768-4a9b849c5868
+ref table LocalDateTable_26ad7dac-7fae-4bcc-bf33-bf7221e9f941
+ref table LocalDateTable_20137fb9-17c7-433f-9016-1394de53f495
+ref table member_last_activity_bi
+ref table LocalDateTable_b159e611-daa8-4dd2-97fb-64f65caa6ec7
+ref table LocalDateTable_d677ba13-a1c1-48e5-b575-9db6d83e012f
+ref table gift_card_redemption
+ref table LocalDateTable_ae8f4723-ac5c-464b-b612-b307c34034bd
+ref table mission_members_fact
+ref table points_redemptions
+ref table challenge_members_fact
+ref table LocalDateTable_b5314062-c970-4221-9e3c-74007ab3db9c
+ref table challenge_dimension
+ref table LocalDateTable_ff325b78-41d2-4478-8944-799f36108c78
+ref table LocalDateTable_c080becd-9bef-4b69-a302-668c76c24315
+ref table LocalDateTable_f21e37fd-cef6-429c-af20-a14fc506c0b7
+ref table LocalDateTable_497fa4b2-ac03-43f1-a219-8950defb7f6f
+ref table mission_dimension
+ref table LocalDateTable_de2061d4-45d5-46a5-8eaf-0f50fad81cd9
+ref table stride
+ref table LocalDateTable_5e60f2d3-2413-4a31-965e-cee984b273e3
+ref table LocalDateTable_2d6c4dba-1e82-4262-a3ad-34b57daeee8d
+ref table LocalDateTable_a64a4c0d-f3bf-4f41-8296-3260ea01811d
+ref table LocalDateTable_2d7e8ab7-2b14-4cf0-9793-18ff5b708d74
+ref table incentive_plan_config
+ref table LocalDateTable_b2049067-91ab-4df6-8ff0-7a428d5668b6
+ref table LocalDateTable_84b174d1-b977-473e-b24c-f2304fa1013c
+ref table points_awarded
+ref table New_Table
+ref table LocalDateTable_1564359b-5399-4d64-a35e-cbd79e0ea163
+ref table LocalDateTable_ad388ab1-2760-4eec-9702-15c5c2b64c01
+ref table Latest_Relationship_Per_User
+ref table LocalDateTable_57bf1d50-a791-4087-83b4-b3e40a838e7f
+ref table LocalDateTable_b161a856-3d1b-4017-b4d4-d5b59ca9f81c
+ref table LocalDateTable_69b9d45b-907c-4123-a6e6-1acb4e90bc5e
+
+ref cultureInfo en-US
+

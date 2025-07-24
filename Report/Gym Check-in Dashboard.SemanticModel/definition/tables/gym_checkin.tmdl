@@ -1,0 +1,276 @@
+table gym_checkin
+	lineageTag: b8031dbc-e491-4454-996e-e179d6360b5a
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a77d6c3-50fd-4732-9add-2761f7be6294
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gymcheckin_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 41759d5b-5866-4bb1-805f-f46e493cb5e8
+		summarizeBy: sum
+		sourceColumn: gymcheckin_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column gym_enrollment_date
+		dataType: string
+		lineageTag: 84e4aaa4-8685-47e8-aed8-9feba4bca300
+		summarizeBy: none
+		sourceColumn: gym_enrollment_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column gym_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 48c99695-f167-43b6-9c55-9eaa3987e5cc
+		summarizeBy: none
+		sourceColumn: gym_start_date
+
+		variation Variation
+			isDefault
+			relationship: 825cf416-c223-477b-83e4-39c35665aee6
+			defaultHierarchy: LocalDateTable_a3eace86-3647-489d-b1da-81a5c4f1a533.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column gym_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: df7f7ef1-d84d-41fb-92d8-a0e94c720ed5
+		summarizeBy: none
+		sourceColumn: gym_end_date
+
+		variation Variation
+			isDefault
+			relationship: 6805aa1c-8e5c-4482-80f9-75128dc100c3
+			defaultHierarchy: LocalDateTable_8d58ddca-698f-46fb-aec1-1095fbb1dbda.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_updated_date
+		dataType: string
+		lineageTag: a0e5dbc7-6223-46d8-b564-86c08ac9f18d
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_group_name
+		dataType: string
+		lineageTag: cdc80168-49b6-42d9-b4e6-41dbd06a2b14
+		summarizeBy: none
+		sourceColumn: target_group_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column achieved_value
+		dataType: int64
+		formatString: 0
+		lineageTag: 071173c8-2017-46fc-b3d8-dcfc7fe88284
+		summarizeBy: none
+		sourceColumn: achieved_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column achievement_status_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 136ae402-37b2-40c5-92a6-64c81a134ac7
+		summarizeBy: sum
+		sourceColumn: achievement_status_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column goal_set
+		dataType: int64
+		formatString: 0
+		lineageTag: d68368e7-db79-4f0e-9103-9ce4cc0ffa0e
+		summarizeBy: sum
+		sourceColumn: goal_set
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_period
+		dataType: string
+		lineageTag: 5f730589-1bf4-491a-a486-be949dbd2c13
+		summarizeBy: none
+		sourceColumn: level_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: aa894fb7-b57a-417a-a5c2-ea9bac29ba0c
+		summarizeBy: none
+		sourceColumn: month_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month_total
+		dataType: string
+		lineageTag: f1bb9065-216c-4afb-be02-5d6c104a5a89
+		summarizeBy: none
+		sourceColumn: month_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_total
+		dataType: string
+		lineageTag: 4203c3fe-ff06-4a13-b70c-27106051127e
+		summarizeBy: none
+		sourceColumn: year_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_complete
+		dataType: int64
+		formatString: 0
+		lineageTag: d4fd05f4-e2a6-4be3-aef9-c099e7aea1f2
+		summarizeBy: sum
+		sourceColumn: is_complete
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_repeat_user
+		dataType: int64
+		formatString: 0
+		lineageTag: a217e6a4-70e7-41e3-b9fc-943209f5adb5
+		summarizeBy: sum
+		sourceColumn: is_repeat_user
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_gymcheckin_date
+		dataType: string
+		lineageTag: f0054e3c-8ae0-452f-a125-3b4cf9afa4ae
+		summarizeBy: none
+		sourceColumn: last_gymcheckin_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Checkins_Category = ```
+			
+			SWITCH(
+			    TRUE(),
+			    'gym_checkin'[achieved_value] = 1, 1,
+			    'gym_checkin'[achieved_value] = 2, 2,
+			    'gym_checkin'[achieved_value] = 3, 3,
+			    'gym_checkin'[achieved_value] = 4, 4,
+			    'gym_checkin'[achieved_value] = 5, 5,
+			    'gym_checkin'[achieved_value] = 6, 6,
+			    'gym_checkin'[achieved_value] = 7, 7,
+			    'gym_checkin'[achieved_value] = 8, 8,
+			    'gym_checkin'[achieved_value] = 9, 9,
+			    'gym_checkin'[achieved_value] = 10, 10,
+			    'gym_checkin'[achieved_value] = 11, 11,
+			    'gym_checkin'[achieved_value] = 12, 12,
+			    'gym_checkin'[achieved_value] = 13, 13,
+			    'gym_checkin'[achieved_value] = 14, 14,
+			    'gym_checkin'[achieved_value] = 15, 15,
+			    'gym_checkin'[achieved_value] = 16, 16,
+			    'gym_checkin'[achieved_value] = 17, 17,
+			    'gym_checkin'[achieved_value] = 18, 18,
+			    'gym_checkin'[achieved_value] = 19, 19,
+			    'gym_checkin'[achieved_value] = 20, 20,
+			    'gym_checkin'[achieved_value] = 21, 21,
+			    'gym_checkin'[achieved_value] = 22, 22,
+			    'gym_checkin'[achieved_value] = 23, 23,
+			    'gym_checkin'[achieved_value] = 24, 24,
+			    'gym_checkin'[achieved_value] = 25, 25,
+			    'gym_checkin'[achieved_value] = 26, 26,
+			    'gym_checkin'[achieved_value] = 27, 27,
+			    'gym_checkin'[achieved_value] = 28, 28,
+			    'gym_checkin'[achieved_value] = 29, 29,
+			    'gym_checkin'[achieved_value] = 30, 30,
+			    'gym_checkin'[achieved_value] >= 31, 31,
+			    0
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 298192f5-db03-4f75-9afd-d5279f419962
+		summarizeBy: none
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = User
+
+	column Is_new_repeat = ```
+			
+			IF(
+			    'gym_checkin'[month_date] = 
+			        CALCULATE(
+			            MIN('gym_checkin'[month_date]),
+			            ALLEXCEPT('gym_checkin', 'gym_checkin'[user_id])
+			        ),
+			    "New",
+			    "Repeat"
+			)
+			
+			```
+		lineageTag: e12f391b-1ea3-4911-ab4d-c2f51d9a855d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_id
+		dataType: string
+		lineageTag: 885f27ee-da84-4d99-8ba2-a984c4bb97ad
+		summarizeBy: none
+		sourceColumn: org_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('gym_checkin'[month_date],"mmm-yy")
+		lineageTag: e63de0b6-37dd-42cc-bf6f-a441d1665eba
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('gym_checkin'[month_date]), ALLSELECTED('gym_checkin')), 
+			    'gym_checkin'[month_date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: ba060e91-49fb-4e6b-9186-21b7e4d6fee6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition gym_checkin = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    gym_checkin_Table = optum_dev_Schema{[Name="gym_checkin",Kind="Table"]}[Data]
+				in
+				    gym_checkin_Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

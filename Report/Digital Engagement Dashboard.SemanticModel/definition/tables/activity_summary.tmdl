@@ -1,0 +1,73 @@
+table activity_summary
+	lineageTag: 368782fd-946e-480b-a18a-881c00b25e51
+
+	column activity_start_date
+		dataType: string
+		lineageTag: 97d37446-9b43-44cb-9ab9-afa004047802
+		summarizeBy: none
+		sourceColumn: activity_start_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_complete
+		dataType: int64
+		formatString: 0
+		lineageTag: 790e0614-bad4-424f-8b14-1cfe3d653f18
+		summarizeBy: sum
+		sourceColumn: activity_complete
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d72d79f9-a088-47aa-b4c5-ac68da3ede40
+		summarizeBy: none
+		sourceColumn: user_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_completion_date
+		dataType: string
+		lineageTag: 4692cb78-c8d1-4ee7-bca8-04bf01549dac
+		summarizeBy: none
+		sourceColumn: activity_completion_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column activity_type
+		dataType: string
+		lineageTag: 4603f59c-e47d-4215-bba2-6b1b8bd16c68
+		summarizeBy: none
+		sourceColumn: activity_type
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition activity_summary = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    activity_summary_Table = optum_dev_Schema{[Name="activity_summary",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(activity_summary_Table,{{"user_id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

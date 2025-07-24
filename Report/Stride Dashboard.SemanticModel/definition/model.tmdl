@@ -1,0 +1,36 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["member_dimension","date_table","stride","Measure_StrideTable","member_last_activity_bi","SchemaName","Table"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.145.1105.0 (25.07)+decbc46fce458c5b8d5109d6f32a743f2ac949c8
+
+ref table DateTableTemplate_86597944-de16-4fee-9d00-68da3e84a7a5
+ref table member_dimension
+ref table date_table
+ref table LocalDateTable_a423fb71-ad0e-4691-acb2-ef1bc4b05780
+ref table stride
+ref table LocalDateTable_3727ace8-2c4c-463f-b908-23e3351a56ea
+ref table LocalDateTable_2bf41d11-9f82-4047-babb-4259aa13e327
+ref table LocalDateTable_28f1d6b5-d37a-444d-bcb7-55b025d928d4
+ref table LocalDateTable_eb1782af-b1f5-4031-9edf-c606bc885596
+ref table LocalDateTable_7a7df38c-abbf-4b9a-903f-a98253e780dd
+ref table Measure_StrideTable
+ref table member_last_activity_bi
+ref table LocalDateTable_6b71929e-1a19-4be3-9c64-9d8c3eae0356
+ref table Parameter
+ref table 'Parameter 2'
+ref table LocalDateTable_172bf4a2-a702-4672-a915-9cdc09eb3155
+ref table Table
+ref table LocalDateTable_63ca9ae4-bed4-4577-b531-174afd5f00b8
+ref table LocalDateTable_9b445061-4d6c-403d-ade1-bd423adf6ca5
+
+ref cultureInfo en-US
+

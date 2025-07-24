@@ -1,0 +1,40 @@
+table Filtered_Clients
+	lineageTag: f030aa3a-4ff7-42f7-9e26-180b085c1656
+
+	column user_id_per_client
+		formatString: 0
+		lineageTag: 330548d6-e84e-4685-b3c5-a80397453509
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [user_id_per_client]
+
+		annotation SummarizationSetBy = User
+
+	column Client_id_name
+		lineageTag: 0737a25d-9d42-45ac-9bfd-ef9ca176d551
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: member_dimension[Client_id_name]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filtered_Clients = calculated
+		mode: import
+		source = ```
+				
+				FILTER(
+				    ADDCOLUMNS(
+				        SUMMARIZE(
+				            'member_dimension',
+				            'member_dimension'[Client_id_name]
+				        ),
+				        "user_id_per_client", 
+				        CALCULATE(DISTINCTCOUNT('survey_event_fact'[user_id]))
+				    ),
+				    [user_id_per_client] > 0
+				)
+				
+				```
+
+	annotation PBI_Id = ca44bcf434ba496fa87ada11dec30b6a
+

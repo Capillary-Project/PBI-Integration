@@ -1,0 +1,39 @@
+table 'Short Month Summary'
+	lineageTag: 89e3d69c-026c-445e-95f4-844813eb5f5f
+
+	column Short_month
+		lineageTag: c09299c8-b611-4f7c-89f6-004515fb17a5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[Short_month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Redeems'
+		formatString: 0
+		lineageTag: 5b961aca-4b39-4be7-851e-23febe15cb39
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Total Redeems]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Short Month Summary' = calculated
+		mode: import
+		source = ```
+				
+				SUMMARIZE(
+				    date_table,
+				    date_table[Short_month],
+				    "Total Redeems", 
+				        CALCULATE(
+				            COUNT('gift_card_redemption'[user_id]),'gift_card_redemption'[redemption_id] <> 0,
+				            USERELATIONSHIP(date_table[date], 'gift_card_redemption'[reward_issue_date])
+				        )
+				)
+				
+				
+				```
+
+	annotation PBI_Id = da4198c369cf4b758379251035e56ebe
+

@@ -1,0 +1,76 @@
+table New_date
+	lineageTag: 5709cf48-8f43-4fea-be1f-968bee3df288
+
+	column date
+		formatString: Long Date
+		lineageTag: f4b79534-5b18-418e-b07d-665228b2111d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[date]
+
+		variation Variation
+			isDefault
+			relationship: 81e6efd6-806c-4690-844e-5f14723f6d22
+			defaultHierarchy: LocalDateTable_fa0a2739-1eed-4e88-95c8-a371e68abbda.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column month
+		lineageTag: d1576b8a-b006-471f-b0dc-15630e3e675b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		lineageTag: adef9f65-7183-4191-a1ce-64bc482e965b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[MonthYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_no
+		formatString: 0
+		lineageTag: dceaa7be-abf4-4beb-b865-65220b1d1d9b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: date_table[month_no]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month
+		lineageTag: a8940f5d-7b48-4eae-b070-043ca3050904
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[Short_month]
+		sortByColumn: MonthOffset
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		lineageTag: b3a7d164-ca74-4737-9af4-6a0f6b17840e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: date_table[Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset
+		formatString: 0
+		lineageTag: f56d3536-5b7a-414f-9277-9ebfb4a45992
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: date_table[MonthOffset]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition New_date = calculated
+		mode: import
+		source = date_table
+
+	annotation PBI_Id = 4fbaddce856d488babb337db6ec62906
+

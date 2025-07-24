@@ -1,0 +1,27 @@
+table ParameterTable
+	lineageTag: 43167792-c13f-4d13-a6fa-d820559eae3a
+
+	column Parameter
+		lineageTag: d7f9394b-2e28-4a9a-ad37-3b1e72062a67
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Parameter]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParameterTable = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Parameter", STRING,
+				    {
+				        {"Show by Count"},
+				        {"Show by Percent"}
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = 544f1e3a74ab405abcad0c87b28c4ac7
+

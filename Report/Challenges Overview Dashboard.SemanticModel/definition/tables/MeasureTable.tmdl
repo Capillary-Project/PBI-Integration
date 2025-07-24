@@ -1,0 +1,283 @@
+table MeasureTable
+	lineageTag: 0325f98e-484c-4cc4-935b-ff10ad1f9cb5
+
+	measure 'Challenge Participants' = ```
+			
+			var a = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]))
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    a
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: 7a4ca2c8-c72c-4691-a026-275f6674c2d3
+
+	measure Participation_rate =
+			
+			VAR A = MAX(Parameter[Parameter])
+			VAR B = DIVIDE([Challenge Participants],A)
+			VAR C =
+			IF(A="Show All Eligible Users",DIVIDE([Challenge Participants],[EligibleUsers]),DIVIDE([Challenge Participants],[ActiveUsers])
+			)
+			RETURN
+			IF(ISBLANK(C),0,C)
+		formatString: 0%;-0%;0%
+		lineageTag: 3fec0e6a-3dc9-4019-9c04-19fdd62b56bc
+
+	measure 'Avg challenge joined per participants' =
+			
+			VAR Total_challenges = CALCULATE(COUNT(challenge_members_fact[user_id]))
+			VAR total_particiants = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]))
+			
+			VAR rate_1 = DIVIDE(Total_challenges,total_particiants)
+			
+			RETURN
+			IF(
+			    ISBLANK(rate_1),
+			    0,
+			    rate_1
+			)
+		lineageTag: 285e3dae-1786-41c8-8e78-ff3acf21a204
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Participants Met Milestone' =
+			
+			var total_challenge_completion= CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]),challenge_members_fact[milestone_achieved] = 1)
+			
+			RETURN
+			IF(
+			    ISBLANK(total_challenge_completion),
+			    0,
+			    total_challenge_completion
+			)
+		formatString: #,0
+		lineageTag: 91aa8b16-1caf-4f48-8304-1ab6c089e46e
+
+	measure '% Participation Met Milestone' =
+			
+			var Challenge_participation = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]))
+			var Challenge_completion = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]),challenge_members_fact[milestone_achieved] = 1)
+			VAR result = DIVIDE(Challenge_completion,Challenge_participation)
+			RETURN
+			IF(
+			    ISBLANK(result),
+			    0,
+			    result
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 939e4694-90b6-4706-a567-550a3bbbe2fd
+
+	measure ActiveUsers = ```
+			
+			VAR ActiveUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_last_activity_bi'[user_id]), USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			RETURN
+			IF(
+			    ISBLANK(ActiveUsers),
+			    0,
+			    ActiveUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: d1586110-ff50-45cf-90b5-fca422eca53f
+
+	measure EligibleUsers = ```
+			
+			VAR date_ = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			VAR EligibleUsers = 
+			    CALCULATE(
+			        DISTINCTCOUNT('member_dimension'[user_id]),
+			        // 'member_dimension'[status] <> "FRAUD_CONFIRMED" && 
+			        // 'member_dimension'[status] <> "SUSPENDED",
+			        'member_dimension'[join_date] <= date_ -- Ignore any pre-existing date filters
+			    )
+			RETURN
+			IF(
+			    ISBLANK(EligibleUsers),
+			    0,
+			    EligibleUsers
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 853e5a0b-73a8-4a4f-9653-ae128f108f3e
+
+	measure 'Challenge Participants by month' =
+			
+			// VAR maxdate = MAX(date_table_1[date])
+			// VAR startdate = DATE(YEAR(maxdate),1,1)
+			
+			var a = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]))
+			RETURN
+			IF(
+			    ISBLANK(a),
+			    0,
+			    a
+			)
+		formatString: 0
+		lineageTag: 9d10e08c-ece3-497e-93d0-e3e6f63f9c05
+
+	measure Total_percent =
+			
+			var Total_percent = DIVIDE(100,100,0)
+			RETURN
+			Total_percent - [Participation_rate]
+		lineageTag: ff032b5c-724f-4914-97c7-0762bfc11ee5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Login_Rates = ```
+			
+			var total_sessions  = CALCULATE(COUNT(member_last_activity_bi[user_id]),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date]))
+			var challenge_participnats = DISTINCTCOUNT(challenge_members_fact[user_id])
+			var total_active  = CALCULATE(DISTINCTCOUNT(member_last_activity_bi[user_id]),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date]))
+			
+			var challenge_participnats_sessions = 
+			    CALCULATE(
+			        COUNT('member_last_activity_bi'[user_id]),
+			        FILTER(
+			            'member_last_activity_bi',
+			            'member_last_activity_bi'[user_id] IN VALUES('challenge_members_fact'[user_id])
+			        ),USERELATIONSHIP(date_table[date],member_last_activity_bi[last_session_date])
+			    )
+			
+			var non_challenge_participants = total_active - challenge_participnats
+			var non_challenge_participants_session = total_sessions - challenge_participnats_sessions
+			
+			var avg_visits_of_challenge_participant = DIVIDE(challenge_participnats_sessions,challenge_participnats)
+			var avg_visits_of_non_challenge_participant = DIVIDE(non_challenge_participants_session,non_challenge_participants) 
+			
+			var final = DIVIDE((avg_visits_of_challenge_participant - avg_visits_of_non_challenge_participant),avg_visits_of_non_challenge_participant)
+			RETURN
+			IF(
+			    ISBLANK(final),
+			    0,
+			    final)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 08678a8b-5f8f-4f7f-96e4-e47283b1a524
+
+	measure Challenge_Buckets
+		lineageTag: 8ad66959-2cad-4030-ad9d-482a0c16965c
+
+	measure Count_of_Users_Per_Bucket = ```
+			
+			VAR ChallengeCounts = 
+			    SUMMARIZE(
+			        challenge_members_fact,
+			        challenge_members_fact[user_id],
+			        "Challenges_User", 
+			        CALCULATE(
+			            COUNT(challenge_members_fact[challenge_id])
+			        )
+			    )
+			
+			VAR BucketedUsers = 
+			    ADDCOLUMNS(
+			        ChallengeCounts,
+			        "User_Bucket",
+			        SWITCH(
+			            TRUE(),
+			            [Challenges_User] = 1, "1 Challenge",
+			            [Challenges_User] = 2, "2 Challenges",
+			            [Challenges_User] = 3, "3 Challenges",
+			            [Challenges_User] = 4, "4 Challenges",
+			            [Challenges_User] >= 5, "5+ Challenges"
+			        )
+			    )
+			
+			VAR TotalUsers = 
+			    COUNTROWS(SUMMARIZE(challenge_members_fact, challenge_members_fact[user_id]))
+			
+			VAR UsersInBucket = 
+			    COUNTROWS(
+			        FILTER(
+			            BucketedUsers,
+			            [User_Bucket] = SELECTEDVALUE('Challenge Bucket'[Visit Bucket])
+			        )
+			    )
+			
+			VAR a = 
+			    DIVIDE(UsersInBucket, TotalUsers, 0)
+			
+			RETURN
+			IF(ISBLANK(a), 0, a)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 6681b52e-b53d-4016-b7f7-9b51858f6300
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: f08f4efa-c08e-4a3a-bc68-5208fb4c9eab
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 10651a44-eb08-4c5c-a446-538afe87ad81
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: e24648f6-7da1-469e-ae5f-ca42ace6b633
+
+	measure Total_Challenge_joins =
+			
+			VAR A =CALCULATE(COUNT('challenge_members_fact'[user_id]))
+			RETURN
+			IF(A = 0,BLANK(),A)
+			// IF(ISBLANK(A),0,A)
+		formatString: 0
+		lineageTag: b71f848f-2d27-4239-a12a-4c1cf1b152cc
+
+	measure Users_incentive =
+			
+			var a = CALCULATE(DISTINCTCOUNT('incentive_earning_detail'[user_id]),'incentive_earning_detail'[challenge_flag] = 1)
+			RETURN
+			if(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 5f3fe79c-bb57-4de7-ae9a-3c42b3bf4e42
+
+	measure Users_instances =
+			
+			var a = CALCULATE(COUNT('incentive_earning_detail'[user_id]),'incentive_earning_detail'[challenge_flag] = 1)
+			RETURN
+			if(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 1d0a0506-17fc-4827-beea-6e2d1ca48bdb
+
+	partition MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

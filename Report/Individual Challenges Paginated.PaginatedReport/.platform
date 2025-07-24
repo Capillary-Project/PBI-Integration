@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "PaginatedReport",
+    "displayName": "Individual Challenges Paginated"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "64161423-3114-a164-449e-43c82f302c82"
+  }
+}

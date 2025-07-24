@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Health Survey Q&A (4)"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "31a5851d-86e8-b4a1-4b81-015da6b965f5"
+  }
+}

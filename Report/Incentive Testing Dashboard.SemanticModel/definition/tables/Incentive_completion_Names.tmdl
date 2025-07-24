@@ -1,0 +1,39 @@
+table Incentive_completion_Names
+	lineageTag: a57ad909-4222-4f8d-8455-4ed1fc04d0af
+
+	column Measure
+		lineageTag: afa366e8-a05a-4d14-ad80-e22321683f3a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure]
+		sortByColumn: Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort
+		formatString: 0
+		lineageTag: b3191f3d-99a8-453d-ae69-9090f88ba18c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Incentive_completion_Names = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Measure", STRING, 
+				    "Sort",INTEGER,
+				    {
+				        {"Achieved Cap",1},
+				        {"Earned Partial Incentive",2},
+				        {"Non-Participant",3}
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = 2eebaeb434344e0085007b7c53d856bb
+

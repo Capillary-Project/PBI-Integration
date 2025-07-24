@@ -1,0 +1,164 @@
+table mission_dimension
+	lineageTag: ba83c252-1fb9-451a-a2db-533461fd7b05
+
+	column mission_id
+		dataType: string
+		lineageTag: 340ee1c4-d97c-44c5-b753-a8a5c13e5fea
+		summarizeBy: none
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: e801d610-79de-4446-b19b-bfd191c56456
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column categories
+		dataType: string
+		lineageTag: cf0ee48f-d78a-4818-b338-ab621e17fb82
+		summarizeBy: none
+		sourceColumn: categories
+
+		annotation SummarizationSetBy = Automatic
+
+	column overview
+		dataType: string
+		lineageTag: a10715d0-efb4-4584-b060-b6a7fcbb223d
+		summarizeBy: none
+		sourceColumn: overview
+
+		annotation SummarizationSetBy = Automatic
+
+	column effort_intensity
+		dataType: string
+		lineageTag: d8879e13-279a-4a79-aa2d-4627c6126567
+		summarizeBy: none
+		sourceColumn: effort_intensity
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 4568ad91-c107-452c-a209-099de989f2b6
+		summarizeBy: sum
+		sourceColumn: target_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column frequency_interval_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 255fef72-fe6f-4fd1-92ff-87b9d6a17696
+		summarizeBy: sum
+		sourceColumn: frequency_interval_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_interval_amount
+		dataType: int64
+		formatString: 0
+		lineageTag: e1174e81-af25-473d-9f48-4283fc764480
+		summarizeBy: sum
+		sourceColumn: duration_interval_amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_interval_type
+		dataType: string
+		lineageTag: fa912131-4c82-4937-94a6-fcc1b052d8f1
+		summarizeBy: none
+		sourceColumn: duration_interval_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_a_day
+		dataType: int64
+		formatString: 0
+		lineageTag: 90991b06-c466-483d-b18a-9d5fc30c011d
+		summarizeBy: sum
+		sourceColumn: points_for_completing_a_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_a_week
+		dataType: int64
+		formatString: 0
+		lineageTag: fd8dcd38-18aa-462a-9c36-89430a4de55d
+		summarizeBy: sum
+		sourceColumn: points_for_completing_a_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column points_for_completing_the_mission
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a71285d-a77a-44ea-90a8-37ef7ff533ea
+		summarizeBy: sum
+		sourceColumn: points_for_completing_the_mission
+
+		annotation SummarizationSetBy = Automatic
+
+	column clinical_mission
+		dataType: int64
+		formatString: 0
+		lineageTag: 552e1175-f969-4891-8850-c1ef6c27166f
+		summarizeBy: sum
+		sourceColumn: clinical_mission
+
+		annotation SummarizationSetBy = Automatic
+
+	column wellness_benefit_level
+		dataType: string
+		lineageTag: 1f541ea3-5c21-4771-a2fc-5ce80cb3c03f
+		summarizeBy: none
+		sourceColumn: wellness_benefit_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e8ff3b65-cf0c-46d5-bd78-9e3d5822d5df
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		variation Variation
+			isDefault
+			relationship: f4532959-626b-4168-9678-a454f3635419
+			defaultHierarchy: LocalDateTable_7a0ebe8a-f839-4064-a708-afafadad82fb.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Single category'
+		dataType: string
+		lineageTag: e2807a1a-57b3-475b-bbfe-d070ebf631ac
+		summarizeBy: none
+		sourceColumn: Single category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mission_dimension = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    mission_dimension_Table = optum_dev_Schema{[Name="mission_dimension",Kind="Table"]}[Data],
+				    #"Removed Duplicates" = Table.Distinct(mission_dimension_Table, {"mission_id"}),
+				    #"Inserted Text Before Delimiter" = Table.AddColumn(#"Removed Duplicates", "Text Before Delimiter", each Text.BeforeDelimiter(Text.Lower([categories]), ","), type text),
+				    #"Renamed Columns" = Table.RenameColumns(#"Inserted Text Before Delimiter",{{"Text Before Delimiter", "Single category"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,294 @@
+table Unique_Member_Measure
+	lineageTag: c2c56266-55b8-46e0-bdcd-e1666765b9dd
+
+	measure Mission_completion_unique =
+			
+			var a = CALCULATE(DISTINCTCOUNT(mission_members_fact[user_id]), USERELATIONSHIP(date_table[date],mission_members_fact[mission_completion_date]),mission_members_fact[mission_complete] = "1")
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 4dcf9207-67d7-4f42-b76d-cd490da4cc4e
+
+	measure Challenge_Joined =
+			
+			var a = CALCULATE(COUNT(challenge_members_fact[user_id]),USERELATIONSHIP(date_table[date],challenge_members_fact[new_start]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 03a0332f-0e37-40ae-86e9-0277dd4a390b
+
+	measure Challenge_completion =
+			
+			var a = CALCULATE(COUNT(challenge_members_fact[user_id]),challenge_members_fact[milestone_achieved]=1,USERELATIONSHIP(date_table[date],challenge_members_fact[new_start]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: b569050d-f477-4e80-8b73-a0a1a845ed7b
+
+	measure 'Mission Users' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(mission_members_fact[user_id]),USERELATIONSHIP(date_table[date],mission_members_fact[mission_start_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 4d8ea54d-0a4d-4682-a5cf-4cbd6dd10182
+
+	measure 'challenge Users' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]), USERELATIONSHIP(date_table[date], challenge_members_fact[new_start]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 0ab809dd-5de6-45b6-af58-6705af63e045
+
+	measure 'Selected Users Measure' = ```
+			
+			var A = MAX(Parameter[Parameter])
+			RETURN
+			IF(A = "Show All Eligible Users", [EligibleUsers], [Active_users_no])
+			
+			
+			```
+		lineageTag: 262aaaba-4651-44d5-9826-514e38bd90c1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Unique_Measure Value' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Joined Mission", 
+			        DIVIDE([Mission Users], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Mission", 
+			        DIVIDE([Mission_completion_unique], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Joined Challenge", 
+			        DIVIDE([challenge Users], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Met Challenge Milestone", 
+			        DIVIDE([Challenge_completion_unique], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Health Survey", 
+			        DIVIDE([Health_Survey_Participants_unique], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Participated in Stride", 
+			        DIVIDE([Stride Participation_unique], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Stride", 
+			        DIVIDE([Stride Completions_unique], [Selected Users Measure], 0),  -- Divide by selected user measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Participated in Gym Check-In", 
+			        DIVIDE([Gym_check_in Participation_unique], [Selected Users Measure], 0),  -- Divide by selected user 
+			        // measure
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Gym Check-In", 
+			        DIVIDE([Gym_check_in Completions_unique], [Selected Users Measure], 0),  -- Divide by selected user 
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Redeemed Points", 
+			        DIVIDE([Redemption Points_unique], [Selected Users Measure], 0),  -- Divide by selected user 
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Active User", 
+			        DIVIDE([Active_users_no], [Selected Users Measure], 0),  -- Divide by selected user 
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Quiz", 
+			        DIVIDE([Quiz_Completion_unique], [Selected Users Measure], 0),  -- Divide by selected user 
+			    BLANK()
+			)
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: f58d9ae3-51b3-4b8d-94fa-cdded08bca2b
+
+	measure Health_Survey_Participants_unique =
+			
+			// var a =CALCULATE(DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP('survey_event_fact'[survey_end_date],date_table[date]))
+			var a = CALCULATE(DISTINCTCOUNT(survey_event_fact[user_id]),USERELATIONSHIP(date_table[date],survey_event_fact[survey_end_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: c3ef7b09-68d3-440e-be04-684fc2049dfb
+
+	measure 'Stride Completions' =
+			
+			var a = CALCULATE(COUNT(stride[user_id]),stride[is_complete] = 1,USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		lineageTag: d7c4eff1-3b5a-41e4-912d-0ccedf11e974
+
+	measure 'Gym_check_in Completions' =
+			
+			var a = CALCULATE(COUNT(gym_checkin[user_id]),gym_checkin[is_complete] = 1,USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 316bcc9a-c937-4746-83a1-c97960c1bd63
+
+	measure 'Redemption Points' =
+			
+			// var a = CALCULATE(DISTINCTCOUNT(gift_card_redemption[user_id]))
+			var a = CALCULATE(COUNT(points_redemptions[user_id]),USERELATIONSHIP(date_table[date],points_redemptions[redemption_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 556ba342-e756-44af-8e7a-d0a1c8a27539
+
+	measure Stride_Incentive =
+			
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),stride[is_complete] = 1, USERELATIONSHIP(incentive_earning_detail[target_group_id],stride[stride_activity_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: c2838856-a78c-4879-8a3c-89001e36f38c
+
+	measure Mission_completion_Incentive =
+			
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),mission_members_fact[mission_complete] = "1",USERELATIONSHIP(date_table[date],mission_members_fact[mission_start_date]),USERELATIONSHIP(mission_members_fact[mission_id],incentive_earning_detail[target_group_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: ad242022-542c-4bc9-93a9-8142b873c92b
+
+	measure 'Stride Participation' = ```
+			
+			var a = CALCULATE(COUNT(stride[user_id]),USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+			
+			```
+		formatString: 0
+		lineageTag: ea1797e2-54b4-46fc-894c-7611f12db991
+
+	measure 'Gym_check_in Participation_unique' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(gym_checkin[user_id]),USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 8fe9bfe9-a799-465a-b64f-b220aa338ebf
+
+	measure Challenge_completion_Incentive =
+			
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]), USERELATIONSHIP(challenge_members_fact[challenge_id],incentive_earning_detail[target_group_id]),challenge_members_fact[milestone_achieved] = 1)
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 49c8d6f3-c0c5-4454-b878-4260698c75b0
+
+	measure Gym_checkin_completion_Incentive =
+			
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]), USERELATIONSHIP(gym_checkin[gymcheckin_id],incentive_earning_detail[target_group_id]),gym_checkin[is_complete] = 1,USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 7e5ef5c2-918e-4a89-9a46-ce8e65f024a8
+
+	measure 'Unique_Table_Measure Value' =
+			
+			SWITCH(
+			    TRUE(),
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Active User", [Active_users_no],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Health Survey", [Health_Survey_Participants_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Joined Mission", [Mission Users],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Mission", [Mission_completion_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Joined Challenge", [challenge Users],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Met Challenge Milestone", [Challenge_completion_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Redeemed Points", [Redemption Points_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Quiz", [Quiz_Completion_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Participated in Stride", [Stride Participation_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Stride", [Stride Completions_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Completed Gym Check-In", [Gym_check_in Completions_unique],
+			    SELECTEDVALUE('Unique_Measure_Names'[Measure]) = "Participated in Gym Check-In", [Gym_check_in Participation_unique],
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: 3ca3463b-968e-46ff-bc4a-1dbf34d2e557
+
+	measure Quiz_Incentive =
+			
+			var a = CALCULATE(COUNT('incentive_earning_detail'[user_id]),incentive_earning_detail[quiz_flag] =1)
+			// CALCULATE(COUNT(incentive_earning_detail[user_id]),USERELATIONSHIP(quiz_completions[quiz_id],incentive_earning_detail[target_group_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 8df69757-97fd-4e92-b5c8-1b0249d4ece9
+
+	measure Health_survey_Incentive =
+			
+			// var a = CALCULATE(COUNT(health_survey_completion[user_id]),USERELATIONSHIP(health_survey_completion[health_survey_id],incentive_earning_detail[target_group_id]),USERELATIONSHIP(date_table[date],health_survey_completion[health_survey_completion_date]))
+			var a = CALCULATE(COUNT(incentive_earning_detail[user_id]),incentive_earning_detail[health_survey_flag]= 1,USERELATIONSHIP(incentive_earning_detail[activity_completion_date],date_table[date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 70380470-e750-4eaf-998c-45bb636d8d55
+
+	measure Challenge_completion_unique =
+			
+			var a = CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]),challenge_members_fact[milestone_achieved]=1,USERELATIONSHIP(date_table[date],challenge_members_fact[new_start]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: ea56e523-2d6a-43a2-954c-b5e613e65144
+
+	measure 'Stride Completions_unique' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),stride[is_complete] = 1,USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 0da27d44-4121-45da-9910-0c0979f55786
+
+	measure 'Stride Participation_unique' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(stride[user_id]),USERELATIONSHIP(date_table[date],stride[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: af8e427a-5c13-446e-842c-4ae688202ee6
+
+	measure 'Gym_check_in Completions_unique' =
+			
+			var a = CALCULATE(DISTINCTCOUNT(gym_checkin[user_id]),gym_checkin[is_complete] = 1,USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: d446a6a9-7952-4563-a756-3cdf0e27f5af
+
+	measure 'Gym_check_in Participation' =
+			
+			var a = CALCULATE(COUNT(gym_checkin[user_id]),USERELATIONSHIP(date_table[date],gym_checkin[month_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 5b14e98b-4e6d-4ce1-9916-ab04123f9161
+
+	measure Health_Survey_Participants =
+			
+			var a =CALCULATE(COUNT('survey_event_fact'[user_id]),USERELATIONSHIP('survey_event_fact'[survey_end_date],date_table[date]))
+			// var a = CALCULATE(COUNT(health_survey_completion[user_id]),USERELATIONSHIP(date_table[date],health_survey_completion[health_survey_completion_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: e61da82d-7aa7-49d5-b44c-f663690f90d5
+
+	measure Quiz_Completion_unique =
+			
+			// var a =CALCULATE(DISTINCTCOUNT('survey_event_fact'[user_id]),USERELATIONSHIP('survey_event_fact'[survey_end_date],date_table[date]))
+			var a = CALCULATE(DISTINCTCOUNT(quiz_completions[user_id]),USERELATIONSHIP(date_table[date],quiz_completions[quiz_completion_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: a50fcc11-fe27-444f-8d2f-41ccb9d50855
+
+	measure 'Redemption Points_unique' =
+			
+			// var a = CALCULATE(DISTINCTCOUNT(gift_card_redemption[user_id]))
+			var a = CALCULATE(DISTINCTCOUNT(points_redemptions[user_id]),USERELATIONSHIP(date_table[date],points_redemptions[redemption_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: eece4fa0-1fb6-4f2c-b240-7f7d907d9271
+
+	partition Unique_Member_Measure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

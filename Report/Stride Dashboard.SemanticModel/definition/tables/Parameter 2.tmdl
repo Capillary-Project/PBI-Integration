@@ -1,0 +1,50 @@
+table 'Parameter 2'
+	lineageTag: dddb7053-8c8f-49cc-a144-5cc262721252
+
+	column Parameter
+		lineageTag: 82f87bb9-d7b6-479b-82cb-c117de2431af
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: f9b5e9de-1a82-4e11-ad74-8694558b5185
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: be226cb3-3db6-454f-a99b-0b3c8fa759eb
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Parameter 2' = calculated
+		mode: import
+		source =
+				{
+				    ("Category with Count Active", NAMEOF('Measure_StrideTable'[Category with Count Active]), 0),
+				    ("Category with Count Light", NAMEOF('Measure_StrideTable'[Category with Count Light]), 1),
+				    ("Category with Count Moderate", NAMEOF('Measure_StrideTable'[Category with Count Moderate]), 2),
+				    ("Category with Count Somewhat", NAMEOF('Measure_StrideTable'[Category with Count Somewhat]), 3)
+				}
+
+	annotation PBI_Id = 6e2d1e2c395d4847bb339417a5b61f39
+

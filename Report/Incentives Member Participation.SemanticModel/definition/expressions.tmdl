@@ -1,0 +1,7 @@
+expression SchemaName = "optum_extracts" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text", List = {"optum_dev", "optum_extracts"}, DefaultValue = "optum_dev"]
+	lineageTag: f0d2f442-dbb3-4196-b315-81e9566bffee
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

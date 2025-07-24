@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Challenges Overview Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3cade5ae-c46a-9039-440c-cfc70c5b21b2"
+  }
+}

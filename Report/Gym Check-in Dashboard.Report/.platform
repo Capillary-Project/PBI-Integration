@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Gym Check-in Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "5bc967eb-b89a-b80d-415d-acf6eb74f51f"
+  }
+}

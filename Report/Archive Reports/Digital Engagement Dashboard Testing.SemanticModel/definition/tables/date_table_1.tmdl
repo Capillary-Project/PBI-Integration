@@ -1,0 +1,49 @@
+table date_table_1
+	lineageTag: 5172f304-bdc2-4159-9c0c-e8935345dd3b
+
+	column date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 2f23a0fc-8c40-4306-8793-b126959182fe
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 9cf46eb2-7e6d-4e5d-bda4-6589bdc3dd58
+			defaultHierarchy: LocalDateTable_695e81cc-fe42-487e-8f4e-bb9fd55ec9d4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column month
+		dataType: string
+		lineageTag: 6a05d6f1-774d-40ab-8ffe-345435f957c6
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 7721051c-2761-4503-916f-4e511661a668
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date_table_1 = m
+		mode: import
+		source =
+				let
+				    Source = date_table
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

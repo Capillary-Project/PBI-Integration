@@ -1,0 +1,26 @@
+table Bridge
+	lineageTag: 4d570117-1d23-4682-947a-90f5fccf0750
+
+	column user_id
+		formatString: 0
+		lineageTag: 7e4ac3fb-24a5-4fa4-8a0e-9860dde66a7e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: member_dimension[user_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Bridge = calculated
+		mode: import
+		source =
+				DISTINCT (member_dimension[user_id])
+				    // SELECTCOLUMNS(member_dimension, "user_id", member_dimension[user_id])
+				//     UNION (
+				//         SELECTCOLUMNS(survey_response_fact, "user_id", survey_response_fact[user_id]),
+				//         SELECTCOLUMNS(survey_event_fact, "user_id", survey_event_fact[user_id]),
+				//         SELECTCOLUMNS(member_dimension, "user_id", member_dimension[user_id])
+				//     )
+				// )
+
+	annotation PBI_Id = 191eaec08f944c0e92e729b78245221e
+

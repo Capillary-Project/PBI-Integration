@@ -1,0 +1,49 @@
+table Incentive_Measure_Names
+	lineageTag: 01d72321-78be-43b4-9ebb-78633a771e78
+
+	column Measure
+		lineageTag: 59c9a231-fe3e-4aa1-90f7-3f9812ae4846
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: 782a5868-0ef2-4e25-b632-90a9784380de
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legend
+		lineageTag: 68224b83-642a-424b-a4f0-0a245db1ac65
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Legend]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Incentive_Measure_Names = calculated
+		mode: import
+		source = ```
+				
+				// UNION(
+				    ADDCOLUMNS(
+				        DATATABLE(
+				            "Measure", STRING, 
+				             "SortOrder", INTEGER,
+				            { 
+				                {"Achieved Cap",1}, 
+				                {"Earned Partial Incentive",2},
+				                {"Non-Participant",3}
+				            }
+				        ),
+				    "Legend", "Current Total"
+				    )
+				```
+
+	annotation PBI_Id = 65b7ba4fa4804eac97ebcd8b8ec3dc6c
+

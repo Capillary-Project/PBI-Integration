@@ -1,0 +1,84 @@
+table 'new table'
+	lineageTag: afcc160c-c858-4da2-8dcd-b35b1a3c10f8
+
+	column user_id
+		formatString: 0
+		lineageTag: 48c50542-0845-4f59-9b2f-188ae16b8fc7
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: incentive_earning_detail[user_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Incentive'
+		formatString: 0
+		lineageTag: 3714ac55-7769-43d8-8823-cddd000af4ff
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Total Incentive]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Max Cap'
+		formatString: 0
+		lineageTag: 9b66e64a-8d17-4881-90c1-759f88efc255
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Max Cap]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surpassing Count'
+		formatString: 0
+		lineageTag: 85e7db42-cf6b-4c2a-b7ff-b24da171f04d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Surpassing Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Not Surpassing Count'
+		formatString: 0
+		lineageTag: 18da2a90-482c-4109-92cb-a786122701ce
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Not Surpassing Count]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'new table' = calculated
+		mode: import
+		source = ```
+				
+				var min_date = CALCULATE(MIN(date_table[date]),VALUES(date_table))
+				var max_date = CALCULATE(MAX(date_table[date]),VALUES(date_table))
+				VAR IncentiveSummary =
+				    ADDCOLUMNS(
+				        SUMMARIZE(
+				            FILTER(
+				                incentive_earning_detail,
+				                incentive_earning_detail[fulfillment_date] >= min_date &&
+				                incentive_earning_detail[fulfillment_date] <= max_date
+				            ),
+				            incentive_earning_detail[user_id]  -- Group by user_id
+				        ),
+				        "Total Incentive", 
+				            CALCULATE(
+				                SUM('incentive_earning_detail'[amount_earned])
+				            ),
+				        "Max Cap", CALCULATE(SUM('incentive_plan_config'[max_cap]))
+				    )
+				
+				RETURN
+				    FILTER(
+				        ADDCOLUMNS(
+				            IncentiveSummary,
+				            "Surpassing Count", IF([Total Incentive] >= [Max Cap], 1, 0),
+				            "Not Surpassing Count", IF([Total Incentive] < [Max Cap], 1, 0)
+				        ),
+				        NOT(ISBLANK([Total Incentive]))  -- Ensure only relevant users appear
+				    )
+				```
+
+	annotation PBI_Id = b7f5b1f7ba0f43d9846e98d429f67864
+

@@ -1,0 +1,174 @@
+table mission_members_fact
+	lineageTag: b6a057c4-9f6a-4157-8680-aaff0027594f
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 012ed113-5bcb-46ae-93c6-814452b0b050
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f014b195-f35f-4059-af3c-a3ec370e1862
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 22170ce9-2ecd-4ad3-9abb-e0c0dd76d297
+		summarizeBy: none
+		sourceColumn: mission_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_complete
+		dataType: string
+		lineageTag: 63f50994-0b05-42e6-93ea-2b43cc1d5ca7
+		summarizeBy: none
+		sourceColumn: mission_complete
+
+		annotation SummarizationSetBy = Automatic
+
+	column completed_intervals
+		dataType: int64
+		formatString: 0
+		lineageTag: 011f14e3-e4dd-43f8-8e3f-f1083b196e9f
+		summarizeBy: sum
+		sourceColumn: completed_intervals
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_completion_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a7208375-1bcd-45a3-839d-981cf195f8b6
+		summarizeBy: none
+		sourceColumn: mission_completion_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column complete_week_01_ts
+		dataType: string
+		lineageTag: f5e98bbc-f75d-428d-a22b-f06bc0609206
+		summarizeBy: none
+		sourceColumn: complete_week_01_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column complete_week_02_ts
+		dataType: string
+		lineageTag: c2a20cb7-09cf-495d-86c1-224054e5c4a2
+		summarizeBy: none
+		sourceColumn: complete_week_02_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column complete_week_03_ts
+		dataType: string
+		lineageTag: fe10cff5-662a-42ca-857c-831e13f90c97
+		summarizeBy: none
+		sourceColumn: complete_week_03_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column complete_week_04_ts
+		dataType: string
+		lineageTag: b20f39d9-653e-48f4-b22a-cb6c539d864b
+		summarizeBy: none
+		sourceColumn: complete_week_04_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_unjoin
+		dataType: int64
+		formatString: 0
+		lineageTag: 95e118ec-5630-42cf-9d12-c6e4634f230a
+		summarizeBy: sum
+		sourceColumn: mission_unjoin
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_unjoin_date
+		dataType: string
+		lineageTag: 047c0fd2-c92f-49bc-b95f-12966ded1d78
+		summarizeBy: none
+		sourceColumn: mission_unjoin_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column mission_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 44159751-9317-4496-ad15-94cc6bfdc30a
+		summarizeBy: none
+		sourceColumn: mission_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column completion_time_days
+		dataType: int64
+		formatString: 0
+		lineageTag: a849557c-0766-4777-9773-89272936ef6b
+		summarizeBy: sum
+		sourceColumn: completion_time_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_date
+		dataType: string
+		lineageTag: 5694f5a7-bfd3-4fe8-92a0-5851490e75af
+		summarizeBy: none
+		sourceColumn: last_updated_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Short_month = FORMAT('mission_members_fact'[mission_start_date],"mmm-yy")
+		lineageTag: 7a29d871-cbc7-48ee-ab7e-db987e2e92c6
+		summarizeBy: none
+		sortByColumn: MonthOffset
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthOffset = ```
+			
+			DATEDIFF(
+			    CALCULATE(MIN('mission_members_fact'[mission_start_date]), ALLSELECTED('mission_members_fact')), 
+			    'mission_members_fact'[mission_start_date], 
+			    MONTH
+			)
+			```
+		formatString: 0
+		lineageTag: 2fa52830-344a-4f1b-81dd-36391238640b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mission_members_fact = m
+		mode: import
+		source =
+				let
+				    Source = DatabricksMultiCloud.Catalogs("capillary-notebook-ushc.cloud.databricks.com", "sql/protocolv1/o/3729305870030/0813-073652-brrb0l8n", null),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    optum_dev_Schema = hive_metastore_Database{[Name=SchemaName,Kind="Schema"]}[Data],
+				    mission_members_fact_Table = optum_dev_Schema{[Name="mission_members_fact",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(mission_members_fact_Table,{{"mission_completion_date", type date}, {"id", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

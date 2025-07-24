@@ -1,0 +1,48 @@
+table Parameter
+	lineageTag: d223b4d4-223b-4d93-bc77-1a5fd8c5d446
+
+	column Parameter
+		lineageTag: a5b1a2fb-234b-4af6-aeaf-4a9760ccbae8
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: 446cd3fc-2649-4ab5-bb74-9f8b3dad13a6
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: c4cb4784-bef7-44f0-9a65-1dc15410f16c
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parameter = calculated
+		mode: import
+		source =
+				{
+				    ("Show Active Users", NAMEOF('MeasureTable'[ActiveUsers]), 0),
+				    ("Show All Eligible Users", NAMEOF('MeasureTable'[EligibleUsers]), 1)
+				}
+
+	annotation PBI_Id = 6891dda0cb85419188424efaa315e8ff
+

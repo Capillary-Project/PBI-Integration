@@ -1,0 +1,50 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["member_dimension","incentive_earning_detail","incentive_plan_config","incentive_plan_config_activity","date_table","Earning_Measure_Table","SchemaName"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.144.1155.0 (25.06)+46435b07013d2a234d7fd007083a9e70b8e79f1c
+
+ref table DateTableTemplate_58efb514-a607-4b28-8351-89015c88e07f
+ref table member_dimension
+ref table incentive_earning_detail
+ref table LocalDateTable_9d27ae9e-d24a-49e5-8198-01c5ff7b5b8e
+ref table LocalDateTable_decfb94c-a58d-48f0-8ecb-2ed69b4fd53a
+ref table LocalDateTable_29e59d3c-929a-41e8-ab70-01dc71145454
+ref table LocalDateTable_4faf629f-0705-4710-a17a-ade5ef589ee8
+ref table LocalDateTable_2fd2f449-11ca-4d39-8349-b1919b3cdcbb
+ref table incentive_plan_config
+ref table LocalDateTable_750fcf02-b2b9-4a30-be2a-b89393d20d7c
+ref table LocalDateTable_548875a9-5e5b-4192-b587-0dec8cf4f1b9
+ref table incentive_plan_config_activity
+ref table LocalDateTable_73dad38e-5634-4e32-a379-f34ef2c3ac5f
+ref table LocalDateTable_4e1bb9ea-dced-4ba4-9de2-6f27f7e24529
+ref table LocalDateTable_b4c78280-50ac-4460-bcfa-3bc876ada569
+ref table LocalDateTable_1aae16da-a77a-42c7-94f6-132804926b87
+ref table LocalDateTable_cecf3514-cb71-4599-9eb3-bc5662c89931
+ref table date_table
+ref table LocalDateTable_99684247-03d1-4fae-9fbf-408478677f41
+ref table Earning_Measure_Table
+ref table LocalDateTable_c54f89e2-7ba1-484f-82bd-93a88ba099b1
+ref table 'Parameter 2'
+ref table Incentive_completion_Names
+ref table ParameterTable
+ref table LocalDateTable_44d3bf91-4a90-437e-84e4-f8451f9c0ef7
+ref table LocalDateTable_0aa6ae44-cc2e-4c5a-aeae-b28dbbd209d4
+ref table LocalDateTable_da68bc7f-1a9e-472f-8b75-fe839bf8bae5
+ref table LocalDateTable_7b5919df-bc37-48f0-9ef1-96c723fb21fb
+ref table Incentive_comppletion_summarize_Table
+ref table Incentive_Measure_Names
+ref table LocalDateTable_c7a9711c-326b-4ad4-b326-fd6a99e14e75
+ref table LocalDateTable_f879cb91-e883-433b-ba56-62ce62a570ff
+ref table 'new table'
+
+ref cultureInfo en-US
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Mission Detail Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bb47f31c-82a9-aacc-4fba-4dab01905e44"
+  }
+}

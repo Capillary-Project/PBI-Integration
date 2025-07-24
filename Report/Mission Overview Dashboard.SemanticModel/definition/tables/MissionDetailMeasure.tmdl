@@ -1,0 +1,104 @@
+table MissionDetailMeasure
+	lineageTag: deb3752a-5cf7-433b-99db-2c237143a04c
+
+	measure 'Avg Joins/user' =
+			
+			Var a = COUNTROWS('mission_members_fact_temp')
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0.0
+		lineageTag: 9b2f33fa-3acc-4332-a468-abc211df7920
+
+	measure 'Avg.Completion_time' =
+			
+			var a = CALCULATE(SUM(mission_members_fact_temp[completion_time_days]),'mission_members_fact_temp'[mission_complete]=1)
+			var b = DIVIDE(a,7)
+			var c = CALCULATE(COUNTROWS('mission_members_fact_temp'),'mission_members_fact_temp'[mission_complete]=1)
+			var d = DIVIDE(b,c)
+			RETURN
+			d
+		formatString: 0
+		lineageTag: 879d5888-f2e8-435d-bbc8-b7786b3137da
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Join Mission%' =
+			
+			Var a = DISTINCTCOUNT('mission_members_fact_temp'[user_id])
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]),ALL(mission_members_fact_temp))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0%;-0%;0%
+		lineageTag: 6f22a25f-0dec-42b3-a32b-5682096722ac
+
+	measure Mission_Total =
+			
+			Var a = COUNT('mission_members_fact_temp'[user_id])
+			RETURN
+			a
+		formatString: 0
+		lineageTag: f187419f-cfa3-4327-8cb0-eb02f06db1ff
+
+	measure Mission_unique =
+			
+			Var a = DISTINCTCOUNT('mission_members_fact_temp'[user_id])
+			RETURN
+			a
+		formatString: 0
+		lineageTag: b566c4d2-f485-4b55-a4fa-7e765e473974
+
+	measure week_1_complete =
+			
+			Var a = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]),mission_members_fact_temp[complete_week_01_ts]<> BLANK())
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0%;-0%;0%
+		lineageTag: 20d5c519-c63b-4d75-a772-2df8eb95967c
+
+	measure week_2_complete =
+			
+			Var a = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]),mission_members_fact_temp[complete_week_02_ts]<> BLANK())
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0%;-0%;0%
+		lineageTag: 40b8cb32-4017-4c19-a1d1-9f02ffb781d9
+
+	measure week_3_complete =
+			
+			Var a = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]),mission_members_fact_temp[complete_week_03_ts]<> BLANK())
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0%;-0%;0%
+		lineageTag: 525af2f5-c060-4638-96d4-c1e2ece2ca58
+
+	measure week_4_complete =
+			
+			Var a = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]),mission_members_fact_temp[complete_week_04_ts]<> BLANK())
+			var b = CALCULATE(DISTINCTCOUNT('mission_members_fact_temp'[user_id]))
+			VAR C = DIVIDE(a,b)
+			RETURN
+			C
+		formatString: 0%;-0%;0%
+		lineageTag: ccb7222a-4ccb-42db-ba0f-6a7b5fe0f53f
+
+	partition MissionDetailMeasure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

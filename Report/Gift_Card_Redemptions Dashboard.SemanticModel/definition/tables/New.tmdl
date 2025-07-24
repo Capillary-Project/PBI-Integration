@@ -1,0 +1,74 @@
+table New
+	lineageTag: 4fdd23eb-af15-4556-9960-6bbe8cd77c04
+
+	column user_id
+		formatString: 0
+		lineageTag: 9ba5c865-f006-4920-9077-21b83a73ee62
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: gift_card_redemption[user_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Latest_Reward_id
+		lineageTag: b54c4d88-13e3-4f4e-aa03-12aa1813f0a6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Latest_Reward_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Redeemed_amount
+		formatString: 0
+		lineageTag: 5c4b167b-c3b9-42a3-bbe9-e1344de58a9d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Redeemed_amount]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unredeemed_amount
+		formatString: 0
+		lineageTag: 6d064cee-e95f-40ae-bfd1-e9f82415874c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Unredeemed_amount]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Max_Date
+		formatString: General Date
+		lineageTag: f89af685-2692-4a87-91d6-49be01000494
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Max_Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition New = calculated
+		mode: import
+		source = ```
+				SUMMARIZE(
+				        gift_card_redemption,
+				        gift_card_redemption[user_id],
+				        "Max_Date",
+				        MAX(gift_card_redemption[last_updated_date]),
+				        "Latest_Reward_id",
+				        MAX(gift_card_redemption[reward_issue_id]),
+				    "Redeemed_amount", 
+				        CALCULATE(
+				            SUM(gift_card_redemption[plan_year_redeemed]),
+				            gift_card_redemption[last_updated_date] = MAX(gift_card_redemption[last_updated_date]),
+				            gift_card_redemption[voucher_id] = MAX(gift_card_redemption[voucher_id])
+				        ),
+				    "Unredeemed_amount", 
+				        CALCULATE(
+				            SUM(gift_card_redemption[plan_year_remaining]),
+				            gift_card_redemption[last_updated_date] = MAX(gift_card_redemption[last_updated_date]),
+				            gift_card_redemption[voucher_id] = MAX(gift_card_redemption[voucher_id])
+				        )
+				)
+				```
+
+	annotation PBI_Id = 84366bfba15a45f88edcfd60a6368e40
+

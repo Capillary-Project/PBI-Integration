@@ -1,0 +1,175 @@
+table ChallengeDetailsMeasure
+	lineageTag: 4ab6ddbb-fa2a-4b71-8ce6-973a990a0b26
+
+	measure %Milestone_achived =
+			
+			// var a = CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]),'challenge_members_fact'[milestone_achieved] = 1,USERELATIONSHIP(date_table[date],challenge_members_fact[join_date]))
+			// VAR b = CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]),ALL('challenge_dimension'),USERELATIONSHIP(date_table[date],challenge_members_fact[join_date]))
+			var a = [Milestone_achived]
+			var b = [Challenge_joins]
+			var c = DIVIDE(a,b)
+			RETURN
+			IF(ISBLANK(c),0,c)
+		formatString: 0%;-0%;0%
+		lineageTag: af1d7d5c-5b06-4dbf-ab82-04365604c6c1
+
+	measure 'Challenge Milestone Goal' =
+			
+			var a = CALCULATE(SUM(challenge_members_fact[milestone_achieved]),USERELATIONSHIP(date_table[date],challenge_members_fact[challenge_completion_date]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 17931016-8cf8-4370-a26e-b93899f2a9d6
+
+	measure Challenge_joins =
+			
+			var a =CALCULATE(COUNT('challenge_members_fact'[user_id]),USERELATIONSHIP(team_challenge_fact[challenge_team_id],challenge_members_fact[challenge_team_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 29483bbf-404e-4ada-b62e-d2143ca68e64
+
+	measure Milestone_achived =
+			
+			var a =CALCULATE(COUNTROWS('challenge_members_fact'),'challenge_members_fact'[milestone_achieved] = 1,USERELATIONSHIP(date_table[date],challenge_members_fact[challenge_completion_date]),USERELATIONSHIP(team_challenge_fact[challenge_team_id],challenge_members_fact[challenge_team_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 918163ab-5f10-4bf6-ac78-2bc87af2d20f
+
+	measure 'Number_of challenge checkpoints' =
+			
+			var a =CALCULATE(sum(challenge_dimension[number_of_checkpoints]),USERELATIONSHIP(team_challenge_fact[challenge_id],challenge_dimension[challenge_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 41cca23a-7c70-4880-ac20-90c2ccbbc285
+
+	measure Milestone_Goal =
+			
+			var a =CALCULATE(SUM(challenge_dimension[challenge_milestone]),USERELATIONSHIP(team_challenge_fact[challenge_id],challenge_dimension[challenge_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		lineageTag: 6001f415-00b9-424d-9d69-53f3906547fa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Tracked Per User' =
+			
+			var  a =DIVIDE([Amount],[Challenge_joins])
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0.0
+		lineageTag: 5d30db3a-c0d8-42f1-a39e-5fcc2bfb3c7e
+
+	measure 'Avg checkpoints Met per user' = ```
+			
+			// var a =
+			// //  CALCULATE(COUNT(challenge_members_fact[number_of_checkpoints]),(challenge_members_fact[number_of_checkpoints])=1,USERELATIONSHIP(date_table[date],challenge_members_fact[challenge_completion_date]))
+			
+			
+			// CALCULATE(SUM(challenge_members_fact[number_of_checkpoints]),(challenge_members_fact[number_of_checkpoints])<>BLANK(),'challenge_members_fact'[milestone_achieved] = 1,USERELATIONSHIP(date_table[date],challenge_members_fact[challenge_completion_date]))
+			
+			// VAR TotalUsers = 
+			//     CALCULATE(DISTINCTCOUNT(challenge_members_fact[user_id]),
+			//         USERELATIONSHIP(date_table[date], challenge_members_fact[challenge_completion_date]))
+			// var b =
+			// // DIVIDE(a,[Milestone_Goal])
+			// DIVIDE(a,TotalUsers)
+			// RETURN
+			// IF(ISBLANK(b),0,b)
+			
+			VAR a =  
+			CALCULATE(  
+			    AVERAGE(challenge_members_fact[number_of_checkpoints]),  
+			    challenge_members_fact[number_of_checkpoints] <> BLANK(),  
+			    challenge_members_fact[milestone_achieved] = 1,  
+			    USERELATIONSHIP(date_table[date], challenge_members_fact[challenge_completion_date])  
+			)
+			var c =
+			CALCULATE(  
+			    DISTINCTCOUNT(challenge_members_fact[user_id]),  
+			    challenge_members_fact[number_of_checkpoints] <> BLANK(),  
+			    challenge_members_fact[milestone_achieved] = 1,  
+			    USERELATIONSHIP(date_table[date], challenge_members_fact[challenge_completion_date])  
+			)
+			var b =
+			// DIVIDE(a,[Milestone_Goal])
+			DIVIDE(a,c)
+			RETURN
+			IF(ISBLANK(b),0,b)
+			
+			
+			```
+		formatString: 0
+		lineageTag: 01869854-a3da-4c3f-887a-b5e4eaf6518d
+
+	measure Amount =
+			
+			var a =CALCULATE(SUM(team_challenge_fact[amount]),USERELATIONSHIP(team_challenge_fact[challenge_team_id],challenge_members_fact[challenge_team_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: #,0
+		lineageTag: 2c4b7f20-401c-4cac-a541-120600293f2e
+
+	measure Start_date = ```
+			
+			var a = CALCULATE(
+			    MIN('date_table'[date]),
+			    ALLSELECTED('date_table')
+			)
+			RETURN
+			"Start Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: 1cdb90b7-b994-4244-9ff4-a37f26a05eae
+
+	measure Client_name = "Client Name: " & SELECTEDVALUE('member_dimension'[client_name])
+		lineageTag: 2d46c2b4-13d6-4052-a25e-ab0c0cab3f24
+
+	measure End_date = ```
+			
+			var a = CALCULATE(
+			    MAX('date_table'[date]),
+			    VALUES('date_table')
+			)
+			RETURN
+			"End Date: " & FORMAT( a, "MM/DD/YYYY" ) 
+			```
+		lineageTag: f65d2b55-9159-4bcc-8723-d6c9027fad81
+
+	measure '# of users Synced Activity' =
+			
+			var a =CALCULATE(DISTINCTCOUNT('challenge_members_fact'[user_id]),USERELATIONSHIP(team_challenge_fact[challenge_team_id],challenge_members_fact[challenge_team_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 5e78f551-2741-4a2e-803d-bbad2cb072c5
+
+	measure Duration =
+			
+			var a = CALCULATE(sum(challenge_dimension[Duration]),USERELATIONSHIP(team_challenge_fact[challenge_id],challenge_dimension[challenge_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 24d13668-79e8-427d-a65b-3c42363f45e8
+
+	measure 'Team Rank' =
+			
+			var a =CALCULATE(SUM('team_challenge_fact'[team_rank]),USERELATIONSHIP(team_challenge_fact[challenge_team_id],challenge_members_fact[challenge_team_id]))
+			RETURN
+			IF(ISBLANK(a),0,a)
+		formatString: 0
+		lineageTag: 2d3bc779-8d37-4391-b426-6979b1261e6c
+
+	partition ChallengeDetailsMeasure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

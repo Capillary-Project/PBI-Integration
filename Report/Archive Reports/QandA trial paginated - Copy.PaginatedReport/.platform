@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "PaginatedReport",
+    "displayName": "QandA trial paginated - Copy"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "08331bf6-e76a-9d40-46cf-46f5506745a1"
+  }
+}

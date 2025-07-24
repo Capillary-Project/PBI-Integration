@@ -1,0 +1,22 @@
+table 'Per Risk'
+	lineageTag: 13d48b72-e952-470d-859d-c599ec11bed7
+
+	column 'Risk Per'
+		dataType: string
+		lineageTag: a9703963-ea69-4092-bd88-b06bcb86bae0
+		summarizeBy: none
+		sourceColumn: Risk Per
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Per Risk' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlAIyizOLlaK1YlWMgSzwUwjJGFjJLYJEttUG8aJBQA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Risk Per" = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Risk Per", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

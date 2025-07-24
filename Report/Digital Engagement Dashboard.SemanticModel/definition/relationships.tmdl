@@ -1,0 +1,366 @@
+relationship c16bf14d-c59e-4af3-9efb-3e3a4468c32a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table.date
+	toColumn: LocalDateTable_cc28da23-9e7e-46a0-8715-2cfa237b2b41.Date
+
+relationship 9cf46eb2-7e6d-4e5d-bda4-6589bdc3dd58
+	joinOnDateBehavior: datePartOnly
+	fromColumn: date_table_1.date
+	toColumn: LocalDateTable_695e81cc-fe42-487e-8f4e-bb9fd55ec9d4.Date
+
+relationship fc99c609-a3b6-bbb1-2ee4-213e0c8e9936
+	isActive: false
+	fromColumn: activity_summary.activity_start_date
+	toColumn: date_table.date
+
+relationship 37ac2147-7282-f405-c38d-45f063d02ddd
+	isActive: false
+	fromColumn: activity_summary.activity_completion_date
+	toColumn: date_table.date
+
+relationship da251b98-3277-a073-2102-ff591993eca4
+	crossFilteringBehavior: bothDirections
+	fromColumn: Append_Fact.Both_id
+	toColumn: Append_Dim.Id
+
+relationship d216f4b1-0cea-4a79-b3fb-66d2f2b34649
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.end_date
+	toColumn: LocalDateTable_9a1abecc-bd91-4b7d-b5b1-337a284c8869.Date
+
+relationship 8b302018-a291-46d0-913a-ececaf1fc077
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.registration_start_date
+	toColumn: LocalDateTable_692adb0d-105d-41c3-a4a4-0526582b8060.Date
+
+relationship 0e5bdac1-d2c9-40ab-baa5-006a7f2992a5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.last_updated_date
+	toColumn: LocalDateTable_f7e548b7-c082-44ec-b03b-8d41e660471c.Date
+
+relationship 7130983b-0f28-43f5-85b8-61b838698645
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mission_dimension.last_updated_date
+	toColumn: LocalDateTable_da68a4f7-02dd-4e88-ba3e-d0da326a8c67.Date
+
+relationship 943cdf4a-6f8f-dbb6-b6fc-0e5f221358c8
+	fromColumn: challenge_members_fact.challenge_id
+	toColumn: challenge_dimension.challenge_id
+
+relationship 7a598a53-2162-40ec-9c21-c4669cef3aa9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.activity_start_date
+	toColumn: LocalDateTable_426367a7-8bfe-4a21-97ed-06c7330d4960.Date
+
+relationship e30c1530-0467-4fa1-89ed-3a0fb19ebf73
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.award_date
+	toColumn: LocalDateTable_fde64140-5830-41fa-a41e-c814ed8bb2e9.Date
+
+relationship 40145e09-21c8-46f2-a70b-252261da1d7a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.fulfillment_date
+	toColumn: LocalDateTable_1e65d489-35d1-471f-8b84-20166f5f3852.Date
+
+relationship a8384933-a05a-4fb6-90eb-47abfef655a0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_startdate
+	toColumn: LocalDateTable_378bc199-9d9c-4a5b-92ea-f4f811a87987.Date
+
+relationship 1a6046bd-beb9-4e32-899f-c9a40ec86aaf
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_enddate
+	toColumn: LocalDateTable_e9a2d676-4dbc-4b13-9611-4e7c8abfa9d6.Date
+
+relationship fbdb6942-1bf1-421b-8a0a-dc5cea6fc2e5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.incentive_plan_year_runout_end_date
+	toColumn: LocalDateTable_263b92c9-9d11-48ba-8292-575ca374dcaa.Date
+
+relationship 000d88d4-c306-4434-bc7b-472186dad502
+	joinOnDateBehavior: datePartOnly
+	fromColumn: incentive_earning_detail.last_updated_date
+	toColumn: LocalDateTable_57708fdd-1299-4a66-8b51-a952260897e3.Date
+
+relationship ef6a71ff-78da-a9e6-6aa9-b52c2ec12f9d
+	toCardinality: many
+	fromColumn: activity_summary.user_id
+	toColumn: member_dimension.user_id
+
+relationship e44a3309-f356-0b5d-5e5f-9c7e14afddef
+	toCardinality: many
+	fromColumn: challenge_members_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship 0dda05dc-b3f1-f6ce-c381-cd3554b24411
+	toCardinality: many
+	fromColumn: Append_Fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship a378aba8-cb3f-4d69-874e-01e0f1a6f37e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_last_activity_bi.last_updated_date
+	toColumn: LocalDateTable_f17464c9-36ea-44d0-b7ea-2062cce13b19.Date
+
+relationship 7391a457-427f-9298-97b8-b11c1ba708d1
+	isActive: false
+	fromColumn: member_last_activity_bi.last_session_date
+	toColumn: date_table.date
+
+relationship 37bbdc08-f192-faa6-b835-7e585515e3a0
+	toCardinality: many
+	fromColumn: member_last_activity_bi.user_id
+	toColumn: member_dimension.user_id
+
+relationship 4055afe2-e06b-a13a-25fe-04fcfb1a4a6d
+	fromColumn: mission_members_fact.mission_id
+	toColumn: mission_dimension.mission_id
+
+relationship 37ae942b-019f-2c9f-f126-6f6765119fce
+	isActive: false
+	fromColumn: mission_members_fact.mission_start_date
+	toColumn: date_table.date
+
+relationship e4d92ac3-52d4-b7ad-0c98-981bc526478c
+	toCardinality: many
+	fromColumn: mission_members_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship c1611884-d69e-1657-1b7c-196aba4a47b2
+	toCardinality: many
+	fromColumn: survey_event_fact.user_id
+	toColumn: member_dimension.user_id
+
+relationship 199624f4-5c23-4779-9f9e-92719676871c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.end_date
+	toColumn: LocalDateTable_d9c1385f-c19f-46a3-8989-1530e10878db.Date
+
+relationship a72f5714-bd79-9112-a7af-53765bacc967
+	isActive: false
+	fromColumn: member_dimension.terms_and_conditions_acceptance_date
+	toColumn: date_table.date
+
+relationship f812802e-13da-4e4e-8942-ff257e3ed2ae
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_members_fact.last_updated_date
+	toColumn: LocalDateTable_66f1b04a-fac5-4c44-b902-f4ca429f19fc.Date
+
+relationship 12f980da-1148-452e-98e3-c9121a8837ba
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gift_card_redemption.plan_year_date
+	toColumn: LocalDateTable_ee0174e4-ee6a-4f20-9e28-eb1afdb1e4ca.Date
+
+relationship 2d394aee-b724-4bdd-b69d-6d7cab9463b1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gift_card_redemption.last_updated_date
+	toColumn: LocalDateTable_8b24bd55-58f4-4162-9923-77214ccd9915.Date
+
+relationship d69fa213-73fa-4ec6-810c-8695366433cc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.stride_start_date
+	toColumn: LocalDateTable_79548bed-4fb4-4518-a613-114f305d657b.Date
+
+relationship 045fa84a-1790-4edd-8837-2dab6fdab266
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.stride_end_date
+	toColumn: LocalDateTable_bd22f744-12f8-4f9e-8271-53785d8eb234.Date
+
+relationship 0d553781-216d-44b0-b871-93f33113c2f8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: stride.last_stride_date
+	toColumn: LocalDateTable_d0316ba9-6832-4833-b7cf-706d5177ce25.Date
+
+relationship f5286d10-8e78-40ba-8c59-bfd90ffe2904
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gym_checkin.gym_start_date
+	toColumn: LocalDateTable_f14e44bb-6ac8-4906-a1b2-65b01c938b60.Date
+
+relationship 8759fd8b-c040-4e4e-9af5-a968198519be
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gym_checkin.gym_end_date
+	toColumn: LocalDateTable_b45a457a-b379-473b-84e7-1348992899e1.Date
+
+relationship AutoDetected_c6adb750-983f-4aed-a054-6d1cd5a36ced
+	toCardinality: many
+	fromColumn: gift_card_redemption.user_id
+	toColumn: member_dimension.user_id
+
+relationship AutoDetected_bfec58f5-4e70-4e07-a505-20996e79589e
+	toCardinality: many
+	fromColumn: stride.user_id
+	toColumn: member_dimension.user_id
+
+relationship AutoDetected_ac883830-0914-49d0-ac8f-faaae5be193f
+	toCardinality: many
+	fromColumn: gym_checkin.user_id
+	toColumn: member_dimension.user_id
+
+relationship c499b96c-bb54-410c-9829-b12fa610d089
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_dimension.start_date
+	toColumn: LocalDateTable_c451b94c-6753-4870-8470-457ffdebfc9c.Date
+
+relationship 54976c28-fa03-4bc8-88df-facc7bf39b1f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: member_dimension.join_date
+	toColumn: LocalDateTable_94b3e0c2-9278-41a0-93ce-f76d6295306a.Date
+
+relationship 1a794626-188e-4aac-803f-16b7f6a143b1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: survey_event_fact.survey_start_date
+	toColumn: LocalDateTable_526a42a8-4cbc-47f9-9a42-e974bf1927fd.Date
+
+relationship 41572d90-6ba1-47f8-8b8f-dbdf463d817b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: survey_event_fact.last_updated_date
+	toColumn: LocalDateTable_37809c75-b527-4637-8e1c-c23f99b6e4cd.Date
+
+relationship fb0f2f61-3ee3-dedf-15a8-0253e937dc61
+	isActive: false
+	fromColumn: survey_event_fact.survey_end_date
+	toColumn: date_table.date
+
+relationship AutoDetected_d00af14a-0932-4adb-9d49-566da5f1e6e2
+	toCardinality: many
+	fromColumn: health_survey_completion.user_id
+	toColumn: member_dimension.user_id
+
+relationship 502a3380-cd32-26a0-e2a9-f64fb910f628
+	toCardinality: many
+	fromColumn: points_redemptions.user_id
+	toColumn: member_dimension.user_id
+
+relationship 27c6a959-0947-adcf-3e31-4d1a52705ce1
+	toCardinality: many
+	fromColumn: quiz_completions.user_id
+	toColumn: member_dimension.user_id
+
+relationship 548cd98c-c3b6-2af9-78aa-d39aac916314
+	isActive: false
+	fromColumn: health_survey_completion.health_survey_completion_date
+	toColumn: date_table.date
+
+relationship 60668e3a-356f-663e-a2c0-5e8f37312f88
+	isActive: false
+	fromColumn: quiz_completions.quiz_completion_date
+	toColumn: date_table.date
+
+relationship 9334360d-da66-2ea5-b9be-1e45eba294d9
+	isActive: false
+	fromColumn: points_redemptions.redemption_date
+	toColumn: date_table.date
+
+relationship bbf661e2-8ba3-93ad-d547-cddf34c09752
+	isActive: false
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: health_survey_completion.health_survey_id
+
+relationship 73f390e0-4349-bdca-7377-71264d72d3ad
+	isActive: false
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: quiz_completions.quiz_id
+
+relationship 161b6eea-cc38-f73d-de7d-6e3df2e94499
+	isActive: false
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: points_redemptions.awarded_ref_id
+
+relationship 86d00cc0-0150-4e50-9248-a3ac2385344c
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: challenge_members_fact.challenge_id
+	toColumn: incentive_earning_detail.target_group_id
+
+relationship 748b7c46-072d-feb6-684e-a9afd3cad229
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: gym_checkin.gymcheckin_id
+	toColumn: incentive_earning_detail.target_group_id
+
+relationship f3b6b4c4-252c-aa19-47b9-f8f1bc801a46
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: gift_card_redemption.reward_issue_id
+	toColumn: incentive_earning_detail.target_group_id
+
+relationship 989f6195-dd9e-052a-87c4-0c739c742554
+	isActive: false
+	fromColumn: incentive_earning_detail.activity_completion_date
+	toColumn: date_table.date
+
+relationship 53fd9bf2-44aa-74c9-de47-5b6189a535b3
+	fromColumn: Append_Dim.Both_Categories
+	toColumn: 'Pseudo Category Table'.Both_Categories
+
+relationship 023b9912-b85a-d8e6-98cf-d2b617dd6c48
+	isActive: false
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: stride.stride_activity_id
+
+relationship 042587fe-31f6-c4f4-a46d-3183160a8d3d
+	isActive: false
+	toCardinality: many
+	fromColumn: incentive_earning_detail.target_group_id
+	toColumn: mission_members_fact.mission_id
+
+relationship f9779ce1-ab0b-4f57-4843-0b51449e2c71
+	fromColumn: stride.month_date
+	toColumn: date_table.date
+
+relationship af04c548-615a-ccbe-fea4-306ff9c2da73
+	toCardinality: many
+	fromColumn: incentive_earning_detail.user_id
+	toColumn: member_dimension.user_id
+
+relationship 37fcb849-f107-b1fa-1194-06dc343fc84e
+	isActive: false
+	fromColumn: gym_checkin.month_date
+	toColumn: date_table.date
+
+relationship d1c86f5e-3b1e-4c80-a23c-05fe395d6df3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: gift_card_redemption.reward_issue_date
+	toColumn: LocalDateTable_c6136d5f-1829-4b0d-8ac7-19394f405c2a.Date
+
+relationship b7c88042-7a05-768c-1375-22fb7c93ea81
+	fromColumn: mission_members_fact.mission_completion_date
+	toColumn: date_table.date
+
+relationship b78e9c5f-f477-08e3-8237-0385f294659f
+	isActive: false
+	fromColumn: Append_Fact.join_date
+	toColumn: date_table.date
+
+relationship 5b5e7d41-43ba-6710-d626-d8d847fc135e
+	isActive: false
+	fromColumn: Append_Fact.mission_start_date
+	toColumn: date_table.date
+
+relationship 6e4f800b-6179-4c50-bdc5-fbcf84a277db
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_members_fact.challenge_completion_date
+	toColumn: LocalDateTable_ca817f04-b3ae-43e2-8dc3-57166d589940.Date
+
+relationship 778d01b5-89bc-4052-a072-4dedabbc48c1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: challenge_members_fact.join_date
+	toColumn: LocalDateTable_96b38d34-0621-42f8-b3b9-db8ee467c117.Date
+
+relationship c02170e1-026b-96f3-dcb0-e56d76e7915f
+	isActive: false
+	fromColumn: challenge_members_fact.new_start
+	toColumn: date_table.date
+
+relationship 20d98c01-23c4-7b9c-d0c6-19b72ab18c89
+	isActive: false
+	fromColumn: member_dimension.start_date
+	toColumn: date_table.date
+
