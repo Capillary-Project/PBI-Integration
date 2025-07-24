@@ -1,5 +1,5 @@
 {
-  "config": "{\"version\":\"5.65\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU08\",\"type\":2,\"version\":\"5.57\"}},\"activeSectionIndex\":1,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "config": "{\"version\":\"5.65\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU08\",\"type\":2,\"version\":\"5.57\"}},\"activeSectionIndex\":2,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
   "filters": "[{\"name\":\"8d39b889049dd11e5dda\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"member_dimension\"}},\"Property\":\"relationship_code\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"m\",\"Entity\":\"member_dimension\",\"Type\":0}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"relationship_code\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"null\"}}],[{\"Literal\":{\"Value\":\"'01'\"}}],[{\"Literal\":{\"Value\":\"'12/31/99'\"}}],[{\"Literal\":{\"Value\":\"'2999-12-31'\"}}],[{\"Literal\":{\"Value\":\"'31/12/99'\"}}],[{\"Literal\":{\"Value\":\"'NA'\"}}],[{\"Literal\":{\"Value\":\"'DP'\"}}],[{\"Literal\":{\"Value\":\"'Dependent'\"}}]]}}}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{\"general\":[{\"properties\":{\"isInvertedSelectionMode\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}]",
   "layoutOptimization": 0,
   "resourcePackages": [
@@ -239,6 +239,27 @@
         }
       ],
       "width": 1440.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "c4c3e247bb8379faec38",
+      "ordinal": 2,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"3e87823d81e506b1824f\",\"layouts\":[{\"id\":0,\"position\":{\"x\":327.02260072060267,\"y\":194.53652145430723,\"z\":1,\"width\":479.63314772355056,\"height\":482.98722567965933,\"tabOrder\":1}}],\"singleVisual\":{\"visualType\":\"donutChart\",\"projections\":{\"Y\":[{\"queryRef\":\"MeasureTable.Total_registration_rate\"},{\"queryRef\":\"MeasureTable.sum\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"m\",\"Entity\":\"MeasureTable\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Total_registration_rate\"},\"Name\":\"MeasureTable.Total_registration_rate\",\"NativeReferenceName\":\"Total_registration_rate\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Total_percent\"},\"Name\":\"MeasureTable.sum\",\"NativeReferenceName\":\"Total_percent\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Total_registration_rate\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"legend\":[{\"properties\":{\"showTitle\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}},\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"slices\":[{\"properties\":{\"innerRadiusRatio\":{\"expr\":{\"Literal\":{\"Value\":\"68L\"}}}}}],\"labels\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"dataPoint\":[{\"properties\":{\"fill\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#1E82CB'\"}}}}}}},{\"properties\":{\"fill\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#1E82CB'\"}}}}}},\"selector\":{\"metadata\":\"MeasureTable.Total_registration_rate\"}},{\"properties\":{\"fill\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#E5E5E6'\"}}}}}},\"selector\":{\"metadata\":\"MeasureTable.sum\"}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"background\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 482.99,
+          "width": 479.63,
+          "x": 327.02,
+          "y": 194.54,
+          "z": 1.00
+        }
+      ],
+      "width": 1280.00
     },
     {
       "config": "{}",
